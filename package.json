@@ -1,0 +1,17 @@
+{
+  "name": "@imagina/qmedia",
+  "version": "0.0.2",
+  "description": "Module with CRUD for media.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "media",
+    "files",
+    "multimedia",
+    "qmedia"
+  ],
+  "author": "http://imaginacolombia.com/",
+  "license": "ISC"
+}
