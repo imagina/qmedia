@@ -10,13 +10,7 @@
       • List/Search
     </div>
      <div class="col-12">
-       <media-form
-         v-model="form.medias_multi"
-         entity="Modules\Page\Entities\Page"
-         entityId="2"
-         label="Main Image"
-       />
-
+     
        <media-list />
 
      </div>
@@ -34,8 +28,7 @@
   export default {
     props: {},
     components: {
-      mediaList,
-      mediaForm
+      mediaList
     },
     watch: {},
     computed: {},
