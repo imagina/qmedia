@@ -1,6 +1,6 @@
 {
   "name": "@imagina/qmedia",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Module with CRUD for media.",
   "main": "index.js",
   "scripts": {

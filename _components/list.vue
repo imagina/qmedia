@@ -1,5 +1,5 @@
 <template>
-  <div id="listMedia" class="row">
+  <div id="mediaList" class="row">
     <!--== Button Group ==-->
     <div class="col-12 text-right">
       <!--== Button Group ==-->
@@ -80,7 +80,8 @@
               slot-scope="props" :props="props">
           <q-icon  v-if="props.row.is_folder" name="far fa-folder" size="20px" />
           <div v-else>
-            <img :src="props.value" alt="">
+            <div class="image" :style="'background-image: url('+props.value+')'" alt="">
+            </div>
           </div>
         </q-td>
   
@@ -597,7 +598,14 @@
     
   }
 </script>
-
-<style scoped>
+<style lang="stylus">
+  @import "~variables";
+  #mediaList
+    .image
+      background-repeat no-repeat
+      background-size 100% cover
+      background-position center center
+      height 50px
+      overflow hidden
 
 </style>
