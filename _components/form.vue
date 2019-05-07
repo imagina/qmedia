@@ -1,6 +1,6 @@
 <template>
   <div id="mediaForm" class="row full-width">
-    <div class="col-12 q-heading q-title q-my-sm label" >{{ getFieldLabel() }}</div>
+    <div v-if="label" class="col-12 q-heading q-caption q-my-sm label" >{{ this.label }}</div>
     <!--= image viewer =-->
     <div class="col-12">
       <!--= if is multiple =-->
@@ -47,7 +47,13 @@
     </div>
   
     <!--= Add File Button =-->
-    <q-btn label="Add File" icon="add" color="primary" class="q-my-xs" @click="modalMedia = true"/>
+    <q-btn
+      :label="buttonLabel ? buttonLabel : 'Add File'"
+      :icon="buttonIcon ? buttonIcon : 'add'"
+      color="primary"
+      class="q-my-xs"
+      size="sm"
+      @click="modalMedia = true"/>
   
   
     <!--= Media List Modal =-->
@@ -99,11 +105,13 @@
       },
       value: {
         type: Object,
-        default: {}
+        default: () =>{return {}}
       },
       entity: { type: String, required: true },
       entityId: { default: null },
-      label: { type: String, default: 'Image'}
+      label: { type: String, default: ''},
+      buttonLabel: { type: String, default: ''},
+      buttonIcon: { type: String, default: ''}
     },
     components: {
       mediaList
@@ -123,25 +131,28 @@
     },
     methods: {
       getData(){
-        let params = {
-          params:{
-            zone: this.zone,
-            entity: this.entity,
-            entity_id: this.entityId
-          },
-          remember:false
-        }
-        // if is multiple media, call diff routes and transform diff the response.data
-        if(this.multiple){
-          mediaService.crud.index('apiRoutes.media.find',params).then(response => {
-            this.files = response.data;
-            this.pushData()
-          })
-        }else{
-          mediaService.crud.index('apiRoutes.media.findFirst',params).then(response => {
-            this.files = [response.data];
-            this.pushData()
-          })
+        // if has entity id, get the files associated
+        if(this.entityId) {
+          let params = {
+            params: {
+              zone: this.zone,
+              entity: this.entity,
+              entity_id: this.entityId
+            },
+            remember: false
+          }
+          // if is multiple media, call diff routes and transform diff the response.data
+          if (this.multiple) {
+            mediaService.crud.index('apiRoutes.media.find', params).then(response => {
+              this.files = response.data;
+              this.pushData()
+            })
+          } else {
+            mediaService.crud.index('apiRoutes.media.findFirst', params).then(response => {
+              this.files = [response.data];
+              this.pushData()
+            })
+          }
         }
       },
   
@@ -180,13 +191,6 @@
       deleteFile(index){
         this.files.splice(index, 1)
         this.pushData()
-      },
-      /**
-       *
-       * @returns {label|{type, default}|string|*|void}
-       */
-      getFieldLabel() {
-        return this.label || this.zone.replace('_', ' ');
       },
     }
     

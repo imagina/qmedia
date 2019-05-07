@@ -30,16 +30,10 @@
       </q-collapsible>
     </div>
     <!--== Breadcrumb ==-->
-    <div id="breadcrumb" class="col-12 q-py-xs">
-        <span v-for="(breadcrumb,index) in breadcrumbs" :key="index">
-          <span v-if="index < (breadcrumbs.length-1)" class="q-body-2">
-            <a href="#" @click="getDataByFolder(breadcrumb.id)" style="text-decoration: none">{{breadcrumb.name}}</a>
-            {{index < breadcrumbs.length-1 ? '/':''}}
-          </span>
-          <span v-else class="q-body-1">{{breadcrumb.name}} </span>
-          
-        </span>
-    </div>
+    <q-breadcrumbs>
+      <q-breadcrumbs-el v-for="(breadcrumb,index) in breadcrumbs" :key="index" :label="breadcrumb.name" @click.native="getDataByFolder(breadcrumb.id)" style="cursor: pointer"/>
+    </q-breadcrumbs>
+ 
     <!--== Table ==-->
     <div class="col-12">
       <!--== Table ==-->

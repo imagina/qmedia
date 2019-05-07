@@ -4,8 +4,11 @@ Module with CRUD for media.
 ##Required
 
 ####Plugins
-- helper
 - axios
+
+####Modules
+- quser
+- qhelper
 
 
 ##Usage
@@ -38,7 +41,7 @@ In file `src/config/sidebar.js`  add:
     title: 'Setup',
     icon: 'fas fa-cog',
     children: [
-      pages.media.index,//setup
+      pages.media.index,// media setup
     ]
   },
 ```
@@ -47,6 +50,9 @@ if already have the -setup- statement, just add `pages.media.index,//setup` on h
 ####Components
 
 #####Media List 
+
+
+
 Basic Usage:
 ```js
 <media-list embebed />
@@ -60,10 +66,12 @@ Basic Usage:
 ```js
 <media-form
    v-model="model"
-   multiple // multiple for galleries
-   entity="Modules\Page\Entities\Page" // Entity Route
-   entityId="2" // Entity Id
-   label="Main Image" // master Title
+   multiple 
+   entity="Modules\Page\Entities\Page"
+   entityId="2"
+   label="Main Image"
+   buttonLabel="Add Image"
+   buttonIcon="fas fa-picture"
    zone='mainimage'
  />
 ```
@@ -74,3 +82,5 @@ Basic Usage:
 | entityId  |String  | false | Used for files request
 | zone |String  | false | Used for files request and for the v-model data, default: image
 | label |String  | false | Used for Master Title, default: Image
+| buttonLabel |String  | false | Used for Custom Button Title, default: 'Add File'
+| buttonIcon |String  | false | Used for Custom Button Icon, default: 'add'

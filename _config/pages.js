@@ -9,7 +9,7 @@ import access from '@imagina/quser/_router/middlewares/access'
 export default {
   //Home Page
   index: {
-    permission: null,
+    permission: 'media.medias.index',
     activated: true,
     path: '/media/index',
     name: 'app.media.index',
