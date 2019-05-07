@@ -36,6 +36,7 @@
             class="absolute-top-left"
             style="top: 0; left: 0;"
             round
+            
             color="red"
             @click="deleteFile(index)"
             icon="fas fa-times"
@@ -119,7 +120,12 @@
     watch: {},
     mounted() {
       this.$nextTick(function () {
-        this.getData()
+        // if has entity id, get the files associated
+        if(this.entityId) {
+          // if has value in zone into v-model
+          if(this.multiple || this.value[this.zone])
+          this.getData()
+        }
       })
     },
     data() {
@@ -131,8 +137,7 @@
     },
     methods: {
       getData(){
-        // if has entity id, get the files associated
-        if(this.entityId) {
+     
           let params = {
             params: {
               zone: this.zone,
@@ -153,7 +158,7 @@
               this.pushData()
             })
           }
-        }
+        
       },
   
       /**
@@ -178,7 +183,7 @@
           if(file)
             this.files = [file]
           let vmodel = {}
-          vmodel[this.zone] = file.id
+          vmodel[this.zone] = file ? file.id : this.files[0] ? this.files[0].id : ''
           this.$emit('input',vmodel)
           this.modalMedia = false
         }
