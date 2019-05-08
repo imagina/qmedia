@@ -16,7 +16,7 @@ export default {
     layout: require('@imagina/qmedia/_layouts/index').default,
     containerLayout: master,
     title: 'Media',
-    icon: 'fas fa-list-alt',
+    icon: 'far fa-images',
     middleware: [auth]
   },
 }

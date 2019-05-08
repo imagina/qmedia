@@ -30,7 +30,7 @@
         <div v-for="(file,index) in files"
              :key="index"
              class="col-12 col-md-6 relative-position">
-          <img class="img-fluid" :src="file.medium_thumb ? file.medium_thumb : ''" />
+          <img class="img-fluid" :src="file ? file.medium_thumb : ''" />
   
           <q-btn
             class="absolute-top-left"
@@ -148,12 +148,14 @@
           // if is multiple media, call diff routes and transform diff the response.data
           if (this.multiple) {
             mediaService.crud.index('apiRoutes.media.find', params).then(response => {
-              this.files = response.data;
+              if(response.data)
+                this.files = response.data;
               this.pushData()
             })
           } else {
             mediaService.crud.index('apiRoutes.media.findFirst', params).then(response => {
-              this.files = [response.data];
+              if(response.data)
+                this.files = [response.data];
               this.pushData()
             })
           }
