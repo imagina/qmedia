@@ -30,7 +30,7 @@
         <div v-for="(file,index) in files"
              :key="index"
              class="col-12 col-md-6 relative-position">
-          <img class="img-fluid" :src="file.medium_thumb" />
+          <img class="img-fluid" :src="file.medium_thumb ? file.medium_thumb : ''" />
   
           <q-btn
             class="absolute-top-left"
@@ -123,7 +123,6 @@
         // if has entity id, get the files associated
         if(this.entityId) {
           // if has value in zone into v-model
-          if(this.multiple || this.value[this.zone])
           this.getData()
         }
       })
