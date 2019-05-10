@@ -95,22 +95,23 @@
           </div>
         </template>
         <!--= Small Thumb or Icon =-->
-        <q-td slot="body-cell-small_thumb"
+        <q-td slot="body-cell-small_thumb" style="width: 30%"
               slot-scope="props" :props="props">
-          <q-icon v-if="props.row.is_folder" name="far fa-folder" size="20px"/>
-          <div v-else>
+          <q-btn v-if="props.row.is_folder" icon="far fa-folder" flat @click="getDataByFolder(props.row.id)" />
+          <div v-else-if="props.row.is_image">
             <div class="image" :style="'background-image: url('+props.value+')'" alt="">
             </div>
+          </div>
+          <div v-else>
+            <q-icon name="far fa-file-alt"/>
           </div>
         </q-td>
         
         <!--= File or Folder Name =-->
-        <q-td slot="body-cell-filename"
+        <q-td slot="body-cell-filename" style="width: 10%"
               slot-scope="props" :props="props">
-          <q-btn v-if="props.row.is_folder" class="q-caption" flat @click="getDataByFolder(props.row.id)">
-            {{props.value}}
-          </q-btn>
-          <span v-else class="q-caption">
+   
+          <span class="q-caption">
             {{props.value}}
           </span>
         </q-td>
@@ -122,7 +123,7 @@
             <q-btn color="primary" label="Use this file" @click="$emit('data', props.row)"/>
           </div>
           <div v-else-if="!embebed">
-            <q-btn v-if="props.row.is_folder" icon="fas fa-pen" color="positive" round size="sm" class="q-mx-xs"
+            <q-btn icon="fas fa-pen" color="positive" round size="sm" class="q-mx-xs"
                    @click="props.row.is_folder ? editFolder(props.row.filename,true,props.row.id) : editFile(true,props.row)"/>
             <q-btn icon="far fa-trash-alt" color="negative" size="sm" class="q-mx-xs" round
                    @click="dialogDeleteItem.handler(props.row.id,props.row.is_folder)"/>
@@ -195,35 +196,93 @@
     </q-dialog>
     
     <!--= Edit File Dialog =-->
-    <q-dialog
+    <q-modal
       v-model="dialogEditFile"
-      stack-buttons
-      prevent-close
+      id="mediaEditFileModal"
+      :content-css="{minWidth: '80vw', minHeight: '80vh'}"
     >
-      <!-- This or use "title" prop on <q-dialog> -->
-      <span slot="title">Rename Folder</span>
-      
-      <!-- This or use "message" prop on <q-dialog> -->
-      <span slot="message"></span>
-      
-      <div slot="body" class="relative-position">
-        <q-field
-          icon="fa fa-folder"
-          label="Folder Name"
-          :label-width="3"
-        >
-          <q-input v-model="fileForm"/>
-        </q-field>
+  
+      <q-modal-layout>
+        <q-toolbar slot="header">
+          <q-btn
+            flat
+            round
+            dense
+            v-close-overlay
+            icon="keyboard_arrow_left"
+          />
+          <q-toolbar-title>
+            Edit File
+          </q-toolbar-title>
+        </q-toolbar>
+        
+  
+        <div class="layout-padding">
+        <locales v-model="locale"></locales>
+        
+        <div class="row gutter-sm" v-if="locale.success">
+          <div class="col-12">
+            <q-field>
+              <q-input float-label="Alt Attribute" v-model="locale.formTemplate.alt_attribute"/>
+            </q-field>
+          </div>
+          <div class="col-12">
+            <q-field>
+              <q-input type="textarea" rows="3" float-label="Description" v-model="locale.formTemplate.description"/>
+            </q-field>
+          </div>
+          <div class="col-12">
+            <q-field>
+              <q-input float-label="Keywords" v-model="locale.formTemplate.keywords" placeholder="one,two,tree"/>
+            </q-field>
+          </div>
+          <div class="col-12">
+            <q-chips-input float-label="Tags" v-model="locale.formTemplate.tags" />
+          </div>
+          <div class="col-12" v-if="fileForm.is_image">
+            <div class="row">
+             
+              <div class="col-6">
+                <q-carousel
+                  color="white"
+                  arrows
+                  height="250px"
+                >
+                  <q-carousel-slide :img-src="fileForm.path ? fileForm.path : ''">
+                  </q-carousel-slide>
+                  <q-carousel-control
+                    slot="control-button"
+                    slot-scope="carousel"
+                    position="bottom-right"
+                    :offset="[18, 22]"
+                  >
+                    <q-btn
+                      round dense push
+                      color="primary"
+                      :icon="carousel.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+                      @click="carousel.toggleFullscreen()"
+                    />
+                  </q-carousel-control>
+                </q-carousel>
+              </div>
+              <div class="col-3">
+                <img class="img-fluid" :src="fileForm.path ? fileForm.path : ''" alt="">
+              </div>
+            </div>
+            
+          </div>
+          <div class="col-12 text-center">
+            
+            <q-btn color="primary" label="Save" @click="editFile()"/>
+          </div>
+        </div>
         <q-inner-loading :visible="loadingEditFile">
           <q-spinner-hourglass size="50px" color="primary"></q-spinner-hourglass>
         </q-inner-loading>
       </div>
       
-      <template slot="buttons" slot-scope="props">
-        <q-btn color="primary" label="Confirm" @click="editFolder('',false,false,props.ok)"/>
-        <q-btn flat label="Cancel" @click="props.cancel"/>
-      </template>
-    </q-dialog>
+      </q-modal-layout>
+    </q-modal>
     
     <!--= Move Elements Dialog =-->
     <q-dialog
@@ -268,9 +327,13 @@
   import axios from 'axios';
   import config from 'src/config/index'
   import {uid} from 'quasar'
+  import _cloneDeep from 'lodash.clonedeep'
   
   /*Services*/
   import mediaService from '@imagina/qmedia/_services/index'
+  
+  /*Components*/
+  import locales from '@imagina/qsite/_components/locales'
   
   export default {
     props: {
@@ -279,7 +342,9 @@
         default: false
       },
     },
-    components: {},
+    components: {
+      locales
+    },
     watch: {
       uploadFile(newValue) {
         if (newValue) this.$refs.uploadComponent.pick()
@@ -306,6 +371,16 @@
     },
     data() {
       return {
+        locale : {
+          fields: {
+            tags:[]
+          },
+          fieldsTranslatable:{
+           alt_attribute:'',
+           description:'',
+           keywords:'',
+          }
+        },
         folderSelected: null,
         selectFolders: [{
           label: 'Root',
@@ -610,12 +685,26 @@
        * @param row
        */
       editFile(openDialog = false, row = false) {
-        /*
+        
         if(openDialog){
+          this.locale.form = row;
           this.fileForm = row;
           this.dialogEditFile = true;
+        }else{
+          this.loadingEditFile = true
+          let data = _cloneDeep(this.locale.form)
+          data['id']= this.fileForm.id
+  
+          mediaService.createItem('apiRoutes.media.file', data.id, data, {params: {}}).then(response => {
+            this.loadingEditFile = false
+            this.rowsSelected = []
+            this.fileForm = {}
+            this.dialogEditFile = false;
+            alert.success('File updated', 'top')
+            this.getData({pagination: this.pagination, search: this.filter.search}, true);
+          })
         }
-        */
+        
       },
     }
     
@@ -630,5 +719,12 @@
       background-position center center
       height 50px
       overflow hidden
+    table td
+      word-wrap break-word !important
+      overflow-wrap break-word  !important
+      white-space inherit  !important
+  #mediaEditFileModal
+    .img-fluid
+      width 50%
 
 </style>

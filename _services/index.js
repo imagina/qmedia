@@ -71,6 +71,23 @@ export default {
     })
   },
   
+  createItem(configName, criteria, data) {
+    
+    return new Promise((resolve, reject) => {
+      //Validations
+      if (!configName) return reject('Config name is required')
+      if (!data) return reject('Data is required')
+      let urlApi = config(configName) + '/' + criteria//Get url from config
+      //let dataRequest = helper.toSnakeCase(data)
+      //Request
+      http.put(urlApi, data).then(response => {
+        resolve(response.data)//Successful response
+      }).catch(error => {
+        reject(error.response.data.errors)//Failed response
+      })
+    })
+  },
+  
   folderList(configName) {
     
     return new Promise((resolve, reject) => {

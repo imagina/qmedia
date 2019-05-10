@@ -154,6 +154,7 @@
             })
           } else {
             mediaService.crud.index('apiRoutes.media.findFirst', params).then(response => {
+          
               if(response.data)
                 this.files = [response.data];
               this.pushData()
