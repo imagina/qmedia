@@ -177,14 +177,19 @@
           this.files.forEach(file => {
             ids.push(file.id)
           })
-          vmodel[this.zone] = {}
+          vmodel = JSON.parse(JSON.stringify(this.value))
+          if(!vmodel[this.zone])
+            vmodel[this.zone] = {}
+            
           vmodel[this.zone].files = ids
           vmodel[this.zone].orders = ids.join();
           this.$emit('input',vmodel)
         }else{
           if(file)
             this.files = [file]
-          let vmodel = {}
+          let vmodel = JSON.parse(JSON.stringify(this.value))
+          if(!vmodel[this.zone])
+            vmodel[this.zone] = {}
           vmodel[this.zone] = file ? file.id : this.files[0] ? this.files[0].id : ''
           this.$emit('input',vmodel)
           this.modalMedia = false
