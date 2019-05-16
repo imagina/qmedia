@@ -123,10 +123,11 @@
           this.getData()
         }
       },
-      zone(){
-        if(this.entityId) {
+      zone() {
+        if (this.entityId) {
           this.getData()
         }
+      }
     },
     mounted() {
       this.$nextTick(function () {
