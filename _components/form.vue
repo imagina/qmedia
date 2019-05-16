@@ -117,12 +117,22 @@
     components: {
       mediaList
     },
-    watch: {},
+    watch: {
+      entityId(){
+        if(this.entityId) {
+          this.getData()
+        }
+      },
+      zone(){
+        if(this.entityId) {
+          this.getData()
+        }
+    },
     mounted() {
       this.$nextTick(function () {
         // if has entity id, get the files associated
         if(this.entityId) {
-          // if has value in zone into v-model
+   
           this.getData()
         }
       })
