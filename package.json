@@ -1,23 +1,54 @@
 {
-  "name": "@imagina/qmedia",
-  "version": "0.0.12",
-  "description": "Module with CRUD for media.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "_args": [
+    [
+      "@imagina/qmedia@0.0.14",
+      "D:\\imagina\\projects\\baseQuasarFrontend\\front-end"
+    ]
+  ],
+  "_from": "@imagina/qmedia@0.0.14",
+  "_id": "@imagina/qmedia@0.0.14",
+  "_inBundle": false,
+  "_integrity": "sha512-6LIFTBF3Uj46kbxoQVKeffhT2JrLyryjbQuehbTaijyb2WxpGAvliVDYlyL3MpxnKZGrsqF6imdAEuCqXcymnA==",
+  "_location": "/@imagina/qmedia",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "@imagina/qmedia@0.0.14",
+    "name": "@imagina/qmedia",
+    "escapedName": "@imagina%2fqmedia",
+    "scope": "@imagina",
+    "rawSpec": "0.0.14",
+    "saveSpec": null,
+    "fetchSpec": "0.0.14"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@imagina/qmedia/-/qmedia-0.0.14.tgz",
+  "_spec": "0.0.14",
+  "_where": "D:\\imagina\\projects\\baseQuasarFrontend\\front-end",
+  "author": {
+    "name": "http://imaginacolombia.com/"
   },
   "dependencies": {
     "@imagina/qsite": "^0.0.4",
-    "vuedraggable": "^2.20.0",
     "axios": "^0.18.0",
-    "localforage": "^1.7.2"
+    "localforage": "^1.7.2",
+    "vuedraggable": "^2.20.0"
   },
+  "description": "Module with CRUD for media.",
   "keywords": [
     "media",
     "files",
     "multimedia",
     "qmedia"
   ],
-  "author": "http://imaginacolombia.com/",
-  "license": "ISC"
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@imagina/qmedia",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.0.14"
 }
