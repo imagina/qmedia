@@ -120,28 +120,28 @@
     },
     watch: {
       entityId(){
-        if(this.entityId) {
+      //  if(this.entityId) {
           this.getData()
-        }
+     //   }
       },
       entity(){
-        if(this.entityId) {
+      //  if(this.entityId) {
           this.getData()
-        }
+      //  }
       },
       zone() {
-        if (this.entityId) {
+     //   if (this.entityId) {
           this.getData()
-        }
+       // }
       }
     },
     mounted() {
       this.$nextTick(function () {
         // if has entity id, get the files associated
-        if(this.entityId) {
+       // if(this.entityId) {
    
           this.getData()
-        }
+       // }
       })
     },
     data() {
@@ -167,6 +167,8 @@
             mediaService.crud.index('apiRoutes.media.find', params).then(response => {
               if(response.data)
                 this.files = response.data;
+              else
+                this.files = []
               this.pushData()
             })
           } else {
@@ -174,6 +176,8 @@
           
               if(response.data)
                 this.files = [response.data];
+              else
+                this.files = []
               this.pushData()
             })
           }
