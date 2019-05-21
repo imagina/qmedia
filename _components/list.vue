@@ -3,7 +3,7 @@
     <!--== Button Group ==-->
     <div class="col-12 text-right">
       <!--== Button Group ==-->
-      <q-btn-group push>
+      <q-btn-group flat>
         <q-btn push
                color="positive"
                label="New Folder"
@@ -26,7 +26,7 @@
                @click="dialogDeleteGlobal.handler()"
                :disable="!rowsSelected.length"/>
         <q-btn push
-               color="primary"
+               color="blue"
                icon="fas fa-sync"
                @click="getData({pagination:pagination,search:filter.search},true)" />
       </q-btn-group>
@@ -70,7 +70,6 @@
         selection="multiple"
         :selected.sync="rowsSelected"
         row-key="filename"
-        color="secondary"
         @request="getData"
       >
         <!--= Search =-->

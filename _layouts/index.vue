@@ -6,9 +6,6 @@
       <span>Multimedia</span>
     </div>
     
-    <div class="q-py-md q-title col-xs-12 text-negative">
-      • List/Search
-    </div>
      <div class="col-12">
      
        <media-list />
