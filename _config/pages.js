@@ -15,7 +15,7 @@ export default {
     layout: require('@imagina/qmedia/_layouts/index').default,
     containerLayout: master,
     title: 'Media',
-    icon: 'far fa-images',
-    middleware: [auth]
+    icon: 'fas fa-camera-retro',
+    middleware: [auth,access]
   },
 }

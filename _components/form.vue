@@ -6,9 +6,8 @@
       <!--= if is multiple =-->
       <q-scroll-area
         v-if="multiple"
-        style="width: 100%; height: 180px;"
-        class="bg-grey-4 q-pa-sm" >
-      <div class="row gutter-xs ">
+        style="width: 100%; height: 150px;">
+      <div class="row gutter-xs">
         
         <div
           v-for="(file,index) in files"
@@ -120,28 +119,23 @@
     },
     watch: {
       entityId(){
-      //  if(this.entityId) {
+        if(this.entityId) {
           this.getData()
-     //   }
-      },
-      entity(){
-      //  if(this.entityId) {
-          this.getData()
-      //  }
+        }
       },
       zone() {
-     //   if (this.entityId) {
+        if (this.entityId) {
           this.getData()
-       // }
+        }
       }
     },
     mounted() {
       this.$nextTick(function () {
         // if has entity id, get the files associated
-       // if(this.entityId) {
+        if(this.entityId) {
    
           this.getData()
-       // }
+        }
       })
     },
     data() {
@@ -167,8 +161,6 @@
             mediaService.crud.index('apiRoutes.media.find', params).then(response => {
               if(response.data)
                 this.files = response.data;
-              else
-                this.files = []
               this.pushData()
             })
           } else {
@@ -176,8 +168,6 @@
           
               if(response.data)
                 this.files = [response.data];
-              else
-                this.files = []
               this.pushData()
             })
           }

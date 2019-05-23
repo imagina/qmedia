@@ -1,17 +1,16 @@
 <template>
   <div id="indexMedia"
        class="q-layout-page row layout-padding">
-    
-    <div class="text_title text-blue-9 col-xs-12 q-title text-right">
-      <span>Multimedia</span>
-    </div>
-    
-     <div class="col-12">
-     
-       <media-list />
 
+    <!--TITLE-->
+    <h1 class="q-headline text-primary">
+      <q-icon name="fas fa-camera-retro"></q-icon>
+      Multimedia List/Search
+    </h1>
+
+     <div class="col-12">
+       <media-list />
      </div>
-   
   </div>
 </template>
 <script>
