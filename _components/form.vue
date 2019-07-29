@@ -8,20 +8,15 @@
         v-if="multiple"
         style="width: 100%; height: 150px;">
       <div class="row gutter-xs">
-        
         <div
           v-for="(file,index) in files"
           :key="index"
           class="column col-xs-6 col-sm-4 col-md-3 col-lg-2"
-          
         >
           <div class="image-multiple"
                :style="'background-image:url(' + file.medium_thumb + ')'">
             <q-btn round color="red" @click="deleteFile(index)" icon="fas fa-times" size="sm"/>
           </div>
-
-          
-      
         </div>
       </div>
       </q-scroll-area>
@@ -31,69 +26,51 @@
              :key="index"
              class="col-12 col-md-6 relative-position">
           <img class="img-fluid" :src="file ? file.medium_thumb : ''" />
-  
+
           <q-btn
             class="absolute-top-left"
             style="top: 0; left: 0;"
             round
-            
             color="red"
             @click="deleteFile(index)"
             icon="fas fa-times"
             size="sm"/>
         </div>
-        
       </div>
-    
     </div>
-  
+
     <!--= Add File Button =-->
     <q-btn
-      :label="buttonLabel ? buttonLabel : 'Add File'"
-      :icon="buttonIcon ? buttonIcon : 'add'"
+      :label="buttonLabel ? buttonLabel : $tr('ui.label.addFile')"
+      :icon="buttonIcon ? buttonIcon : 'fas fa-upload'"
       color="primary"
       class="q-my-xs"
       size="sm"
       @click="modalMedia = true"/>
-  
-  
+
+
     <!--= Media List Modal =-->
     <q-modal v-model="modalMedia" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
       <q-modal-layout>
         <q-toolbar slot="header">
-          <q-btn
-            flat
-            round
-            dense
-            v-close-overlay
-            icon="keyboard_arrow_left"
-          />
-          <q-toolbar-title>
-            Media
-          </q-toolbar-title>
+          <q-toolbar-title>{{$tr('qmedia.layout.selectMedia')}}</q-toolbar-title>
+          <q-btn flat v-close-overlay icon="fas fa-times"/>
         </q-toolbar>
-
-        
         <div class="layout-padding">
-          
           <media-list embebed @data="pushData" />
-  
         </div>
       </q-modal-layout>
     </q-modal>
-    
+
   </div>
 </template>
 <script>
-  /*Plugins*/
-  import {alert} from '@imagina/qhelper/_plugins/alert'
-  
   /*Components*/
   import mediaList from '@imagina/qmedia/_components/list'
 
   /*Services*/
   import mediaService from '@imagina/qmedia/_services/index'
-  
+
   export default {
     props: {
       zone: {
@@ -133,7 +110,7 @@
       this.$nextTick(function () {
         // if has entity id, get the files associated
         if(this.entityId) {
-   
+
           this.getData()
         }
       })
@@ -147,7 +124,7 @@
     },
     methods: {
       getData(){
-     
+
           let params = {
             params: {
               zone: this.zone,
@@ -158,28 +135,28 @@
           }
           // if is multiple media, call diff routes and transform diff the response.data
           if (this.multiple) {
-            mediaService.crud.index('apiRoutes.media.find', params).then(response => {
+            this.$crud.index('apiRoutes.qmedia.find', params).then(response => {
               if(response.data)
                 this.files = response.data;
               this.pushData()
             })
           } else {
-            mediaService.crud.index('apiRoutes.media.findFirst', params).then(response => {
-          
+            this.$crud.index('apiRoutes.qmedia.findFirst', params).then(response => {
+
               if(response.data)
                 this.files = [response.data];
               this.pushData()
             })
           }
-        
+
       },
-  
+
       /**
        * push data to v-model
        * @param file
        */
       pushData(file = false){
-        
+
         if(this.multiple){
           // if file is not false, its pusher on files list
           if(file)
@@ -191,7 +168,7 @@
           vmodel = JSON.parse(JSON.stringify(this.value))
           if(!vmodel[this.zone])
             vmodel[this.zone] = {}
-            
+
           vmodel[this.zone].files = ids
           vmodel[this.zone].orders = ids.join();
           this.$emit('input',vmodel)
@@ -205,7 +182,7 @@
           this.$emit('input',vmodel)
           this.modalMedia = false
         }
-        
+
       },
       /**
        * delete files and push data to the v-model
@@ -216,7 +193,7 @@
         this.pushData()
       },
     }
-    
+
   }
 </script>
 <style lang="stylus">
@@ -228,8 +205,8 @@
       background-position center center
       height 150px
       overflow hidden
-    
+
     .label
       text-transform capitalize
-  
+
 </style>
