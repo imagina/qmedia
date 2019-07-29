@@ -12,9 +12,9 @@ export default {
     activated: true,
     path: '/media/index',
     name: 'app.media.index',
-    layout: require('@imagina/qmedia/_layouts/index').default,
+    layout: require('@imagina/qmedia/_layouts/admin/index').default,
     containerLayout: master,
-    title: 'Media',
+    title: 'qmedia.sidebar.adminIndex',
     icon: 'fas fa-camera-retro',
     middleware: [auth,access]
   },
