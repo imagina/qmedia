@@ -1,4 +1,4 @@
-## QMEDIA 1.0.0
+## QMEDIA 1.0.1
 Module with CRUD for media.
 
 ## Installation

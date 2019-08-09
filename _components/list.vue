@@ -11,7 +11,7 @@
         :selected.sync="rowsSelected"
         row-key="filename"
         @request="getData"
-        class="border-top-color"
+        class="box-table"
       >
         <!--Header-->
         <template slot="top" slot-scope="props">

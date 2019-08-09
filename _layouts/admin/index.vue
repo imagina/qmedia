@@ -1,13 +1,5 @@
 <template>
-  <div id="indexMedia"
-       class="q-layout-page row layout-padding">
-
-    <!--TITLE-->
-    <h1 class="q-headline text-primary">
-      <q-icon :name="$route.meta.icon"></q-icon>
-      {{$tr($route.meta.title)}}
-    </h1>
-
+  <div id="indexMedia">
     <div class="col-12">
       <media-list/>
     </div>
