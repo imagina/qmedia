@@ -1,10 +1,3 @@
-//Layout container
-import master from 'src/layouts/master'
-
-//Middleware
-import auth from '@imagina/quser/_router/middlewares/auth'
-import access from '@imagina/quser/_router/middlewares/access'
-
 export default {
   //Home Page
   index: {
@@ -12,10 +5,10 @@ export default {
     activated: true,
     path: '/media/index',
     name: 'app.media.index',
-    layout: require('@imagina/qmedia/_layouts/admin/index').default,
-    containerLayout: master,
+    page: () => import('@imagina/qmedia/_layouts/admin/index'),
+    layout: () => import('src/layouts/master'),
     title: 'qmedia.sidebar.adminIndex',
     icon: 'fas fa-camera-retro',
-    middleware: [auth,access]
+    authenticated: true,
   },
 }

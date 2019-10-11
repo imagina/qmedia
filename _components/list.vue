@@ -14,83 +14,81 @@
         class="box-table"
       >
         <!--Header-->
-        <template slot="top" slot-scope="props">
-          <div class="row table-top col-12">
-            <!--Table slot left-->
-            <div class="table-top-left col-12 col-md-5 col-lg-4 col-xl-3">
-              <!---Search-->
-              <q-search
-                hide-underline
-                clearable
-                color="secondary"
-                v-model="filter.search"
-                @input="getData({pagination:pagination,search:filter.search})"
-              />
-            </div>
-            <!--Table slot Right-->
-            <div class="table-top-right col-12 col-md-7 col-lg-8 col-xl-9 text-right">
-              <div class="row justify-end items-center full-width">
-                <!--Button Move file -->
-                <q-btn color="teal" icon="fas fa-arrows-alt"
-                       @click="getFolders(); dialogMove=true"
-                       :label="$tr('ui.label.move')"
-                       v-if="rowsSelected.length"/>
-                <!--Button delete file -->
-                <q-btn color="red-14" icon="fas fa-trash" class="q-ml-xs"
-                       @click="dialogDeleteGlobal.handler()"
-                       :label="$tr('ui.label.delete')"
-                       v-if="rowsSelected.length"/>
-                <!--Button add folder -->
-                <q-btn color="positive" icon="fas fa-folder-plus" class="q-ml-xs"
-                       @click="dialogCreateFolder=true"
-                       :label="$tr('qmedia.layout.newFolder')"
-                       v-if="$auth.hasAccess('media.folders.create')"
-                />
-                <!--Button add file -->
-                <q-btn color="blue" icon="add_photo_alternate" class="q-ml-xs"
-                       @click="uploadFile = !uploadFile" :loading="loadingUploadFile"
-                       :label="$tr('qmedia.layout.uploadFile')"
-                       v-if="$auth.hasAccess('media.medias.create')">
-                  <div slot="loading">
-                    <q-spinner class="on-left"/>
-                    <span class="q-hide q-md-show">{{$tr('ui.label.loading')}}...</span>
-                  </div>
-                </q-btn>
-                <!---Uploader Files-->
-                <q-uploader
-                  :key="uploaderID"
-                  :url="uploaderUrl"
-                  multiple v-show="false"
-                  method="POST"
-                  extensions=".gif,.jpg,.jpeg,.png,.pdf"
-                  auto-expand
-                  :additional-fields="additionalFields"
-                  @fail="$alert.error({message: `${this.$tr('ui.message.recordNoCreated')}`})"
-                  @finish="finishUploadFiles(); loadingUploadFile = false"
-                  hide-upload-button
-                  ref="uploadComponent"
-                  @add="()=>{$refs.uploadComponent.upload(); loadingUploadFile = true}"
-                  :headers="headers"/>
-                <!--Button refresh -->
-                <q-btn color="info" icon="fas fa-sync" class="q-ml-xs"
-                       @click="getData({pagination:pagination,search:filter.search},true)">
-                  <q-tooltip>{{$tr('ui.label.refresh')}}</q-tooltip>
-                </q-btn>
+        <template slot="top">
+          <q-no-ssr>
+            <div class="row table-top col-12">
+              <!--Table slot left-->
+              <div class="table-top-left col-12 col-md-5 col-lg-4 col-xl-3">
+                <!---Search-->
+                <q-input clearable v-model="filter.search" dense outlined debounce="800" style="max-width: 250px"
+                         :placeholder="`${$tr('ui.label.search',{capitalize : true})}...`"
+                         @input="getData({pagination:pagination,search:filter.search})">
+                  <template v-slot:append>
+                    <q-icon name="search"/>
+                  </template>
+                </q-input>
+              </div>
+              <!--Table slot Right-->
+              <div class="table-top-right col-12 col-md-7 col-lg-8 col-xl-9 text-right">
+                <div class="row justify-end items-center full-width">
+                  <!--Button Move file -->
+                  <q-btn color="teal" icon="fas fa-arrows-alt"
+                         @click="getFolders(); dialogMove=true"
+                         :label="$tr('ui.label.move')"
+                         v-if="rowsSelected.length"/>
+                  <!--Button delete file -->
+                  <q-btn color="red-14" icon="fas fa-trash" class="q-ml-xs"
+                         @click="dialogDeleteGlobal.handler()"
+                         :label="$tr('ui.label.delete')"
+                         v-if="rowsSelected.length"/>
+                  <!--Button add folder -->
+                  <q-btn color="positive" icon="fas fa-folder-plus" class="q-ml-xs"
+                         @click="dialogCreateFolder=true"
+                         :label="$tr('qmedia.layout.newFolder')"
+                         v-if="$auth.hasAccess('media.folders.create')"
+                  />
+                  <!--Button add file -->
+                  <q-btn color="blue" icon="add_photo_alternate" class="q-ml-xs"
+                         @click="uploadFile = !uploadFile" :loading="loadingUploadFile"
+                         :label="$tr('qmedia.layout.uploadFile')"
+                         v-if="$auth.hasAccess('media.medias.create')">
+                    <div slot="loading">
+                      <q-spinner class="on-left"/>
+                      <span class="q-hide q-md-show">{{$tr('ui.label.loading')}}...</span>
+                    </div>
+                  </q-btn>
+                  <!---Uploader Files-->
+                  <q-uploader
+                    :key="uploaderID"
+                    multiple v-show="false"
+                    auto-expand
+                    field-name="file"
+                    :factory="files => factoryUploader(files)"
+                    @fail="$alert.error({message: `${this.$tr('ui.message.recordNoCreated')}`})"
+                    @finish="finishUploadFiles(); loadingUploadFile = false"
+                    hide-upload-button
+                    ref="uploadComponent"
+                    @added="()=>{$refs.uploadComponent.upload(); loadingUploadFile = true}"/>
+                  <!--Button refresh -->
+                  <q-btn color="info" icon="fas fa-sync" class="q-ml-xs"
+                         @click="getData({pagination:pagination,search:filter.search},true)">
+                    <q-tooltip>{{$tr('ui.label.refresh')}}</q-tooltip>
+                  </q-btn>
+                </div>
+              </div>
+              <!--Breadcrumb-->
+              <div class="table-top-filters col-12 q-pt-md">
+                <q-breadcrumbs>
+                  <q-breadcrumbs-el v-for="(breadcrumb,index) in breadcrumbs" :key="index" :label="breadcrumb.name"
+                                    @click.native="getDataByFolder(breadcrumb.id)" style="cursor: pointer"/>
+                </q-breadcrumbs>
               </div>
             </div>
-            <!--Breadcrumb-->
-            <div class="table-top-filters col-12 q-pt-md">
-              <q-breadcrumbs>
-                <q-breadcrumbs-el v-for="(breadcrumb,index) in breadcrumbs" :key="index" :label="breadcrumb.name"
-                                  @click.native="getDataByFolder(breadcrumb.id)" style="cursor: pointer"/>
-              </q-breadcrumbs>
-            </div>
-          </div>
+          </q-no-ssr>
         </template>
 
         <!--= Small Thumb or Icon =-->
-        <q-td slot="body-cell-small_thumb" style="width: 30%"
-              slot-scope="props" :props="props">
+        <q-td slot="body-cell-small_thumb" style="width: 30%" slot-scope="props" :props="props">
           <q-btn v-if="props.row.is_folder" icon="far fa-folder" flat @click="getDataByFolder(props.row.id)"/>
           <div v-else-if="props.row.is_image">
             <div class="image" :style="'background-image: url('+props.value+')'" alt="">
@@ -102,16 +100,14 @@
         </q-td>
 
         <!--= File or Folder Name =-->
-        <q-td slot="body-cell-filename" style="width: 10%"
-              slot-scope="props" :props="props">
+        <q-td slot="body-cell-filename" style="width: 10%" slot-scope="props" :props="props">
           <span class="q-caption">
             {{props.value}}
           </span>
         </q-td>
 
         <!--= Actions =-->
-        <q-td slot="body-cell-actions"
-              slot-scope="props" :props="props">
+        <q-td slot="body-cell-actions" slot-scope="props" :props="props">
           <div v-if="embebed && !props.row.is_folder">
             <q-btn color="blue" :label="$tr('ui.label.select')" size="sm"
                    @click="$emit('data', props.row)"/>
@@ -131,187 +127,154 @@
       <!--Loading-->
       <inner-loading :visible="loading"/>
     </div>
+
     <!--= Create Folder Dialog =-->
-    <q-dialog
-      v-model="dialogCreateFolder"
-      prevent-close
-      class="backend-page"
-    >
-      <!-- This or use "title" prop on <q-dialog> -->
-      <span slot="title" class="text-primary">
-        <q-icon name="fa fa-folder"></q-icon>
-        {{$tr('qmedia.layout.newFolder')}}
-      </span>
+    <q-dialog v-model="dialogCreateFolder">
+      <q-card class="backend-page">
+        <!--Header-->
+        <q-toolbar class="bg-primary text-white">
+          <q-toolbar-title>
+            <q-icon name="fa fa-folder" class="q-mr-sm"/>
+            <label>{{$tr('qmedia.layout.newFolder')}}</label>
+          </q-toolbar-title>
+          <q-btn flat v-close-popup icon="fas fa-times"/>
+        </q-toolbar>
 
-      <!-- This or use "message" prop on <q-dialog> -->
-      <span slot="message"></span>
+        <!--Content-->
+        <div class="relative-position q-pa-md">
+          <q-form @submit="newFolder()"
+                  @validation-error="$alert.error($tr('ui.message.formInvalid'))">
+            <q-input :label="$tr('qmedia.layout.form.folderName')"
+                     :rules="[val => !!val || $tr('ui.message.fieldRequired')]"
+                     v-model="folderName" outlined dense/>
 
-      <div slot="body" class="relative-position">
-        <q-input :stack-label="$tr('qmedia.layout.form.folderName')"
-                 v-model="folderName"/>
-        <inner-loading :visible="loadingCreateFolder"/>
-      </div>
+            <div class="text-right">
+              <q-btn color="positive" :label="$tr('ui.label.save')" type="submit"
+                     icon="fas fa-save" v-close-popup/>
+            </div>
 
-      <template slot="buttons" slot-scope="props">
-        <q-btn :label="$tr('ui.label.cancel')" color="negative" @click="props.cancel" icon="fas fa-times"/>
-        <q-btn color="positive" :label="$tr('ui.label.save')" @click="newFolder(props.ok)" icon="fas fa-save"/>
-      </template>
+            <inner-loading :visible="loadingCreateFolder"/>
+          </q-form>
+        </div>
+      </q-card>
     </q-dialog>
 
-    <!--= Edit Folder Dialog =-->
-    <q-dialog
-      v-model="dialogRenameFolder"
-      prevent-close class="backend-page"
-    >
-      <!-- This or use "title" prop on <q-dialog> -->
-      <span slot="title" class="text-primary">
-        <q-icon name="fa fa-folder"></q-icon>
-        {{$tr('qmedia.layout.renameFolder')}}
-      </span>
+    <!--= update Folder Dialog =-->
+    <q-dialog v-model="dialogRenameFolder">
+      <q-card class="backend-page">
+        <!--Header-->
+        <q-toolbar class="bg-primary text-white">
+          <q-toolbar-title>
+            <q-icon name="fa fa-folder" class="q-mr-sm"/>
+            <label>{{$tr('qmedia.layout.renameFolder')}}</label>
+          </q-toolbar-title>
+          <q-btn flat v-close-popup icon="fas fa-times"/>
+        </q-toolbar>
 
-      <!-- This or use "message" prop on <q-dialog> -->
-      <span slot="message"></span>
+        <!--Content-->
+        <div class="relative-position q-pa-md">
+          <q-form @submit="editFolder('',false,false)"
+                  @validation-error="$alert.error($tr('ui.message.formInvalid'))">
+            <q-input :label="$tr('qmedia.layout.form.folderName')"
+                     :rules="[val => !!val || $tr('ui.message.fieldRequired')]"
+                     v-model="folderName" outlined dense/>
 
-      <div slot="body" class="relative-position">
-        <q-field>
-          <q-input :stack-label="$tr('qmedia.layout.form.folderName')" v-model="folderName"/>
-        </q-field>
-        <inner-loading :visible="loadingRenameFolder"/>
-      </div>
+            <div class="text-right">
+              <q-btn color="positive" :label="$tr('ui.label.save')" type="submit"
+                     icon="fas fa-save" v-close-popup/>
+            </div>
 
-      <template slot="buttons" slot-scope="props">
-        <q-btn :label="$tr('ui.label.cancel')" color="negative" @click="props.cancel" icon="fas fa-times"/>
-        <q-btn color="positive" :label="$tr('ui.label.confirm')" icon="fas fa-save"
-               @click="editFolder('',false,false,props.ok)"/>
-      </template>
+            <inner-loading :visible="loadingRenameFolder"/>
+          </q-form>
+        </div>
+      </q-card>
     </q-dialog>
 
     <!--= Edit File Dialog =-->
-    <q-modal
-      v-model="dialogEditFile"
-      id="mediaEditFileModal"
-      class="backend-page"
-      :content-css="{minWidth: '80vw', minHeight: '80vh'}"
-    >
-      <q-modal-layout>
-        <q-toolbar slot="header">
-          <q-toolbar-title class="capitalize">
-            {{$tr('qmedia.layout.editFile')}}
+    <q-dialog v-model="dialogEditFile">
+      <q-card class="backend-page">
+        <!--Header-->
+        <q-toolbar class="bg-primary text-white">
+          <q-toolbar-title>
+            <q-icon name="fa fa-folder" class="q-mr-sm"/>
+            <label>{{$tr('qmedia.layout.editFile')}}</label>
           </q-toolbar-title>
-          <q-btn flat v-close-overlay icon="fas fa-times"/>
+          <q-btn flat v-close-popup icon="fas fa-times"/>
         </q-toolbar>
 
-        <q-toolbar slot="footer" color="white">
-          <q-toolbar-title></q-toolbar-title>
-          <!--button save-->
-          <q-btn color="positive" :label="$tr('ui.label.save')" @click="editFile()"/>
-        </q-toolbar>
+        <!--Content-->
+        <div class="relative-position q-pa-md">
+          <q-form @submit="editFile()" ref="formEditFile"
+                  @validation-error="$alert.error($tr('ui.message.formInvalid'))">
 
-        <div class="layout-padding">
-          <locales v-model="locale"/>
+            <locales v-model="locale" class="q-mb-md"/>
 
-          <div class="row gutter-sm" v-if="locale.success">
-            <div class="col-12">
-              <q-field>
-                <q-input :stack-label="$tr('qmedia.layout.form.altAttribute')"
-                         v-model="locale.formTemplate.alt_attribute"/>
-              </q-field>
-            </div>
-            <div class="col-12">
-              <q-field>
-                <q-input type="textarea" rows="3"
-                         :stack-label="$tr('ui.label.description',{capitalize:true})"
-                         v-model="locale.formTemplate.description"/>
-              </q-field>
-            </div>
-            <div class="col-12">
-              <q-field>
-                <q-input :stack-label="$tr('qmedia.layout.form.keyWords')"
-                         v-model="locale.formTemplate.keywords"
-                         placeholder="one,two,tree"/>
-              </q-field>
-            </div>
-            <div class="col-12">
-              <q-chips-input :stack-label="$trp('ui.label.tag',{capitalize:true})" v-model="locale.formTemplate.tags"/>
-            </div>
-            <div class="col-12" v-if="fileForm.is_image">
-              <div class="row">
-
-                <div class="col-6">
-                  <q-carousel
-                    color="white"
-                    arrows
-                    height="250px"
-                  >
-                    <q-carousel-slide :img-src="fileForm.path ? fileForm.path : ''">
-                    </q-carousel-slide>
-                    <q-carousel-control
-                      slot="control-button"
-                      slot-scope="carousel"
-                      position="bottom-right"
-                      :offset="[18, 22]"
-                    >
-                      <q-btn
-                        round dense push
-                        color="primary"
-                        :icon="carousel.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-                        @click="carousel.toggleFullscreen()"
-                      />
-                    </q-carousel-control>
-                  </q-carousel>
-                </div>
-                <div class="col-3">
-                  <img class="img-fluid" :src="fileForm.path ? fileForm.path : ''" alt="">
-                </div>
+            <!--Form-->
+            <div v-if="locale.success">
+              <div class="text-center">
+                <img class="img-fluid" style="max-width: 200px"
+                     :src="fileForm.path ? fileForm.path : ''" alt="">
               </div>
-
+              <q-input :label="$tr('qmedia.layout.form.altAttribute')"
+                       v-model="locale.formTemplate.alt_attribute" outlined dense/>
+              <q-input :label="$tr('ui.label.description')"
+                       v-model="locale.formTemplate.description" outlined dense/>
+              <q-input :label="$tr('qmedia.layout.form.keyWords')"
+                       v-model="locale.formTemplate.keywords" outlined dense/>
+              <q-select :label="$trp('ui.label.tag',{capitalize:true})" bg-color="white"
+                        v-model="locale.formTemplate.tags" use-input use-chips multiple
+                        hide-dropdown-icon input-debounce="0" new-value-mode="add-unique"
+                        style="width: 100%" outlined dense/>
             </div>
-          </div>
-          <inner-loading :visible="loadingEditFile"/>
-        </div>
 
-      </q-modal-layout>
-    </q-modal>
+            <div class="text-right">
+              <q-btn color="positive" :label="$tr('ui.label.save')" type="submit"
+                     icon="fas fa-save" v-close-popup/>
+            </div>
+
+            <inner-loading :visible="loadingRenameFolder"/>
+          </q-form>
+        </div>
+      </q-card>
+    </q-dialog>
 
     <!--= Move Elements Dialog =-->
-    <q-dialog
-      v-model="dialogMove"
-      prevent-close
-      class="backend-page"
-    >
-      <!-- This or use "title" prop on <q-dialog> -->
-      <span slot="title" class="text-primary">
-        <q-icon name="fa fa-folder"></q-icon>
-        {{$tr('qmedia.layout.moveMedia')}}
-      </span>
+    <q-dialog v-model="dialogMove">
+      <q-card class="backend-page">
+        <!--Header-->
+        <q-toolbar class="bg-primary text-white">
+          <q-toolbar-title>
+            <q-icon name="fa fa-folder" class="q-mr-sm"/>
+            <label>{{$tr('qmedia.layout.moveMedia')}}</label>
+          </q-toolbar-title>
+          <q-btn flat v-close-popup icon="fas fa-times"/>
+        </q-toolbar>
 
-      <!-- This or use "message" prop on <q-dialog> -->
-      <span slot="message"></span>
+        <!--Content-->
+        <div class="relative-position q-pa-md">
+          <q-form @submit="moveElements()"
+                  @validation-error="$alert.error($tr('ui.message.formInvalid'))">
 
-      <div slot="body" class="relative-position">
-        <q-field>
-          <q-select
-            :stack-label="$tr('qmedia.layout.form.moveTo')"
-            v-model="folderSelected"
-            :options="selectFolders"
-          />
+            <q-select :label="$tr('qmedia.layout.form.moveTo')" v-model="folderSelected"
+                      :options="selectFolders" outlined dense emit-value map-options/>
 
-        </q-field>
-        <inner-loading :visible="loadingMove"/>
-      </div>
+            <div class="text-right">
+              <q-btn color="positive" :label="$tr('ui.label.confirm')" type="submit"
+                     icon="fas fa-save" v-close-popup/>
+            </div>
 
-      <template slot="buttons" slot-scope="props">
-        <q-btn :label="$tr('ui.label.cancel')" color="negative" @click="props.cancel" icon="fas fa-times"/>
-        <q-btn color="positive" :label="$tr('ui.label.confirm')" @click="moveElements(props.ok)" icon="fas fa-save"/>
-      </template>
+            <inner-loading :visible="loadingRenameFolder"/>
+          </q-form>
+        </div>
+      </q-card>
     </q-dialog>
   </div>
 </template>
 <script>
   /*Plugins*/
-  import axios from 'axios';
+  import axios from 'axios'
   import config from 'src/config/index'
-  import {uid} from 'quasar'
+  import { uid } from 'quasar'
   import _cloneDeep from 'lodash.clonedeep'
 
   /*Services*/
@@ -319,7 +282,6 @@
 
   /*Components*/
   import locales from '@imagina/qsite/_components/locales'
-  import innerLoading from 'src/components/master/innerLoading'
 
   export default {
     props: {
@@ -328,22 +290,19 @@
         default: false
       }
     },
-    components: {
-      locales,
-      innerLoading
-    },
+    components: { locales },
     watch: {
-      uploadFile(newValue) {
-        if (newValue) this.$refs.uploadComponent.pick()
+      uploadFile (newValue) {
+        if (newValue) this.$refs.uploadComponent.pickFiles()
       }
     },
-    mounted() {
+    mounted () {
       this.$nextTick(function () {
         this.breadcrumbs = this.defaultBreadCrum
-        this.getData({pagination: this.pagination, search: this.filter.search}, this.embebed);
+        this.getData({ pagination: this.pagination, search: this.filter.search }, this.embebed)
       })
     },
-    data() {
+    data () {
       return {
         locale: {
           fields: {
@@ -361,7 +320,7 @@
           value: 0
         }],
         uploaderID: uid(),
-        uploaderUrl: config('apiRoutes.qmedia.file'),
+        uploaderUrl: this.$axios.defaults.baseURL.replace('/api', config('apiRoutes.qmedia.file')),
         folderName: '',
         idFolderToEdit: '',
         idFileToEdit: '',
@@ -373,9 +332,10 @@
         rowsSelected: [],
         uploadFile: false,
         breadcrumbs: [],
-        headers: {
-          'Authorization': this.$store.state.quserAuth.userToken
-        },
+        headers: [{
+          name: 'Authorization',
+          value: this.$store.state.quserAuth.userToken
+        }],
         filter: {
           search: '',
           folderId: 0
@@ -401,15 +361,15 @@
        * Additional fields for uploader http request
        * @returns {*[]}
        */
-      additionalFields() {
+      additionalFields () {
         return [
           {
             name: 'parent_id',
             value: this.filter.folderId
           }
-        ];
+        ]
       },
-      columnsTable() {
+      columnsTable () {
         return [
           {
             name: 'small_thumb', label: '',
@@ -431,7 +391,7 @@
 
         ]
       },
-      dialogDeleteGlobal() {
+      dialogDeleteGlobal () {
         return {
           handler: () => {
             this.$q.dialog({
@@ -440,14 +400,14 @@
               message: this.$tr('ui.message.deleteRecord'),
               cancel: this.$tr('ui.label.cancel'),
               color: 'negative'
-            }).then(() => {
+            }).onOk(() => {
               this.deleteElements()
-            }).catch(() => {
+            }).onCancel(() => {
             })
           }
         }
       },
-      dialogDeleteItem() {
+      dialogDeleteItem () {
         return {
           handler: (id, isFolder) => {
             this.$q.dialog({
@@ -455,23 +415,24 @@
               ok: this.$tr('ui.label.delete'),
               message: this.$tr('ui.message.deleteRecord'),
               cancel: this.$tr('ui.label.cancel'),
-            }).then(() => {
+            }).onOk(() => {
               this.deleteElement(id, isFolder)
-            }).catch(() => {
+            }).onCancel(() => {
             })
           }
         }
       },
-      defaultBreadCrum() {
-        return [{id: 0, name: this.$tr('ui.label.home')}]
+      defaultBreadCrum () {
+        return [{ id: 0, name: this.$tr('ui.label.home') }]
       }
     },
     methods: {
-      async getData({pagination, search}, refresh = false) {
+      async getData ({ pagination, search }, refresh = false) {
         this.loading = true
         // clear storage cache
-        if (refresh)
-          this.$helper.clearCache('apiRoutes.qmedia.allMedia')
+        if (refresh) {
+          this.$cache.remove('apiRoutes.qmedia.allMedia')
+        }
 
         let params = {
           params: {
@@ -487,22 +448,24 @@
 
         // if folderId is not root path
         if (this.filter.folderId != 0) {
-          let breacrumb = await mediaService.breadcrumb('apiRoutes.qmedia.breadcrumb', this.filter.folderId, {params: {}});
+          let breacrumb = await mediaService.breadcrumb('apiRoutes.qmedia.breadcrumb', this.filter.folderId, { params: {} })
           breacrumb.data[0] = this.defaultBreadCrum[0]//Translate first field
           this.breadcrumbs = breacrumb.data
         } else
         // reseting breadcrumb
+        {
           this.breadcrumbs = this.defaultBreadCrum
+        }
 
         // index all media by params
         this.$crud.index('apiRoutes.qmedia.allMedia', params).then(response => {
           this.dataTable = response.data
-          this.pagination.rowsPerPage = pagination.rowsPerPage;
-          this.pagination.page = pagination.page;
-          this.pagination.rowsNumber = response.meta.total;
+          this.pagination.rowsPerPage = pagination.rowsPerPage
+          this.pagination.page = pagination.page
+          this.pagination.rowsNumber = response.meta.total
           this.loading = false
         }).catch(error => {
-          this.$alert.error({message: this.$tr('ui.message.errorRequest'), pos: 'bottom'})
+          this.$alert.error({ message: this.$tr('ui.message.errorRequest'), pos: 'bottom' })
           this.loading = false
         })
       },
@@ -511,16 +474,16 @@
        * @param folderId
        * @param refresh
        */
-      getDataByFolder(folderId, refresh = false) {
+      getDataByFolder (folderId, refresh = false) {
         this.filter.folderId = folderId
-        this.getData({pagination: this.pagination, search: this.filter.search}, refresh)
+        this.getData({ pagination: this.pagination, search: this.filter.search }, refresh)
       },
 
       /**
        * creating new folder
        * @param okFn
        */
-      newFolder(okFn) {
+      newFolder () {
         this.loadingFolder = true
         let data = {
           name: this.folderName,
@@ -528,20 +491,19 @@
         }
 
         mediaService.postRequest('apiRoutes.qmedia.folder', data).then(reponse => {
-          okFn()
           this.loadingFolder = false
-          this.$alert.success({message: `${this.$tr('ui.message.recordCreated')}`})
-          this.getData({pagination: this.pagination, search: this.filter.search}, true);
+          this.$alert.success({ message: `${this.$tr('ui.message.recordCreated')}` })
+          this.getData({ pagination: this.pagination, search: this.filter.search }, true)
         }).catch(error => {
           this.loadingFolder = false
-          this.$alert.error({message: `${this.$tr('ui.message.recordNoCreated')}`})
+          this.$alert.error({ message: `${this.$tr('ui.message.recordNoCreated')}` })
         })
       },
       /**
        * move elements selected on q-table component
        * @param okFn
        */
-      moveElements(okFn) {
+      moveElements () {
         this.loadingMove = true
         let data = {
           destinationFolder: this.folderSelected,
@@ -549,27 +511,26 @@
         }
 
         mediaService.postRequest('apiRoutes.qmedia.move', data).then(reponse => {
-          okFn()
           this.loadingMove = false
           this.rowsSelected = []
-          this.$alert.success({message: this.$tr('ui.message.recordUpdated')})
-          this.getData({pagination: this.pagination, search: this.filter.search}, true);
+          this.$alert.success({ message: this.$tr('ui.message.recordUpdated') })
+          this.getData({ pagination: this.pagination, search: this.filter.search }, true)
         }).catch(error => {
           this.loadingMove = false
-          this.$alert.error({message: this.$tr('ui.message.recordNoUpdated')})
+          this.$alert.error({ message: this.$tr('ui.message.recordNoUpdated') })
         })
       },
 
       /**
        * finish upload files event from q-uploader component
        */
-      finishUploadFiles() {
-        this.uploadFile = false;
-        this.uploaderID = uid();
-        this.$alert.success({message: `${this.$tr('ui.message.recordCreated')}`})
+      finishUploadFiles () {
+        this.uploadFile = false
+        this.uploaderID = uid()
+        this.$alert.success({ message: `${this.$tr('ui.message.recordCreated')}` })
         this.getDataByFolder(this.filter.folderId, true)
       },
-      getFolders() {
+      getFolders () {
         mediaService.folderList('apiRoutes.qmedia.folder').then(response => {
           this.selectFolders = [{
             label: 'Root',
@@ -582,7 +543,7 @@
             })
           }
         }).catch(error => {
-          this.$alert.error({message: this.$tr('ui.message.errorRequest'), pos: 'bottom'})
+          this.$alert.error({ message: this.$tr('ui.message.errorRequest'), pos: 'bottom' })
         })
       },
 
@@ -591,7 +552,7 @@
        * @param id
        * @param isFolder
        */
-      deleteElement(id, isFolder) {
+      deleteElement (id, isFolder) {
         let configRoute = 'apiRoutes.qmedia.file'
 
         // if is Folder replace configRoute and successMessage
@@ -600,29 +561,29 @@
         }
 
         mediaService.crud.delete(configRoute, id).then(response => {
-          this.$alert.success({message: `${this.$tr('ui.message.recordDeleted')}`})
-          this.getData({pagination: this.pagination, search: this.filter.search}, true);
+          this.$alert.success({ message: `${this.$tr('ui.message.recordDeleted')}` })
+          this.getData({ pagination: this.pagination, search: this.filter.search }, true)
         }).catch(error => {
-          this.$alert.error({message: `${this.$tr('ui.message.recordNoDeleted')}`})
+          this.$alert.error({ message: `${this.$tr('ui.message.recordNoDeleted')}` })
         })
       },
 
       /**
        * deleting multiple elements on media by selected rows on q-table component
        */
-      deleteElements() {
+      deleteElements () {
         this.loading = true
         let data = {
           files: this.rowsSelected
         }
 
         mediaService.postRequest('apiRoutes.qmedia.batchDestroy', data).then(response => {
-          this.$alert.success({message: `${this.$tr('ui.message.recordDeleted')}`})
+          this.$alert.success({ message: `${this.$tr('ui.message.recordDeleted')}` })
           this.loading = false
           this.rowsSelected = []
-          this.getData({pagination: this.pagination, search: this.filter.search}, true);
+          this.getData({ pagination: this.pagination, search: this.filter.search }, true)
         }).catch(error => {
-          this.$alert.error({message: `${this.$tr('ui.message.recordNoDeleted')}`})
+          this.$alert.error({ message: `${this.$tr('ui.message.recordNoDeleted')}` })
         })
       },
       /**
@@ -632,12 +593,12 @@
        * @param id
        * @param okFn
        */
-      editFolder(name, openDialog, id = false, okFn = false) {
+      editFolder (name, openDialog, id = false) {
         // if openDialog its true, just opened
         if (openDialog) {
           this.idFolderToEdit = id
-          this.folderName = name;
-          this.dialogRenameFolder = true;
+          this.folderName = name
+          this.dialogRenameFolder = true
         } else { // else: send folder data to the service
           this.loadingRenameFolder = true
           let data = {
@@ -646,15 +607,14 @@
             parent_id: this.filter.folderId
           }
 
-          mediaService.editItem('apiRoutes.qmedia.folder', this.idFolderToEdit, data, {params: {}}).then(response => {
-            okFn()
+          mediaService.editItem('apiRoutes.qmedia.folder', this.idFolderToEdit, data, { params: {} }).then(response => {
             this.loadingRenameFolder = false
             this.rowsSelected = []
-            this.$alert.success({message: this.$tr('ui.message.recordUpdated')})
-            this.getData({pagination: this.pagination, search: this.filter.search}, true);
+            this.$alert.success({ message: this.$tr('ui.message.recordUpdated') })
+            this.getData({ pagination: this.pagination, search: this.filter.search }, true)
           }).catch(error => {
             this.loadingRenameFolder = false
-            this.$alert.error({message: this.$tr('ui.message.recordNoUpdated')})
+            this.$alert.error({ message: this.$tr('ui.message.recordNoUpdated') })
           })
         }
       },
@@ -664,34 +624,49 @@
        * @param openDialog
        * @param row
        */
-      editFile(openDialog = false, row = false) {
+      editFile (openDialog = false, row = false) {
         if (openDialog) {
-          this.locale.form = row;
-          this.fileForm = row;
-          this.dialogEditFile = true;
+          this.locale.form = row
+          this.fileForm = row
+          this.dialogEditFile = true
         } else {
           this.loadingEditFile = true
           let data = _cloneDeep(this.locale.form)
           data['id'] = this.fileForm.id
 
-          mediaService.createItem('apiRoutes.qmedia.file', data.id, data, {params: {}}).then(response => {
+          mediaService.createItem('apiRoutes.qmedia.file', data.id, data, { params: {} }).then(response => {
             this.loadingEditFile = false
             this.rowsSelected = []
             this.fileForm = {}
-            this.dialogEditFile = false;
-            this.$alert.success({message: this.$tr('ui.message.recordUpdated')})
-            this.getData({pagination: this.pagination, search: this.filter.search}, true);
+            this.dialogEditFile = false
+            this.$alert.success({ message: this.$tr('ui.message.recordUpdated') })
+            this.getData({ pagination: this.pagination, search: this.filter.search }, true)
           }).catch(error => {
             this.loadingEditFile = false
-            this.$alert.error({message: this.$tr('ui.message.recordNoUpdated')})
+            this.$alert.error({ message: this.$tr('ui.message.recordNoUpdated') })
           })
         }
       },
+
+      //Factory uploader
+      factoryUploader (files) {
+        return {
+          url: `${this.$axios.defaults.baseURL}${config('apiRoutes.qmedia.file')}`,
+          method: 'POST',
+          extensions: '.gif,.jpg,.jpeg,.png,.pdf',
+          formFields: [
+            { name: 'parent_id', value: this.filter.folderId },
+            { name: 'Content-Type', value: files[0].type },
+          ],
+          headers: [
+            { name: 'Authorization', value: this.$store.state.quserAuth.userToken }
+          ]
+        }
+      }
     }
   }
 </script>
 <style lang="stylus">
-  @import "~variables";
   #mediaList
     .table-top
       .table-top-right

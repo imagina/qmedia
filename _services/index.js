@@ -1,7 +1,6 @@
-import crud from '@imagina/qhelper/_services/baseService'
+import crud from '@imagina/qcrud/_services/baseService'
 import http from "axios/index";
-import {remember} from "@imagina/qhelper/_plugins/remember"
-import {helper} from "@imagina/qhelper/_plugins/helper";
+import remember from "@imagina/qhelper/_plugins/remember"
 import config from 'src/config/index'
 
 export default {
@@ -12,10 +11,10 @@ export default {
       if (!configName) return reject('Config name is required')
       if (!criteria) return reject('Criteria is required')
       params.refresh == undefined ? params.refresh = false : true
-      
+
       let urlApi = config(configName) + '/' + criteria//Get url from config
       let requestParams = (params && params.params) ? params.params : false//Get request params
-      
+
       if (params && params.remember) {//Remember request
         let key = !requestParams ? configName : configName + JSON.stringify(requestParams)//Key for rememeber
         remember.async(//Call method remember
@@ -38,13 +37,12 @@ export default {
     })
   },
   postRequest(configName, data) {
-    
+
     return new Promise((resolve, reject) => {
       //Validations
       if (!configName) return reject('Config name is required')
       if (!data) return reject('Data is required')
       let urlApi = config(configName)//Get url from config
-      //let dataRequest = helper.toSnakeCase(data)
       //Request
       http.post(urlApi, data).then(response => {
         resolve(response.data)//Successful response
@@ -53,15 +51,14 @@ export default {
       })
     })
   },
-  
+
   editItem(configName, criteria, data) {
-    
+
     return new Promise((resolve, reject) => {
       //Validations
       if (!configName) return reject('Config name is required')
       if (!data) return reject('Data is required')
       let urlApi = config(configName) + '/' + criteria//Get url from config
-      //let dataRequest = helper.toSnakeCase(data)
       //Request
       http.post(urlApi, data).then(response => {
         resolve(response.data)//Successful response
@@ -70,15 +67,14 @@ export default {
       })
     })
   },
-  
+
   createItem(configName, criteria, data) {
-    
+
     return new Promise((resolve, reject) => {
       //Validations
       if (!configName) return reject('Config name is required')
       if (!data) return reject('Data is required')
       let urlApi = config(configName) + '/' + criteria//Get url from config
-      //let dataRequest = helper.toSnakeCase(data)
       //Request
       http.put(urlApi, data).then(response => {
         resolve(response.data)//Successful response
@@ -87,14 +83,13 @@ export default {
       })
     })
   },
-  
+
   folderList(configName) {
-    
+
     return new Promise((resolve, reject) => {
       //Validations
       if (!configName) return reject('Config name is required')
       let urlApi = config(configName)//Get url from config
-      //let dataRequest = helper.toSnakeCase(data)
       //Request
       http.get(urlApi).then(response => {
         resolve(response.data)//Successful response

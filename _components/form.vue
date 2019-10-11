@@ -50,17 +50,17 @@
 
 
     <!--= Media List Modal =-->
-    <q-modal v-model="modalMedia" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
-      <q-modal-layout>
-        <q-toolbar slot="header">
+    <q-dialog id="modalMedia" v-model="modalMedia" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
+      <q-card>
+        <q-toolbar class="bg-primary text-white">
           <q-toolbar-title>{{$tr('qmedia.layout.selectMedia')}}</q-toolbar-title>
-          <q-btn flat v-close-overlay icon="fas fa-times"/>
+          <q-btn flat v-close-popup icon="fas fa-times"/>
         </q-toolbar>
-        <div class="layout-padding">
+        <q-card-section class="q-pa-md">
           <media-list embebed @data="pushData" />
-        </div>
-      </q-modal-layout>
-    </q-modal>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
 
   </div>
 </template>
@@ -139,14 +139,14 @@
               if(response.data)
                 this.files = response.data;
               this.pushData()
-            })
+            }).catch(error => {})
           } else {
             this.$crud.index('apiRoutes.qmedia.findFirst', params).then(response => {
 
               if(response.data)
                 this.files = [response.data];
               this.pushData()
-            })
+            }).catch(error => {})
           }
 
       },
@@ -197,7 +197,6 @@
   }
 </script>
 <style lang="stylus">
-  @import "~variables";
   #mediaForm
     .image-multiple
       background-repeat no-repeat
@@ -209,4 +208,10 @@
     .label
       text-transform capitalize
 
+  #modalMedia
+    .q-card
+      min-width 80vw
+      .q-card__section
+        max-height calc(100vh - 148px) !important
+        overflow-y scroll
 </style>
