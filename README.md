@@ -1,9 +1,9 @@
-## QMEDIA 1.0.1
+## QMEDIA 2.0.0
 Module with CRUD for media.
 
 ## Installation
 
-`` npm i @imagina/qmedia@1.0.0 ``
+`` npm i @imagina/qmedia@2.0.0 ``
 
 #### Components
 
