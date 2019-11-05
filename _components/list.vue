@@ -273,15 +273,11 @@
 <script>
   /*Plugins*/
   import axios from 'axios'
-  import config from 'src/config/index'
   import { uid } from 'quasar'
   import _cloneDeep from 'lodash.clonedeep'
 
   /*Services*/
   import mediaService from '@imagina/qmedia/_services/index'
-
-  /*Components*/
-  import locales from '@imagina/qsite/_components/locales'
 
   export default {
     props: {
@@ -290,7 +286,7 @@
         default: false
       }
     },
-    components: { locales },
+    components: { },
     watch: {
       uploadFile (newValue) {
         if (newValue) this.$refs.uploadComponent.pickFiles()
