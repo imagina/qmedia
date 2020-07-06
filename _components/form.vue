@@ -7,25 +7,27 @@
       <q-scroll-area
         v-if="multiple"
         style="width: 100%; height: 150px;">
-      <div class="row gutter-xs">
+   
+        <draggable @change="pushData(false)" class="row  q-col-gutter-x-xs full-width" v-model="files" group="people">
+        
         <div
           v-for="(file,index) in files"
           :key="index"
-          class="column col-xs-6 col-sm-4 col-md-3 col-lg-2"
+          :style="'background-image:url(' + file.mediumThumb + ')'"
+          class="image-multiple col-6 col-md-3 col-lg-2"
         >
-          <div class="image-multiple"
-               :style="'background-image:url(' + file.medium_thumb + ')'">
             <q-btn round color="red" @click="deleteFile(index)" icon="fas fa-times" size="sm"/>
-          </div>
+    
         </div>
-      </div>
+        </draggable>
+     
       </q-scroll-area>
       <!--= if not multiple =-->
-        <div v-else class="row gutter-xs">
+        <div v-else class="row q-col-gutter-x-sm">
         <div v-for="(file,index) in files"
              :key="index"
-             class="col-12 col-md-6 relative-position">
-          <img class="img-fluid" :src="file ? file.medium_thumb : ''" />
+             class="col-12 col-md-6 ">
+          <img class="img-fluid" :src="file ? file.mediumThumb : ''" />
 
           <q-btn
             class="absolute-top-left"
@@ -67,7 +69,7 @@
 <script>
   /*Components*/
   import mediaList from '@imagina/qmedia/_components/list'
-
+  import draggable from 'vuedraggable'
   /*Services*/
   import mediaService from '@imagina/qmedia/_services/index'
 
@@ -92,7 +94,8 @@
       buttonIcon: { type: String, default: ''}
     },
     components: {
-      mediaList
+      mediaList,
+      draggable
     },
     watch: {
       entityId(){
@@ -124,15 +127,15 @@
     },
     methods: {
       getData(){
-
           let params = {
+            refresh: true,
             params: {
               zone: this.zone,
               entity: this.entity,
               entity_id: this.entityId
             },
-            remember: false
           }
+
           // if is multiple media, call diff routes and transform diff the response.data
           if (this.multiple) {
             this.$crud.index('apiRoutes.qmedia.find', params).then(response => {
@@ -150,7 +153,6 @@
           }
 
       },
-
       /**
        * push data to v-model
        * @param file
@@ -159,8 +161,11 @@
 
         if(this.multiple){
           // if file is not false, its pusher on files list
-          if(file)
+          if(file){
             this.files.push(file)
+            this.$alert.success("image: "+file.filename+" added")
+          }
+          
           let vmodel = {}, ids = []
           this.files.forEach(file => {
             ids.push(file.id)
@@ -172,6 +177,7 @@
           vmodel[this.zone].files = ids
           vmodel[this.zone].orders = ids.join();
           this.$emit('input',vmodel)
+          
         }else{
           if(file)
             this.files = [file]

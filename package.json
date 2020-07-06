@@ -13,6 +13,9 @@
     "asgardcms",
     "qmedia"
   ],
+  "dependencies": {
+    "vuedraggable": "^2.23.2"
+  },
   "license": "ISC",
   "main": "index.js",
   "name": "@imagina/qmedia",
@@ -23,5 +26,5 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "2.0.1"
+  "version": "2.0.2"
 }
