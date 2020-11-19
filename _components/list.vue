@@ -32,25 +32,25 @@
               <div class="table-top-right col-12 col-md-7 col-lg-8 col-xl-9 text-right">
                 <div class="row justify-end items-center full-width">
                   <!--Button Move file -->
-                  <q-btn color="teal" icon="fas fa-arrows-alt"
+                  <q-btn color="teal" icon="fas fa-arrows-alt" rounded unelevated
                          @click="getFolders(); dialogMove=true"
                          :label="$tr('ui.label.move')"
                          v-if="rowsSelected.length"/>
                   <!--Button delete file -->
                   <q-btn color="red-14" icon="fas fa-trash" class="q-ml-xs"
                          @click="dialogDeleteGlobal.handler()"
-                         :label="$tr('ui.label.delete')"
+                         :label="$tr('ui.label.delete')" rounded unelevated
                          v-if="rowsSelected.length"/>
                   <!--Button add folder -->
                   <q-btn color="positive" icon="fas fa-folder-plus" class="q-ml-xs"
-                         @click="dialogCreateFolder=true"
+                         @click="dialogCreateFolder=true" rounded unelevated
                          :label="$tr('qmedia.layout.newFolder')"
                          v-if="$auth.hasAccess('media.folders.create')"
                   />
                   <!--Button add file -->
                   <q-btn color="blue" icon="add_photo_alternate" class="q-ml-xs"
                          @click="uploadFile = !uploadFile" :loading="loadingUploadFile"
-                         :label="$tr('qmedia.layout.uploadFile')"
+                         :label="$tr('qmedia.layout.uploadFile')" rounded unelevated
                          v-if="$auth.hasAccess('media.medias.create')">
                     <div slot="loading">
                       <q-spinner class="on-left"/>
@@ -70,7 +70,7 @@
                     ref="uploadComponent"
                     @added="()=>{$refs.uploadComponent.upload(); loadingUploadFile = true}"/>
                   <!--Button refresh -->
-                  <q-btn color="info" icon="fas fa-sync" class="q-ml-xs"
+                  <q-btn color="info" icon="fas fa-sync" class="q-ml-xs" rounded unelevated
                          @click="getData({pagination:pagination,search:filter.search},true)">
                     <q-tooltip>{{$tr('ui.label.refresh')}}</q-tooltip>
                   </q-btn>
@@ -89,7 +89,7 @@
 
         <!--= Small Thumb or Icon =-->
         <q-td slot="body-cell-small_thumb" style="width: 30%" slot-scope="props" :props="props">
-          <q-btn v-if="props.row.isFolder" icon="far fa-folder" flat @click="getDataByFolder(props.row)"/>
+          <q-btn v-if="props.row.isFolder" icon="far fa-folder" flat @click="getDataByFolder(props.row)" rounded unelevated/>
           <div v-else-if="props.row.isImage">
             <div class="image" :style="'background-image: url('+props.value+')'" alt="">
             </div>
@@ -110,14 +110,14 @@
         <q-td slot="body-cell-actions" slot-scope="props" :props="props">
           <div v-if="embebed && !props.row.isFolder">
             <q-btn color="blue" :label="$tr('ui.label.select')" size="sm"
-                   @click="$emit('data', props.row)"/>
+                   @click="$emit('data', props.row)" rounded unelevated/>
           </div>
           <div v-else-if="!embebed">
-            <q-btn icon="fas fa-pen" color="positive" size="sm" class="q-mx-xs"
+            <q-btn icon="fas fa-pen" color="positive" size="sm" class="q-mx-xs" round unelevated
                    @click="props.row.isFolder ? editFolder(props.row.filename,true,props.row.id) : editFile(true,props.row)">
               <q-tooltip>{{$tr('ui.label.edit')}}</q-tooltip>
             </q-btn>
-            <q-btn icon="far fa-trash-alt" color="negative" size="sm" class="q-mx-xs"
+            <q-btn icon="far fa-trash-alt" color="negative" size="sm" class="q-mx-xs" round unelevated
                    @click="dialogDeleteItem.handler(props.row.id,props.row.isFolder)">
               <q-tooltip>{{$tr('ui.label.delete')}}</q-tooltip>
             </q-btn>
@@ -150,7 +150,7 @@
 
             <div class="text-right">
               <q-btn color="positive" :label="$tr('ui.label.save')" type="submit"
-                     icon="fas fa-save" v-close-popup/>
+                     icon="fas fa-save" v-close-popup rounded unelevated/>
             </div>
 
             <inner-loading :visible="loadingCreateFolder"/>
@@ -181,7 +181,7 @@
 
             <div class="text-right">
               <q-btn color="positive" :label="$tr('ui.label.save')" type="submit"
-                     icon="fas fa-save" v-close-popup/>
+                     icon="fas fa-save" v-close-popup rounded unelevated/>
             </div>
 
             <inner-loading :visible="loadingRenameFolder"/>
@@ -229,7 +229,7 @@
 
             <div class="text-right">
               <q-btn color="positive" :label="$tr('ui.label.save')" type="submit"
-                     icon="fas fa-save" v-close-popup/>
+                     icon="fas fa-save" v-close-popup rounded unelevated/>
             </div>
 
             <inner-loading :visible="loadingRenameFolder"/>
@@ -260,7 +260,7 @@
 
             <div class="text-right">
               <q-btn color="positive" :label="$tr('ui.label.confirm')" type="submit"
-                     icon="fas fa-save" v-close-popup/>
+                     icon="fas fa-save" v-close-popup rounded unelevated/>
             </div>
 
             <inner-loading :visible="loadingRenameFolder"/>
@@ -440,7 +440,7 @@
           },
           refresh: refresh
         }
-       
+
         // if folderId is not root path
         if (this.filter.folderId != 0) {
           let breacrumb = await this.$crud.show('apiRoutes.qmedia.breadcrumb', this.filter.folderName, params)
@@ -613,7 +613,7 @@
             parent_id: this.filter.folderId
           }
 
-          mediaService.editItem('apiRoutes.qmedia.folders', this.idFolderToEdit, data, { params: {} }).then(response => {
+          mediaService.crud.update('apiRoutes.qmedia.folders', this.idFolderToEdit, data).then(response => {
             this.loadingRenameFolder = false
             this.rowsSelected = []
             this.$alert.success({ message: this.$tr('ui.message.recordUpdated') })
