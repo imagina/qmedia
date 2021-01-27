@@ -9,7 +9,7 @@
           <div
             v-for="(file,index) in files"
             :key="index"
-            :style="'background-image:url(' + file.mediumThumb + ')'"
+            :style="'background-image:url(' + getThumbnails(file,'smallThumb') + ')'"
             class="image-multiple col-6 col-md-3 col-lg-2"
           >
             <q-btn round color="red" @click="deleteFile(index)" icon="fas fa-times" size="sm"/>
@@ -23,7 +23,7 @@
         <div v-for="(file,index) in files"
              :key="index"
              class="col-12 col-md-6 ">
-          <img class="img-fluid" :src="file ? file.mediumThumb : ''"/>
+          <img class="img-fluid" :src="file ? getThumbnails(file,'smallThumb') : ''"/>
           <q-btn class="absolute-top-left" style="top: 0; left: 0;" round color="red" @click="deleteFile(index)"
                  icon="fas fa-times"
                  size="sm"/>
@@ -192,8 +192,14 @@
         this.files.splice(index, 1)
         this.pushData()
       },
+      getThumbnails(file, name){
+        if(file && file.thumbnails){
+          let itemFile = file.thumbnails.find(item => item.name == name)
+          return itemFile ? itemFile.path : ''
+        }
+        return ''
+      }
     }
-
   }
 </script>
 <style lang="stylus">
