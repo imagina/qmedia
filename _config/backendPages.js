@@ -1,7 +1,7 @@
 export default {
   //Home Page
   index: {
-    permission: 'media.medias.index',
+    permission: 'media.medias.manage',
     activated: true,
     path: '/media/index',
     name: 'app.media.index',
