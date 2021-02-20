@@ -97,7 +97,7 @@
             </div>
           </div>
           <div v-else>
-            <q-icon name="far fa-file-alt"/>
+            <q-icon color="grey-8" name="far fa-file-alt" size="40px"/>
           </div>
         </q-td>
 
@@ -283,6 +283,7 @@ import mediaService from '@imagina/qmedia/_services/index'
 
 export default {
   props: {
+    disk : {default : 'publicmedia'},
     embebed: {
       type: Boolean,
       default: false
@@ -442,7 +443,8 @@ export default {
           page: pagination.page,
           take: pagination.rowsPerPage,
           filter: {
-            ...this.filter
+            ...this.filter,
+            disk : this.disk
           },
         },
         refresh: refresh
@@ -670,6 +672,7 @@ export default {
         formFields: [
           {name: 'parent_id', value: this.filter.folderId},
           {name: 'Content-Type', value: files[0].type},
+          {name: 'disk', value: this.disk},
         ],
         headers: [
           {name: 'Authorization', value: this.$store.state.quserAuth.userToken}

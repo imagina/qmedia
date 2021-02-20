@@ -23,7 +23,12 @@
         <div v-for="(file,index) in files"
              :key="index"
              class="col-12 col-md-6 ">
-          <img class="img-fluid" :src="file ? getThumbnails(file,'smallThumb') : ''"/>
+          <div v-if="file.is_image || file.isImage">
+            <img class="img-fluid" :src="file ? getThumbnails(file,'smallThumb') : ''" width="200px" style="max-height: 200px"/>
+          </div>
+          <div v-else>
+            <q-icon color="grey-8" name="far fa-file-alt" size="40px"/>
+          </div>
           <q-btn class="absolute-top-left" style="top: 0; left: 0;" round color="red" @click="deleteFile(index)"
                  icon="fas fa-times"
                  size="sm"/>
@@ -45,11 +50,11 @@
     <q-dialog id="modalMedia" v-model="modalMedia" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
       <q-card>
         <q-toolbar class="bg-primary text-white">
-          <q-toolbar-title>{{$tr('qmedia.layout.selectMedia')}}</q-toolbar-title>
+          <q-toolbar-title>{{ $tr('qmedia.layout.selectMedia') }}</q-toolbar-title>
           <q-btn flat v-close-popup icon="fas fa-times"/>
         </q-toolbar>
         <q-card-section class="q-pa-md">
-          <media-list embebed @data="pushData"/>
+          <media-list embebed @data="pushData" :disk="disk"/>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -57,102 +62,103 @@
   </div>
 </template>
 <script>
-  /*Components*/
-  import mediaList from '@imagina/qmedia/_components/list'
-  import draggable from 'vuedraggable'
-  /*Services*/
-  import mediaService from '@imagina/qmedia/_services/index'
+/*Components*/
+import mediaList from '@imagina/qmedia/_components/list'
+import draggable from 'vuedraggable'
+/*Services*/
+import mediaService from '@imagina/qmedia/_services/index'
 
-  export default {
-    props: {
-      zone: {
-        type: String,
-        default: 'image'
-      },
-      multiple: {
-        type: Boolean,
-        default: false
-      },
-      value: {
-        type: Object,
-        default: () => {
-          return {}
-        }
-      },
-      entity: {type: String, required: true},
-      entityId: {default: null},
-      label: {type: String, default: ''},
-      buttonLabel: {type: String, default: ''},
-      buttonIcon: {type: String, default: ''}
+export default {
+  props: {
+    disk: {default: 'publicmedia'},
+    zone: {
+      type: String,
+      default: 'image'
     },
-    components: {
-      mediaList,
-      draggable
+    multiple: {
+      type: Boolean,
+      default: false
     },
-    watch: {
-      entityId() {
-        if (this.entityId) {
-          this.getData()
-        }
-      },
-      zone() {
-        if (this.entityId) {
-          this.getData()
-        }
+    value: {
+      type: Object,
+      default: () => {
+        return {}
       }
     },
-    mounted() {
-      this.$nextTick(function () {
-        // if has entity id, get the files associated
-        if (this.entityId) {
-
-          this.getData()
-        }
-      })
-    },
-    data() {
-      return {
-        modalMedia: false,
-        ids: [],
-        files: []
+    entity: {type: String, required: true},
+    entityId: {default: null},
+    label: {type: String, default: ''},
+    buttonLabel: {type: String, default: ''},
+    buttonIcon: {type: String, default: ''}
+  },
+  components: {
+    mediaList,
+    draggable
+  },
+  watch: {
+    entityId() {
+      if (this.entityId) {
+        this.getData()
       }
     },
-    methods: {
-      getData() {
-        let params = {
-          refresh: true,
-          params: {
-            zone: this.zone,
-            entity: this.entity,
-            entity_id: this.entityId
-          },
-        }
+    zone() {
+      if (this.entityId) {
+        this.getData()
+      }
+    }
+  },
+  mounted() {
+    this.$nextTick(function () {
+      // if has entity id, get the files associated
+      if (this.entityId) {
 
-        // if is multiple media, call diff routes and transform diff the response.data
-        if (this.multiple) {
-          this.$crud.index('apiRoutes.qmedia.find', params).then(response => {
-            if (response.data)
-              this.files = response.data;
-            this.pushData()
-          }).catch(error => {
-          })
-        } else {
-          this.$crud.index('apiRoutes.qmedia.findFirst', params).then(response => {
+        this.getData()
+      }
+    })
+  },
+  data() {
+    return {
+      modalMedia: false,
+      ids: [],
+      files: []
+    }
+  },
+  methods: {
+    getData() {
+      let params = {
+        refresh: true,
+        params: {
+          zone: this.zone,
+          entity: this.entity,
+          entity_id: this.entityId
+        },
+      }
 
-            if (response.data)
-              this.files = [response.data];
-            this.pushData()
-          }).catch(error => {
-          })
-        }
+      // if is multiple media, call diff routes and transform diff the response.data
+      if (this.multiple) {
+        this.$crud.index('apiRoutes.qmedia.find', params).then(response => {
+          if (response.data)
+            this.files = response.data;
+          this.pushData()
+        }).catch(error => {
+        })
+      } else {
+        this.$crud.index('apiRoutes.qmedia.findFirst', params).then(response => {
 
-      },
-      /**
-       * push data to v-model
-       * @param file
-       */
-      pushData(file = false) {
+          if (response.data)
+            this.files = [response.data];
+          this.pushData()
+        }).catch(error => {
+        })
+      }
 
+    },
+    /**
+     * push data to v-model
+     * @param file
+     */
+    pushData(file = false) {
+      setTimeout(() => {
         if (this.multiple) {
           // if file is not false, its pusher on files list
           if (file) {
@@ -182,43 +188,43 @@
           this.$emit('input', vmodel)
           this.modalMedia = false
         }
-
-      },
-      /**
-       * delete files and push data to the v-model
-       * @param index
-       */
-      deleteFile(index) {
-        this.files.splice(index, 1)
-        this.pushData()
-      },
-      getThumbnails(file, name){
-        if(file && file.thumbnails){
-          let itemFile = file.thumbnails.find(item => item.name == name)
-          return itemFile ? itemFile.path : ''
-        }
-        return ''
+      }, 300)
+    },
+    /**
+     * delete files and push data to the v-model
+     * @param index
+     */
+    deleteFile(index) {
+      this.files.splice(index, 1)
+      this.pushData()
+    },
+    getThumbnails(file, name) {
+      if (file && file.thumbnails) {
+        let itemFile = file.thumbnails.find(item => item.name == name)
+        return itemFile ? itemFile.path : ''
       }
+      return ''
     }
   }
+}
 </script>
 <style lang="stylus">
-  #mediaForm
-    .image-multiple
-      background-repeat no-repeat
-      background-size 100% auto
-      background-position center center
-      height 150px
-      overflow hidden
+#mediaForm
+  .image-multiple
+    background-repeat no-repeat
+    background-size 100% auto
+    background-position center center
+    height 150px
+    overflow hidden
 
-    .label
-      text-transform capitalize
+  .label
+    text-transform capitalize
 
-  #modalMedia
-    .q-card
-      min-width 80vw
+#modalMedia
+  .q-card
+    min-width 80vw
 
-      .q-card__section
-        max-height calc(100vh - 148px) !important
-        overflow-y scroll
+    .q-card__section
+      max-height calc(100vh - 148px) !important
+      overflow-y scroll
 </style>
