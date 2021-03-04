@@ -1,6 +1,6 @@
 import crud from '@imagina/qcrud/_services/baseService'
 import http from "axios/index";
-import remember from "@imagina/qhelper/_plugins/remember"
+import remember from "@imagina/qsite/_plugins/remember"
 import config from '@imagina/qsite/_config/master/index'
 
 export default {
