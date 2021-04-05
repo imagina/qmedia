@@ -10,5 +10,8 @@ export default {
     title: 'qmedia.sidebar.adminIndex',
     icon: 'fas fa-camera-retro',
     authenticated: true,
+    subHeader : {
+      refresh : true
+    }
   },
 }

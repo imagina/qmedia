@@ -1,6 +1,6 @@
 export default {
   //Home Page
-  selectMediackEditor: {
+  selectMediaCKEditor: {
     permission: 'media.medias.index',
     activated: true,
     path: '/media/select',
