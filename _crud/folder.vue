@@ -24,7 +24,7 @@ export default {
           id: {value: ''},
           userId: {value: this.$store.state.quserAuth.userId},
           isFolder: {value: 1},
-          name: {
+          filename: {
             value: null,
             type: 'input',
             props: {
@@ -32,10 +32,14 @@ export default {
             }
           },
           parentId: {
-            value: null,
+            value: '0',
             type: 'treeSelect',
             props: {
-              label: this.$tr('ui.form.parent')
+              label: this.$tr('ui.form.parent'),
+              clearable: false,
+              options: [
+                {label: this.$tr('ui.message.noValue'), value: '0', id: '0'}
+              ]
             },
             loadOptions: {
               apiRoute: 'apiRoutes.qmedia.files',

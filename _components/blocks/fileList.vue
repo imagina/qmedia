@@ -12,7 +12,7 @@
           <!---Top content-->
           <template v-if="gridChip || gridCard" v-slot:top>
             <div id="tableTopContent" :class="`relative-position ${order ? 'cursor-pointer' : ''}`"
-                 @click="toggleOrder()">
+                 @click="(order && table.filter.order) ? toggleOrder() : false">
               <!---Title-->
               <span>{{ title }}</span>
               <!--Counter-->
@@ -61,36 +61,87 @@
           <template v-slot:item="props">
             <!---Card-->
             <div class="q-pa-xs col-6 col-md-3 col-lg-2" v-if="gridCard">
-              <div class="file-card cursor-pointer" @click="fileAction(props.row)">
+              <div class="file-card cursor-pointer">
                 <!--Image Preview-->
-                <div v-if="props.row.isImage" class="file-card_img img-as-bg"
+                <div v-if="props.row.isImage" class="file-card_img img-as-bg" @click="fileAction(props.row)"
                      :style="`background-image: url('${props.row.mediumThumb}')`">
+                  <!--Tooltip-->
+                  <q-tooltip anchor="center middle" self="center middle" :delay="500">
+                    {{ props.row.filename }}
+                  </q-tooltip>
                 </div>
                 <!--Icon-->
-                <div v-else class="file-card_icon img-as-bg row items-center justify-center">
+                <div v-else class="file-card_icon img-as-bg row items-center justify-center"
+                     @click="fileAction(props.row)">
                   <q-icon :name="props.row.icon" color="blue-grey"/>
+                  <!--Tooltip-->
+                  <q-tooltip anchor="center middle" self="center middle" :delay="500">
+                    {{ props.row.filename }}
+                  </q-tooltip>
                 </div>
-                <div class="file-card__title ellipsis"> {{ props.row.filename }}</div>
-                <!--Tooltip-->
-                <q-tooltip anchor="center middle" self="center middle" :delay="500">
-                  {{ props.row.filename }}
-                </q-tooltip>
+                <!--Bottom content-->
+                <div class="file-card__bottom">
+                  <!--Name-->
+                  <div class="file-card__bottom_title ellipsis">
+                    {{ props.row.filename }}
+                  </div>
+                  <!--Actions-->
+                  <q-btn class="file-card__bottom_actions" icon="fas fa-ellipsis-v" unelevated round size="xs"
+                         color="blue-grey" flat>
+                    <!---Menu actions-->
+                    <q-menu anchor="bottom left" self="bottom end">
+                      <q-list style="min-width: 100px">
+                        <q-item clickable v-close-popup v-for="(item, itemKey) in fileActions" :key="itemKey"
+                                @click.native="item.action(props.row)">
+                          <q-item-section>
+                            <div class="row items-center">
+                              <q-icon :name="item.icon" class="q-mr-sm" color="blue-grey" size="18px"/>
+                              {{ item.label }}
+                            </div>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-menu>
+                  </q-btn>
+                </div>
               </div>
             </div>
             <!--Chips-->
             <div class="q-pa-xs col-6 col-md-3 col-lg-2" v-else-if="gridChip">
-              <div class="file-chip cursor-pointer" @click="fileAction(props.row)">
+              <div class="file-chip cursor-pointer">
                 <!--Image Preview-->
-                <div v-if="props.row.isImage" class="file-chip__img img-as-bg"
+                <div v-if="props.row.isImage" class="file-chip__img img-as-bg" @click="fileAction(props.row)"
                      :style="`background-image: url('${props.row.mediumThumb}')`">
                 </div>
                 <!--Icon-->
-                <q-icon v-else :name="`fas fa-${props.row.isFolder ? 'folder' : 'file'}`" class="file-chip__icon"/>
-                <div class="file-chip__title ellipsis">{{ props.row.filename }}</div>
-                <!--Tooltip-->
-                <q-tooltip anchor="center middle" self="center middle" :delay="500">
+                <q-icon v-else :name="`fas fa-${props.row.isFolder ? 'folder' : 'file'}`" class="file-chip__icon"
+                        @click="fileAction(props.row)"/>
+                <!--Title-->
+                <div class="file-chip__title ellipsis" @click="fileAction(props.row)">
                   {{ props.row.filename }}
-                </q-tooltip>
+                  <!--Tooltip-->
+                  <q-tooltip anchor="center middle" self="center middle" :delay="500">
+                    {{ props.row.filename }}
+                  </q-tooltip>
+                </div>
+                <!--Actions-->
+                <q-btn class="file-chip__actions" icon="fas fa-ellipsis-v" unelevated round size="xs"
+                       color="blue-grey" flat>
+                  <!---Menu actions-->
+                  <q-menu anchor="bottom left" self="bottom end">
+                    <q-list style="min-width: 100px">
+                      <q-item clickable v-close-popup v-for="(item, itemKey) in fileActions" :key="itemKey"
+                              @click.native="item.action(props.row)">
+                        <q-item-section>
+                          <div class="row items-center">
+                            <q-icon :name="item.icon" class="q-mr-sm" color="blue-grey" size="18px"/>
+                            {{ item.label }}
+                          </div>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-menu>
+                </q-btn>
               </div>
             </div>
           </template>
@@ -117,7 +168,11 @@
       </div>
     </div>
     <!--Crud folders-->
-    <crud :crud-data="import('@imagina/qmedia/_crud/folder')" type="onlyUpdate" ref="crudFolder"/>
+    <crud :crud-data="import('@imagina/qmedia/_crud/folder')" type="noIndex" ref="crudFolder"
+          @deleted="$root.$emit('page.data.refresh')"/>
+    <!--Crud files-->
+    <crud :crud-data="import('@imagina/qmedia/_crud/files')" type="noIndex" ref="crudFile"
+          @deleted="$root.$emit('page.data.refresh')"/>
   </div>
 </template>
 <script>
@@ -188,6 +243,27 @@ export default {
     }
   },
   computed: {
+    //File Actions
+    fileActions() {
+      return [
+        {
+          label: this.$tr('ui.label.edit'),
+          icon: 'fas fa-pen',
+          action: (item) => {
+            if (item.isImage) this.$refs.crudFile.update(item)
+            else this.$refs.crudFolder.update(item)
+          }
+        },
+        {
+          label: this.$tr('ui.label.delete'),
+          icon: 'fas fa-trash',
+          action: (item) => {
+            if (item.isImage) this.$refs.crudFile.delete(item)
+            else this.$refs.crudFolder.delete(item)
+          }
+        }
+      ]
+    },
     //Table columns
     tableColumns() {
       return [
@@ -294,15 +370,11 @@ export default {
         this.modalPdf.show = true
       }
     },
-    //Toogle order
+    //Toggle order
     toggleOrder() {
       this.table.filter.order.way = (this.table.filter.order.way == 'asc' ? 'desc' : 'asc')
       this.table.pagination.page = 1
       this.getData()
-    },
-    //Delete item
-    deleteFile(file) {
-      console.warn('Delete', file)
     }
   }
 }
@@ -359,13 +431,22 @@ export default {
           .q-icon
             font-size 50px
 
-        .file-card__title
+        .file-card__bottom
           width 100%
-          font-size 12px
-          padding 5px
           background-color white
-          color $grey-9
-          text-transform lowercase
+          position relative
+
+          .file-card__bottom_title
+            font-size 12px
+            padding 5px 13px 5px 5px
+            color $grey-9
+            text-transform lowercase
+            width calc(100% - 15px)
+
+          .file-card__bottom_actions
+            position absolute
+            right 2px
+            top 2px
 
       .file-chip
         border 1px solid $grey-5
@@ -390,6 +471,12 @@ export default {
 
         .file-chip__title
           padding-left 23px
+          padding-right 20px
           text-transform lowercase
+
+        .file-chip__actions
+          position absolute
+          right 2px
+          top 4px
 </style>
 

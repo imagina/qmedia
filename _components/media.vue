@@ -1,10 +1,5 @@
 <template>
   <div id="mediaMasterComponent" class="q-mb-lg">
-    <div class="q-mb-xl bg-white q-pa-md">
-      <dynamic-field v-model="filesComponent"
-                     :field="{value : null, type : 'uploader', props : {accept : 'images', maxFiles : 3}}"/>
-    </div>
-
     <!--Media content-->
     <div id="mediaContent" class="bg-white q-py-md">
       <!---Actions-->
@@ -49,9 +44,8 @@
       <breadcrumb-component ref="breadcrumbComponent" :params="filter" @selected="setFolder" class="q-mb-md"/>
       <!---Recent Files-->
       <file-list-component grid-card ref="recentFilesComponent" :params="filesParams.recentFiles"
-                           @selected="setFolder"
-                           rows-per-page="6" :title="$trp('ui.label.recent')" no-pagination class="q-px-md q-mb-lg"
-                           :key="$uid()"/>
+                           @selected="setFolder" :key="$uid()" rows-per-page="6" :title="$trp('ui.label.recent')"
+                           no-pagination class="q-px-md q-mb-lg"/>
       <!---Folders Files-->
       <file-list-component v-if="!listView" grid-chip ref="foldersFilesComponent" :params="filesParams.folderFiles"
                            @selected="setFolder" rows-per-page="24" :title="$trp('ui.label.folder')" counter order
@@ -66,10 +60,10 @@
     </div>
     <!--Crud folders-->
     <crud :crud-data="import('@imagina/qmedia/_crud/folder')" type="onlyUpdate" ref="crudFolders"
-          @created="refreshData()" @updated="refreshData()" :custom-data="customCrudData.folder"/>
+          @created="refreshData" @updated="refreshData" :custom-data="customCrudData.folder"/>
     <!--Crud Files-->
     <crud :crud-data="import('@imagina/qmedia/_crud/files')" type="onlyUpdate" ref="crudFiles"
-          @created="refreshData()" @updated="refreshData()" :custom-data="customCrudData.file"/>
+          @created="refreshData" @updated="refreshData" :custom-data="customCrudData.file"/>
   </div>
 </template>
 <script>
@@ -82,7 +76,7 @@ export default {
     this.$root.$off('page.data.refresh')
   },
   props: {
-    disk : {default : 'publicmedia'}
+    disk: {default: 'publicmedia'}
   },
   components: {
     breadcrumbComponent,
@@ -163,12 +157,16 @@ export default {
       return {
         folder: {
           formLeft: {
-            disk : {value : this.disk},
+            disk: {value: this.disk},
             parentId: {
-              value: this.filter.folderId ? this.filter.folderId : null,
+              value: this.filter.folderId ? this.filter.folderId : '0',
               type: 'treeSelect',
               props: {
-                label: this.$tr('ui.form.parent')
+                label: this.$tr('ui.form.parent'),
+                clearable: false,
+                options: [
+                  {label: this.$tr('ui.message.noValue'), value: '0', id: '0'}
+                ]
               },
               loadOptions: {
                 apiRoute: 'apiRoutes.qmedia.files',
@@ -180,12 +178,16 @@ export default {
         },
         file: {
           formLeft: {
-            disk : {value : this.disk},
+            disk: {value: this.disk},
             folderId: {
-              value: this.filter.folderId ? this.filter.folderId : null,
+              value: this.filter.folderId ? this.filter.folderId : '0',
               type: 'treeSelect',
               props: {
-                label: this.$tr('ui.label.folder')
+                label: this.$tr('ui.label.folder'),
+                clearable: false,
+                options: [
+                  {label: this.$tr('ui.message.noValue'), value: '0', id: '0'}
+                ]
               },
               loadOptions: {
                 apiRoute: 'apiRoutes.qmedia.files',
@@ -208,6 +210,7 @@ export default {
     },
     //Refresh Data
     refreshData() {
+      console.warn('Media, Refresh data')
       setTimeout(() => {
         this.$refs.breadcrumbComponent.getData(true)
         this.$refs.recentFilesComponent.getData(true)

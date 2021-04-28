@@ -26,7 +26,10 @@ export default {
           userId: {value: this.$store.state.quserAuth.userId},
           file: {
             value: null,
-            type: 'uploader'
+            type: 'uploader',
+            props: {
+              vIf: (this.crudInfo.typeForm == 'create') ? true : false
+            }
           },
           altAttribute: {
             value: '',
@@ -37,10 +40,14 @@ export default {
             },
           },
           folderId: {
-            value: null,
+            value: '0',
             type: 'treeSelect',
             props: {
-              label: this.$tr('ui.form.parent')
+              label: this.$tr('ui.label.folder'),
+              clearable: false,
+              options: [
+                {label: this.$tr('ui.message.noValue'), value: '0', id: '0'}
+              ]
             },
             loadOptions: {
               apiRoute: 'apiRoutes.qmedia.files',
@@ -73,6 +80,7 @@ export default {
       return new Promise(async (resolve, reject) => {
         //Upload only file
         let fileData = new FormData()
+        fileData.append('parent_id', formData.folderId || 0)
         fileData.append('file', formData.file)
 
         //Request send file
