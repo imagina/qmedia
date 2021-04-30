@@ -24,7 +24,8 @@
              :key="index"
              class="col-12 col-md-6 ">
           <div v-if="file.is_image || file.isImage">
-            <img class="img-fluid" :src="file ? getThumbnails(file,'smallThumb') : ''" width="200px" style="max-height: 200px"/>
+            <img class="img-fluid" :src="file ? getThumbnails(file,'smallThumb') : ''" width="200px"
+                 style="max-height: 200px"/>
           </div>
           <div v-else>
             <q-icon color="grey-8" name="far fa-file-alt" size="40px"/>

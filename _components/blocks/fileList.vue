@@ -40,15 +40,10 @@
             <!-- actions columns -->
             <q-td v-else-if="props.col.name == 'actions'" :props="props">
               <div class="full-width" style="width : max-content">
-                <!--Edit button-->
-                <q-btn color="positive" icon="fas fa-pen" size="sm" style="font-size: 8px; padding: 6px"
-                       round unelevated class="q-ml-xs">
-                  <q-tooltip :delay="300">{{ $tr('ui.label.edit') }}</q-tooltip>
-                </q-btn>
-                <!--Delete button-->
-                <q-btn color="negative" icon="fas fa-trash-alt" size="sm" class="q-ml-xs"
-                       round unelevated style="font-size: 8px; padding: 6px" @click="deleteFile(props.row)">
-                  <q-tooltip :delay="300">{{ $tr('ui.label.delete') }}</q-tooltip>
+                <q-btn v-for="(action, keyAction) in fileActions" :key="keyAction" :color="action.color"
+                       :icon="action.icon" size="sm" style="font-size: 8px; padding: 6px"
+                       round unelevated class="q-ml-xs" @click="action.action(props.row)">
+                  <q-tooltip :delay="300">{{ action.label }}</q-tooltip>
                 </q-btn>
               </div>
             </q-td>
@@ -169,10 +164,10 @@
     </div>
     <!--Crud folders-->
     <crud :crud-data="import('@imagina/qmedia/_crud/folder')" type="noIndex" ref="crudFolder"
-          @deleted="$root.$emit('page.data.refresh')"/>
+          @deleted="$root.$emit('page.data.refresh')" @updated="$root.$emit('page.data.refresh')"/>
     <!--Crud files-->
     <crud :crud-data="import('@imagina/qmedia/_crud/files')" type="noIndex" ref="crudFile"
-          @deleted="$root.$emit('page.data.refresh')"/>
+          @deleted="$root.$emit('page.data.refresh')" @updated="$root.$emit('page.data.refresh')"/>
   </div>
 </template>
 <script>
@@ -249,6 +244,7 @@ export default {
         {
           label: this.$tr('ui.label.edit'),
           icon: 'fas fa-pen',
+          color: 'green',
           action: (item) => {
             if (item.isImage) this.$refs.crudFile.update(item)
             else this.$refs.crudFolder.update(item)
@@ -257,6 +253,7 @@ export default {
         {
           label: this.$tr('ui.label.delete'),
           icon: 'fas fa-trash',
+          color: 'red',
           action: (item) => {
             if (item.isImage) this.$refs.crudFile.delete(item)
             else this.$refs.crudFolder.delete(item)
@@ -267,6 +264,10 @@ export default {
     //Table columns
     tableColumns() {
       return [
+        {
+          name: 'id', label: 'Id', field: 'id', align: 'left',
+          sortable: true
+        },
         {
           name: 'filename', label: this.$tr('ui.form.name'), field: 'filename', align: 'left',
           sortable: true

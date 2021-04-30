@@ -210,7 +210,6 @@ export default {
     },
     //Refresh Data
     refreshData() {
-      console.warn('Media, Refresh data')
       setTimeout(() => {
         this.$refs.breadcrumbComponent.getData(true)
         this.$refs.recentFilesComponent.getData(true)
