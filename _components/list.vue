@@ -4,14 +4,14 @@
     <div class="col-12 backend-page relative-position">
       <!--== Table ==-->
       <q-table
-        :data="dataTable"
-        :columns="columnsTable"
-        :pagination.sync="pagination"
-        selection="multiple"
-        :selected.sync="rowsSelected"
-        row-key="filename"
-        @request="getData"
-        class="box-table"
+          :data="dataTable"
+          :columns="columnsTable"
+          :pagination.sync="pagination"
+          selection="multiple"
+          :selected.sync="rowsSelected"
+          row-key="filename"
+          @request="getData"
+          class="box-table"
       >
         <!--Header-->
         <template slot="top">
@@ -59,16 +59,16 @@
                   </q-btn>
                   <!---Uploader Files-->
                   <q-uploader
-                    :key="uploaderID"
-                    multiple v-show="false"
-                    auto-expand
-                    field-name="file"
-                    :factory="files => factoryUploader(files)"
-                    @fail="$alert.error({message: `${this.$tr('ui.message.recordNoCreated')}`})"
-                    @finish="finishUploadFiles(); loadingUploadFile = false"
-                    hide-upload-button
-                    ref="uploadComponent"
-                    @added="()=>{$refs.uploadComponent.upload(); loadingUploadFile = true}"/>
+                      :key="uploaderID"
+                      multiple v-show="false"
+                      auto-expand
+                      field-name="file"
+                      :factory="files => factoryUploader(files)"
+                      @fail="$alert.error({message: `${this.$tr('ui.message.recordNoCreated')}`})"
+                      @finish="finishUploadFiles(); loadingUploadFile = false"
+                      hide-upload-button
+                      ref="uploadComponent"
+                      @added="()=>{$refs.uploadComponent.upload(); loadingUploadFile = true}"/>
                   <!--Button refresh -->
                   <q-btn color="info" icon="fas fa-sync" class="q-ml-xs" rounded unelevated
                          @click="getData({pagination:pagination,search:filter.search},true)">
@@ -93,7 +93,7 @@
           <q-btn v-if="props.row.isFolder" icon="far fa-folder" flat @click="getDataByFolder(props.row)" rounded
                  unelevated/>
           <div v-else-if="props.row.isImage">
-            <div class="image" :style="'background-image: url('+props.value+')'" alt="">
+            <div class="image" :style="'background-image: url('+props.value+')'" alt="" style="min-width: 60px">
             </div>
           </div>
           <div v-else>
@@ -283,7 +283,7 @@ import mediaService from '@imagina/qmedia/_services/index'
 
 export default {
   props: {
-    disk : {default : 'publicmedia'},
+    disk: {default: 'publicmedia'},
     embebed: {
       type: Boolean,
       default: false
@@ -444,7 +444,7 @@ export default {
           take: pagination.rowsPerPage,
           filter: {
             ...this.filter,
-            disk : this.disk
+            disk: this.disk
           },
         },
         refresh: refresh
@@ -455,7 +455,7 @@ export default {
         let breacrumb = await this.$crud.show('apiRoutes.qmedia.breadcrumb', this.filter.folderName, params)
         this.breadcrumbs = breacrumb.data
       } else
-        // reseting breadcrumb
+          // reseting breadcrumb
       {
         this.breadcrumbs = this.defaultBreadCrum
       }
