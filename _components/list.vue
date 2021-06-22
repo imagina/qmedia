@@ -42,7 +42,7 @@
                          :label="$tr('ui.label.delete')" rounded unelevated
                          v-if="rowsSelected.length"/>
                   <!--Button add folder -->
-                  <q-btn color="positive" icon="fas fa-folder-plus" class="q-ml-xs"
+                  <q-btn color="green" icon="fas fa-folder-plus" class="q-ml-xs"
                          @click="dialogCreateFolder=true" rounded unelevated
                          :label="$tr('qmedia.layout.newFolder')"
                          v-if="$auth.hasAccess('media.folders.create')"
@@ -115,11 +115,11 @@
                    @click="$emit('data', props.row)" rounded unelevated/>
           </div>
           <div v-else-if="!embebed">
-            <q-btn icon="fas fa-pen" color="positive" size="sm" class="q-mx-xs" round unelevated
+            <q-btn icon="fas fa-pen" color="green" size="sm" class="q-mx-xs" round unelevated
                    @click="props.row.isFolder ? editFolder(props.row.filename,true,props.row.id) : editFile(true,props.row)">
               <q-tooltip>{{ $tr('ui.label.edit') }}</q-tooltip>
             </q-btn>
-            <q-btn icon="far fa-trash-alt" color="negative" size="sm" class="q-mx-xs" round unelevated
+            <q-btn icon="far fa-trash-alt" color="red" size="sm" class="q-mx-xs" round unelevated
                    @click="dialogDeleteItem.handler(props.row.id,props.row.isFolder)">
               <q-tooltip>{{ $tr('ui.label.delete') }}</q-tooltip>
             </q-btn>
@@ -151,7 +151,7 @@
                      v-model="folderName" outlined dense/>
 
             <div class="text-right">
-              <q-btn color="positive" :label="$tr('ui.label.save')" type="submit"
+              <q-btn color="green" :label="$tr('ui.label.save')" type="submit"
                      icon="fas fa-save" v-close-popup rounded unelevated/>
             </div>
 
@@ -182,7 +182,7 @@
                      v-model="folderName" outlined dense/>
 
             <div class="text-right">
-              <q-btn color="positive" :label="$tr('ui.label.save')" type="submit"
+              <q-btn color="green" :label="$tr('ui.label.save')" type="submit"
                      icon="fas fa-save" v-close-popup rounded unelevated/>
             </div>
 
@@ -230,7 +230,7 @@
             </div>
 
             <div class="text-right">
-              <q-btn color="positive" :label="$tr('ui.label.save')" type="submit"
+              <q-btn color="green" :label="$tr('ui.label.save')" type="submit"
                      icon="fas fa-save" v-close-popup rounded unelevated/>
             </div>
 
@@ -261,7 +261,7 @@
                       :options="selectFolders" outlined dense emit-value map-options/>
 
             <div class="text-right">
-              <q-btn color="positive" :label="$tr('ui.label.confirm')" type="submit"
+              <q-btn color="green" :label="$tr('ui.label.confirm')" type="submit"
                      icon="fas fa-save" v-close-popup rounded unelevated/>
             </div>
 
@@ -403,7 +403,7 @@ export default {
             ok: this.$tr('ui.label.delete'),
             message: this.$tr('ui.message.deleteRecord'),
             cancel: this.$tr('ui.label.cancel'),
-            color: 'negative'
+            color: 'red'
           }).onOk(() => {
             this.deleteElements()
           }).onCancel(() => {
