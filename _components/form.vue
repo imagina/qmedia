@@ -1,12 +1,12 @@
 <template>
   <div id="mediaForm" class="row full-width">
     <!--Top Content-->
-    <div v-if="label" class="col-12">
+    <div class="col-12">
       <div class="row justify-between items-center">
         <!--Title-->
         <div class="text-blue-grey">
           <q-icon name="fas fa-photo-video" class="q-mr-sm"/>
-          {{ this.label }}
+          <label>{{ label || $tr('ui.label.file') }}</label>
         </div>
         <!--= Add File Button =-->
         <q-btn :label="buttonLabel ? buttonLabel : $tr('ui.label.select')" no-caps @click="modalMedia = true" unelevated
