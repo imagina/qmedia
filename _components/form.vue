@@ -10,7 +10,7 @@
         </div>
         <!--= Add File Button =-->
         <q-btn :label="buttonLabel ? buttonLabel : $tr('ui.label.select')" no-caps @click="modalMedia = true" unelevated
-               :icon="buttonIcon ? buttonIcon : 'fas fa-plus'" color="primary" size="sm" rounded padding="xs sm"/>
+               :icon="buttonIcon ? buttonIcon : 'fas fa-plus'" color="green" rounded class="btn-extra-small"/>
       </div>
     </div>
     <!--Separator-->
