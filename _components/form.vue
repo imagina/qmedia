@@ -77,7 +77,7 @@ export default {
       default: false
     },
     value: {
-      type: Object,
+      //type: Object,
       default: () => {
         return {}
       }
@@ -164,7 +164,8 @@ export default {
           }
 
           //Default value to filesData
-          filesData = JSON.parse(JSON.stringify(this.value))
+          if (Array.isArray(this.value) && !this.value.lenght) filesData = {}
+          else filesData = JSON.parse(JSON.stringify(this.value))
 
           //Validate if exist zone
           if (!filesData[zone] || Array.isArray(filesData[zone])) filesData[zone] = {}
@@ -176,7 +177,10 @@ export default {
           filesData[zone].orders = ids.join()
         } else {
           if (file) this.files = [file]
-          filesData = JSON.parse(JSON.stringify(this.value))
+
+          if (Array.isArray(this.value) && !this.value.lenght) filesData = {}
+          else filesData = JSON.parse(JSON.stringify(this.value))
+
           if (!filesData[zone]) filesData[zone] = {}
           filesData[zone] = file ? file.id : (this.files[0] ? this.files[0].id : '')
           this.modalMedia = false
