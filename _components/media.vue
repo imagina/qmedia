@@ -1,47 +1,23 @@
 <template>
   <div id="mediaMasterComponent" class="q-mb-lg">
-    <!--Media content-->
-    <div id="mediaContent" class="bg-white q-py-md">
-      <!---Actions-->
-      <div id="mediaActions" class="row q-mb-md q-px-md">
-        <!--Search-->
-        <div class="col-12 col-md-4 col-xl-3">
-          <dynamic-field :field="{value : null, type : 'search'}" v-model="filter.search"/>
-        </div>
-        <!--Actions-->
-        <div class="col-12 col-md-8 col-xl-9">
-          <div class="row q-gutter-xs justify-end full-width">
-            <!--Toggle view as grid-->
-            <q-btn round unelevated size="12px" style="font-size: 8px; padding: 6px"
-                   color="light-blue" @click="listView = !listView"
-                   :icon="listView ? 'fas fa-grip-horizontal' : 'fas fa-list-ul'">
-              <q-tooltip>{{ $tr(`ui.message.${listView ? 'gribView' : 'listView'}`) }}</q-tooltip>
-            </q-btn>
-            <!--New File-->
-            <q-btn round unelevated size="12px" style="font-size: 8px; padding: 6px"
-                   color="green" icon="fas fa-plus">
-              <!---Menu actions-->
-              <q-menu anchor="bottom right" self="top right">
-                <q-list style="min-width: 100px">
-                  <q-item clickable v-close-popup v-for="(item, itemKey) in createActions" :key="itemKey"
-                          @click.native="item.action()">
-                    <q-item-section>
-                      <div class="row items-center">
-                        <q-icon :name="item.icon" class="q-mr-sm" color="blue-grey" size="18px"/>
-                        {{ item.label }}
-                      </div>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-menu>
-              <!--Tooltip-->
-              <q-tooltip>{{ $tr('qmedia.layout.newFile') }}</q-tooltip>
-            </q-btn>
-          </div>
-        </div>
-      </div>
+    <!--Crud folders-->
+    <crud :crud-data="import('@imagina/qmedia/_crud/folder')" type="onlyUpdate" ref="crudFolders"
+          @created="refreshData" @updated="refreshData" :custom-data="customCrudData.folder"/>
+
+    <!--Crud Files-->
+    <crud :crud-data="import('@imagina/qmedia/_crud/files')" type="onlyUpdate" ref="crudFiles"
+          @created="refreshData" @updated="refreshData" :custom-data="customCrudData.file"/>
+
+    <!--Top Content-->
+    <div class="box box-auto-height q-mb-md">
+      <!--Page Actions-->
+      <page-actions :extra-actions="pageActions" title="Media" @search="val => {filter.search = val}"/>
       <!--Bread crumb-->
-      <breadcrumb-component ref="breadcrumbComponent" :params="filter" @selected="setFolder" class="q-mb-md"/>
+      <breadcrumb-component ref="breadcrumbComponent" :params="filter" @selected="setFolder"/>
+    </div>
+
+    <!--Media content-->
+    <div id="mediaContent" class="box">
       <!---Recent Files-->
       <file-list-component grid-card ref="recentFilesComponent" :params="filesParams.recentFiles"
                            @selected="setFolder" :key="$uid()" rows-per-page="6" :title="$trp('ui.label.recent')"
@@ -58,12 +34,6 @@
       <file-list-component v-if="listView" ref="tableFilesComponent" :params="filesParams.tableFiles"
                            @selected="setFolder" rows-per-page="20" class="q-px-md" :key="$uid()"/>
     </div>
-    <!--Crud folders-->
-    <crud :crud-data="import('@imagina/qmedia/_crud/folder')" type="onlyUpdate" ref="crudFolders"
-          @created="refreshData" @updated="refreshData" :custom-data="customCrudData.folder"/>
-    <!--Crud Files-->
-    <crud :crud-data="import('@imagina/qmedia/_crud/files')" type="onlyUpdate" ref="crudFiles"
-          @created="refreshData" @updated="refreshData" :custom-data="customCrudData.file"/>
   </div>
 </template>
 <script>
@@ -101,18 +71,40 @@ export default {
     }
   },
   computed: {
-    //Actions to create file
-    createActions() {
+    //page actions
+    pageActions() {
       return [
+        'search',
         {
           label: this.$tr('qmedia.layout.newFolder'),
-          icon: 'fas fa-folder-plus',
+          props: {
+            icon: 'fas fa-folder-plus',
+            label: this.$tr('qmedia.layout.newFolder'),
+            round: false,
+            rounded: true,
+            padding: 'xs md',
+            color: 'green'
+          },
           action: () => this.$refs.crudFolders.create()
         },
         {
           label: this.$tr('qmedia.layout.newFile'),
-          icon: 'note_add',
+          props: {
+            icon: 'fas fa-file-upload',
+            label: this.$tr('qmedia.layout.newFile'),
+            round: false,
+            rounded: true,
+            padding: 'xs md',
+            color: 'green'
+          },
           action: () => this.$refs.crudFiles.create()
+        },
+        {
+          label: this.$tr(`ui.message.${this.listView ? 'gribView' : 'listView'}`),
+          props: {
+            icon: this.listView ? 'fas fa-grip-horizontal' : 'fas fa-list-ul'
+          },
+          action: () => this.listView = !this.listView
         },
       ]
     },
