@@ -1,51 +1,48 @@
 <template>
   <div id="mediaForm" class="row full-width">
-    <div v-if="label" class="col-12 q-heading q-caption q-my-sm label">{{ this.label }}</div>
-    <!--= image viewer =-->
+    <!--Top Content-->
     <div class="col-12">
-      <!--= if is multiple =-->
-      <q-scroll-area v-if="multiple" style="width: 100%; height: 150px;">
-        <draggable @change="pushData(false)" class="row  q-col-gutter-x-xs full-width" v-model="files" group="people">
-          <div
-            v-for="(file,index) in files"
-            :key="index"
-            :style="'background-image:url(' + getThumbnails(file,'smallThumb') + ')'"
-            class="image-multiple col-6 col-md-3 col-lg-2"
-          >
-            <q-btn round color="red" @click="deleteFile(index)" icon="fas fa-times" size="sm"/>
-
+      <div class="row justify-between items-center">
+        <!--Title-->
+        <div class="text-blue-grey">
+          <q-icon name="fas fa-photo-video" class="q-mr-sm"/>
+          <label>{{ label || $tr('ui.label.file') }}</label>
+        </div>
+        <!--= Add File Button =-->
+        <q-btn :label="buttonLabel ? buttonLabel : $tr('ui.label.select')" no-caps @click="modalMedia = true" unelevated
+               :icon="buttonIcon ? buttonIcon : 'fas fa-plus'" color="green" rounded class="btn-extra-small"/>
+      </div>
+    </div>
+    <!--Separator-->
+    <div class="col-12 q-mt-sm q-mb-md">
+      <q-separator/>
+    </div>
+    <!--= Files viewer =-->
+    <div class="col-12">
+      <div style="min-height: 160px">
+        <draggable @change="pushData(false)" class="row" v-model="files" group="filesDrag">
+          <div v-for="(file,index) in files" :key="index"
+               class="file-block col-6 col-md-3 relative-position">
+            <!--Image-->
+            <div class="file-block-content" v-if="file.is_image || file.isImage"
+                 @click="$refs.avatarImage.open(file.path)"
+                 :style="'background-image:url(' + getThumbnails(file,'smallThumb') + ')'">
+            </div>
+            <!--Icon-->
+            <div class="file-block-content row items-center justify-center" v-else>
+              <q-icon color="grey-8" size="40px"
+                      :name="((file.media_type || file.mediaType) == 'video') ? 'fas fa-video' : 'far fa-file-alt'"/>
+            </div>
+            <!--Action remove file-->
+            <q-btn round color="red" @click="deleteFile(index)" icon="fas fa-trash-alt" size="sm" unelevated
+                   class="btn-remove-file"/>
           </div>
         </draggable>
-
-      </q-scroll-area>
-      <!--= if not multiple =-->
-      <div v-else class="row q-col-gutter-x-sm">
-        <div v-for="(file,index) in files"
-             :key="index"
-             class="col-12 col-md-6 ">
-          <div v-if="file.is_image || file.isImage">
-            <img class="img-fluid" :src="file ? getThumbnails(file,'smallThumb') : ''" width="200px"
-                 style="max-height: 200px"/>
-          </div>
-          <div v-else>
-            <q-icon color="grey-8" name="far fa-file-alt" size="40px"/>
-          </div>
-          <q-btn class="absolute-top-left" style="top: 0; left: 0;" round color="red" @click="deleteFile(index)"
-                 icon="fas fa-times"
-                 size="sm"/>
-        </div>
       </div>
     </div>
 
-    <!--= Add File Button =-->
-    <q-btn
-      :label="buttonLabel ? buttonLabel : $tr('ui.label.addFile')"
-      :icon="buttonIcon ? buttonIcon : 'fas fa-upload'"
-      color="primary"
-      class="q-my-xs"
-      size="sm"
-      @click="modalMedia = true"/>
-
+    <!--Image preview-->
+    <avatar-image ref="avatarImage" no-preview/>
 
     <!--= Media List Modal =-->
     <q-dialog id="modalMedia" v-model="modalMedia" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
@@ -59,7 +56,6 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-
   </div>
 </template>
 <script>
@@ -81,7 +77,7 @@ export default {
       default: false
     },
     value: {
-      type: Object,
+      //type: Object,
       default: () => {
         return {}
       }
@@ -138,16 +134,13 @@ export default {
       // if is multiple media, call diff routes and transform diff the response.data
       if (this.multiple) {
         this.$crud.index('apiRoutes.qmedia.find', params).then(response => {
-          if (response.data)
-            this.files = response.data;
+          if (response.data && Array.isArray(response.data)) this.files = response.data;
           this.pushData()
         }).catch(error => {
         })
       } else {
         this.$crud.index('apiRoutes.qmedia.findFirst', params).then(response => {
-
-          if (response.data)
-            this.files = [response.data];
+          if (response.data) this.files = [response.data];
           this.pushData()
         }).catch(error => {
         })
@@ -160,35 +153,40 @@ export default {
      */
     pushData(file = false) {
       setTimeout(() => {
+        let zone = this.$clone(this.zone)
+        let filesData = {}
+
         if (this.multiple) {
           // if file is not false, its pusher on files list
           if (file) {
             this.files.push(file)
-            this.$alert.success("image: " + file.filename + " added")
+            this.$alert.success("image " + file.filename + " added")
           }
 
-          let vmodel = {}, ids = []
-          this.files.forEach(file => {
-            ids.push(file.id)
-          })
-          vmodel = JSON.parse(JSON.stringify(this.value))
-          if (!vmodel[this.zone])
-            vmodel[this.zone] = {}
+          //Default value to filesData
+          if (Array.isArray(this.value) && !this.value.lenght) filesData = {}
+          else filesData = JSON.parse(JSON.stringify(this.value))
 
-          vmodel[this.zone].files = ids
-          vmodel[this.zone].orders = ids.join();
-          this.$emit('input', vmodel)
+          //Validate if exist zone
+          if (!filesData[zone] || Array.isArray(filesData[zone])) filesData[zone] = {}
 
+          //Get files ID
+          let ids = this.files.map(file => file.id)
+          //Set files data
+          filesData[zone].files = ids
+          filesData[zone].orders = ids.join()
         } else {
-          if (file)
-            this.files = [file]
-          let vmodel = JSON.parse(JSON.stringify(this.value))
-          if (!vmodel[this.zone])
-            vmodel[this.zone] = {}
-          vmodel[this.zone] = file ? file.id : this.files[0] ? this.files[0].id : ''
-          this.$emit('input', vmodel)
+          if (file) this.files = [file]
+
+          if (Array.isArray(this.value) && !this.value.lenght) filesData = {}
+          else filesData = JSON.parse(JSON.stringify(this.value))
+
+          if (!filesData[zone]) filesData[zone] = {}
+          filesData[zone] = file ? file.id : (this.files[0] ? this.files[0].id : '')
           this.modalMedia = false
         }
+        //Emit data
+        this.$emit('input', this.$clone(filesData))
       }, 300)
     },
     /**
@@ -211,15 +209,30 @@ export default {
 </script>
 <style lang="stylus">
 #mediaForm
-  .image-multiple
-    background-repeat no-repeat
-    background-size 100% auto
-    background-position center center
-    height 150px
-    overflow hidden
+  border dashed 1px $blue-grey
+  border-radius 5px
+  padding 8px 10px
+
+  .file-block
+    padding 3px
+
+    .file-block-content
+      cursor pointer
+      background-repeat no-repeat
+      background-size 100% auto
+      background-position center center
+      height 150px
+      overflow hidden
+      border 1px solid $grey-4
+      border-radius 5px
 
   .label
     text-transform capitalize
+
+  .btn-remove-file
+    position absolute
+    right 0
+    top 0
 
 #modalMedia
   .q-card

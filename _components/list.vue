@@ -4,14 +4,14 @@
     <div class="col-12 backend-page relative-position">
       <!--== Table ==-->
       <q-table
-        :data="dataTable"
-        :columns="columnsTable"
-        :pagination.sync="pagination"
-        selection="multiple"
-        :selected.sync="rowsSelected"
-        row-key="filename"
-        @request="getData"
-        class="box-table"
+          :data="dataTable"
+          :columns="columnsTable"
+          :pagination.sync="pagination"
+          selection="multiple"
+          :selected.sync="rowsSelected"
+          row-key="filename"
+          @request="getData"
+          class="box-table"
       >
         <!--Header-->
         <template slot="top">
@@ -42,7 +42,7 @@
                          :label="$tr('ui.label.delete')" rounded unelevated
                          v-if="rowsSelected.length"/>
                   <!--Button add folder -->
-                  <q-btn color="positive" icon="fas fa-folder-plus" class="q-ml-xs"
+                  <q-btn color="green" icon="fas fa-folder-plus" class="q-ml-xs"
                          @click="dialogCreateFolder=true" rounded unelevated
                          :label="$tr('qmedia.layout.newFolder')"
                          v-if="$auth.hasAccess('media.folders.create')"
@@ -59,16 +59,16 @@
                   </q-btn>
                   <!---Uploader Files-->
                   <q-uploader
-                    :key="uploaderID"
-                    multiple v-show="false"
-                    auto-expand
-                    field-name="file"
-                    :factory="files => factoryUploader(files)"
-                    @fail="$alert.error({message: `${this.$tr('ui.message.recordNoCreated')}`})"
-                    @finish="finishUploadFiles(); loadingUploadFile = false"
-                    hide-upload-button
-                    ref="uploadComponent"
-                    @added="()=>{$refs.uploadComponent.upload(); loadingUploadFile = true}"/>
+                      :key="uploaderID"
+                      multiple v-show="false"
+                      auto-expand
+                      field-name="file"
+                      :factory="files => factoryUploader(files)"
+                      @fail="$alert.error({message: `${this.$tr('ui.message.recordNoCreated')}`})"
+                      @finish="finishUploadFiles(); loadingUploadFile = false"
+                      hide-upload-button
+                      ref="uploadComponent"
+                      @added="()=>{$refs.uploadComponent.upload(); loadingUploadFile = true}"/>
                   <!--Button refresh -->
                   <q-btn color="info" icon="fas fa-sync" class="q-ml-xs" rounded unelevated
                          @click="getData({pagination:pagination,search:filter.search},true)">
@@ -93,7 +93,7 @@
           <q-btn v-if="props.row.isFolder" icon="far fa-folder" flat @click="getDataByFolder(props.row)" rounded
                  unelevated/>
           <div v-else-if="props.row.isImage">
-            <div class="image" :style="'background-image: url('+props.value+')'" alt="">
+            <div class="image" :style="'background-image: url('+props.value+')'" alt="" style="min-width: 60px">
             </div>
           </div>
           <div v-else>
@@ -115,11 +115,11 @@
                    @click="$emit('data', props.row)" rounded unelevated/>
           </div>
           <div v-else-if="!embebed">
-            <q-btn icon="fas fa-pen" color="positive" size="sm" class="q-mx-xs" round unelevated
+            <q-btn icon="fas fa-pen" color="green" size="sm" class="q-mx-xs" round unelevated
                    @click="props.row.isFolder ? editFolder(props.row.filename,true,props.row.id) : editFile(true,props.row)">
               <q-tooltip>{{ $tr('ui.label.edit') }}</q-tooltip>
             </q-btn>
-            <q-btn icon="far fa-trash-alt" color="negative" size="sm" class="q-mx-xs" round unelevated
+            <q-btn icon="far fa-trash-alt" color="red" size="sm" class="q-mx-xs" round unelevated
                    @click="dialogDeleteItem.handler(props.row.id,props.row.isFolder)">
               <q-tooltip>{{ $tr('ui.label.delete') }}</q-tooltip>
             </q-btn>
@@ -151,7 +151,7 @@
                      v-model="folderName" outlined dense/>
 
             <div class="text-right">
-              <q-btn color="positive" :label="$tr('ui.label.save')" type="submit"
+              <q-btn color="green" :label="$tr('ui.label.save')" type="submit"
                      icon="fas fa-save" v-close-popup rounded unelevated/>
             </div>
 
@@ -182,7 +182,7 @@
                      v-model="folderName" outlined dense/>
 
             <div class="text-right">
-              <q-btn color="positive" :label="$tr('ui.label.save')" type="submit"
+              <q-btn color="green" :label="$tr('ui.label.save')" type="submit"
                      icon="fas fa-save" v-close-popup rounded unelevated/>
             </div>
 
@@ -230,7 +230,7 @@
             </div>
 
             <div class="text-right">
-              <q-btn color="positive" :label="$tr('ui.label.save')" type="submit"
+              <q-btn color="green" :label="$tr('ui.label.save')" type="submit"
                      icon="fas fa-save" v-close-popup rounded unelevated/>
             </div>
 
@@ -261,7 +261,7 @@
                       :options="selectFolders" outlined dense emit-value map-options/>
 
             <div class="text-right">
-              <q-btn color="positive" :label="$tr('ui.label.confirm')" type="submit"
+              <q-btn color="green" :label="$tr('ui.label.confirm')" type="submit"
                      icon="fas fa-save" v-close-popup rounded unelevated/>
             </div>
 
@@ -283,7 +283,7 @@ import mediaService from '@imagina/qmedia/_services/index'
 
 export default {
   props: {
-    disk : {default : 'publicmedia'},
+    disk: {default: 'publicmedia'},
     embebed: {
       type: Boolean,
       default: false
@@ -403,7 +403,7 @@ export default {
             ok: this.$tr('ui.label.delete'),
             message: this.$tr('ui.message.deleteRecord'),
             cancel: this.$tr('ui.label.cancel'),
-            color: 'negative'
+            color: 'red'
           }).onOk(() => {
             this.deleteElements()
           }).onCancel(() => {
@@ -444,7 +444,7 @@ export default {
           take: pagination.rowsPerPage,
           filter: {
             ...this.filter,
-            disk : this.disk
+            disk: this.disk
           },
         },
         refresh: refresh
@@ -455,7 +455,7 @@ export default {
         let breacrumb = await this.$crud.show('apiRoutes.qmedia.breadcrumb', this.filter.folderName, params)
         this.breadcrumbs = breacrumb.data
       } else
-        // reseting breadcrumb
+          // reseting breadcrumb
       {
         this.breadcrumbs = this.defaultBreadCrum
       }
