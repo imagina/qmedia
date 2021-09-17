@@ -8,31 +8,41 @@
     <crud :crud-data="import('@imagina/qmedia/_crud/files')" type="onlyUpdate" ref="crudFiles"
           @created="refreshData" @updated="refreshData" :custom-data="customCrudData.file"/>
 
-    <!--Top Content-->
+    <!--Page Actions-->
     <div class="box box-auto-height q-mb-md">
-      <!--Page Actions-->
       <page-actions :extra-actions="pageActions" title="Media" @search="val => {filter.search = val}"/>
-      <!--Bread crumb-->
+    </div>
+
+    <!--Bread crumb-->
+    <div class="box box-auto-height q-mb-md">
       <breadcrumb-component ref="breadcrumbComponent" :params="filter" @selected="setFolder"/>
     </div>
 
-    <!--Media content-->
-    <div id="mediaContent" class="box">
-      <!---Recent Files-->
-      <file-list-component grid-card ref="recentFilesComponent" :params="filesParams.recentFiles"
-                           @selected="setFolder" :key="$uid()" rows-per-page="6" :title="$trp('ui.label.recent')"
-                           no-pagination class="q-px-md q-mb-lg"/>
-      <!---Folders Files-->
-      <file-list-component v-if="!listView" grid-chip ref="foldersFilesComponent" :params="filesParams.folderFiles"
-                           @selected="setFolder" rows-per-page="24" :title="$trp('ui.label.folder')" counter order
-                           class="q-px-md q-mb-lg" :key="$uid()"/>
-      <!---Other Files-->
-      <file-list-component v-if="!listView" grid-card ref="otherFilesComponent" :params="filesParams.otherFiles"
-                           @selected="setFolder" rows-per-page="18" :title="$trp('ui.label.file')" counter order
-                           class="q-px-md" :key="$uid()"/>
-      <!---Table Files-->
-      <file-list-component v-if="listView" ref="tableFilesComponent" :params="filesParams.tableFiles"
-                           @selected="setFolder" rows-per-page="20" class="q-px-md" :key="$uid()"/>
+    <!---Recent Files-->
+    <div class="box box-auto-height q-mb-md">
+      <file-list-component ref="recentFilesComponent" :params="filesParams.recentFiles" key="recentFiles"
+                           grid-card no-pagination :title="$trp('ui.label.recent')" icon="fas fa-hourglass-half"
+                           @selected="setFolder" rows-per-page="6"/>
+    </div>
+
+    <!---Folders Files-->
+    <div class="box box-auto-height q-mb-md">
+      <file-list-component ref="foldersFilesComponent" :params="filesParams.folderFiles" key="foldersContent"
+                           grid-chip counter order :title="$trp('ui.label.folder')" icon="fas fa-folder-open"
+                           rows-per-page="24" @selected="setFolder"/>
+    </div>
+
+    <!---Other Files-->
+    <div class="box box-auto-height q-mb-md relative-position">
+      <!--List-->
+      <file-list-component ref="otherFilesComponent" :params="filesParams.otherFiles" key="otherFiles"
+                           counter :grid-card="!listView" order :title="$trp('ui.label.file')" icon="fas fa-photo-video"
+                           rows-per-page="24"/>
+      <!--toogle view-->
+      <q-btn :icon="listView ? 'fas fa-grip-horizontal' : 'fas fa-list-ul'" class="btn-toggle-view btn-small"
+             @click="listView = !listView" round unelevated outline color="blue-grey">
+        <q-tooltip>{{ this.$tr(`ui.message.${this.listView ? 'gribView' : 'listView'}`) }}</q-tooltip>
+      </q-btn>
     </div>
   </div>
 </template>
@@ -98,19 +108,12 @@ export default {
             color: 'green'
           },
           action: () => this.$refs.crudFiles.create()
-        },
-        {
-          label: this.$tr(`ui.message.${this.listView ? 'gribView' : 'listView'}`),
-          props: {
-            icon: this.listView ? 'fas fa-grip-horizontal' : 'fas fa-list-ul'
-          },
-          action: () => this.listView = !this.listView
-        },
+        }
       ]
     },
     //Params to component files
     filesParams() {
-      return {
+      return this.$clone({
         recentFiles: {
           ...this.filter,
           search: null,
@@ -134,15 +137,8 @@ export default {
             field: 'filename',
             way: 'asc'
           }
-        },
-        tableFiles: {
-          ...this.filter,
-          order: {
-            field: 'created_at',
-            way: 'desc'
-          }
         }
-      }
+      })
     },
     //Custom crud params
     customCrudData() {
@@ -205,17 +201,17 @@ export default {
       setTimeout(() => {
         this.$refs.breadcrumbComponent.getData(true)
         this.$refs.recentFilesComponent.getData(true)
-        //As list view
-        if (this.listView) {
-          this.$refs.tableFilesComponent.getData(true)
-        } else {
-          this.$refs.foldersFilesComponent.getData(true)
-          this.$refs.otherFilesComponent.getData(true)
-        }
+        this.$refs.foldersFilesComponent.getData(true)
+        this.$refs.otherFilesComponent.getData(true)
       }, 100)
     }
   }
 }
 </script>
 <style lang="stylus">
+#mediaMasterComponent
+  .btn-toggle-view
+    position absolute
+    top 7px
+    right 15px
 </style>

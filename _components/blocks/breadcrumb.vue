@@ -96,6 +96,7 @@ export default {
   #breadcrumbContent
     padding 10px 15px
     background $grey-2
+    border-radius 10px
 
     .q-breadcrumbs__el
       font-size 14px

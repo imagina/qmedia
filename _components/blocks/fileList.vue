@@ -10,11 +10,13 @@
                  :grid="(gridCard || gridChip) ? true : false"
                  :rows-per-page-options="table.rowsPerPageOptions" @request="getDataTable">
           <!---Top content-->
-          <template v-if="gridChip || gridCard" v-slot:top>
-            <div id="tableTopContent" :class="`relative-position ${order ? 'cursor-pointer' : ''}`"
-                 @click="(order && table.filter.order) ? toggleOrder() : false">
+          <template v-slot:top>
+            <div id="tableTopContent" @click="(order && table.filter.order) ? toggleOrder() : false"
+                 :class="`text-blue-grey row items-center relative-position ${order ? 'cursor-pointer' : ''}`">
               <!---Title-->
-              <span>{{ title }}</span>
+              <q-icon v-if="icon" :name="icon" class="q-mr-sm"/>
+              <!---Title-->
+              <b>{{ title }}</b>
               <!--Counter-->
               <span v-if="counter" class="q-ml-sm">({{ table.pagination.rowsNumber }})</span>
               <!--Arrow icon to order-->
@@ -22,6 +24,10 @@
                       :name="`fas fa-arrow-${table.filter.order.way == 'asc' ? 'up' : 'down'}`"/>
               <!--Tooltip-->
               <q-tooltip v-if="order">{{ $tr('ui.label.order') }}</q-tooltip>
+            </div>
+            <!--Separator-->
+            <div class="full-width">
+              <q-separator class="q-my-sm"/>
             </div>
           </template>
           <!--Custom columns-->
@@ -144,20 +150,23 @@
         <!--Image preview-->
         <avatar-image ref="avatarImage" no-preview/>
         <!---PDF preview-->
-        <q-dialog v-model="modalPdf.show" maximized>
-          <q-card id="cardContent" class="bg-grey-1 backend-page row">
-            <!--Header-->
-            <q-toolbar class="bg-primary text-white">
-              <q-toolbar-title>Media</q-toolbar-title>
-              <q-btn flat v-close-popup icon="fas fa-times"/>
-            </q-toolbar>
-
-            <!--Content-->
-            <q-card-section class="relative-position col-12 q-pa-none">
-              <iframe :src="modalPdf.src" width="100%" style="height: calc(100vh - 55px)"/>
-            </q-card-section>
-          </q-card>
-        </q-dialog>
+        <master-modal v-model="modalPdf.show" :title="`PDF | ${modalPdf.fileName}`" width="100%">
+          <iframe :src="modalPdf.src" width="100%" style="height: calc(100vh - 272px)"/>
+        </master-modal>
+        <!---audio/video-->
+        <master-modal v-model="modalAudioVideo.show"
+                      :title="$helper.toCapitalize(modalAudioVideo.type) + ' | ' + modalAudioVideo.fileName">
+          <!--Audio-->
+          <audio controls v-if="modalAudioVideo.type == 'audio'" style="width: 100%">
+            <source :src="modalAudioVideo.src" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+          <!--Video-->
+          <video width="100%" controls v-if="modalAudioVideo.type == 'video'">
+            <source :src="modalAudioVideo.src" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </master-modal>
         <!--Loading-->
         <inner-loading :visible="loading"/>
       </div>
@@ -172,6 +181,7 @@
 </template>
 <script>
 export default {
+  name: 'fileListComponent',
   props: {
     params: {
       default: () => {
@@ -181,6 +191,7 @@ export default {
     gridCard: {type: Boolean, default: false},
     gridChip: {type: Boolean, default: false},
     title: {default: false},
+    icon: {default: false},
     rowsPerPage: {default: 20},
     noPagination: {type: Boolean, default: false},
     counter: {type: Boolean, default: false},
@@ -233,21 +244,28 @@ export default {
       },
       modalPdf: {
         show: false,
-        src: false
+        src: false,
+        fileName: '',
+      },
+      modalAudioVideo: {
+        show: false,
+        src: false,
+        type: '',
+        fileName: ''
       }
     }
   },
   computed: {
     //File Actions
     fileActions() {
-      return [
+      let response = [
         {
           label: this.$tr('ui.label.edit'),
           icon: 'fas fa-pen',
           color: 'green',
           action: (item) => {
-            if (item.isImage) this.$refs.crudFile.update(item)
-            else this.$refs.crudFolder.update(item)
+            if (item.isFolder) this.$refs.crudFolder.update(item)
+            else this.$refs.crudFile.update(item)
           }
         },
         {
@@ -255,11 +273,23 @@ export default {
           icon: 'fas fa-trash',
           color: 'red',
           action: (item) => {
-            if (item.isImage) this.$refs.crudFile.delete(item)
-            else this.$refs.crudFolder.delete(item)
+            if (item.isFolder) this.$refs.crudFolder.delete(item)
+            else this.$refs.crudFile.delete(item)
           }
         }
       ]
+
+      //Add download action
+      if (this.$auth.hasAccess('media.medias.download') && !this.params.isFolder)
+        response.unshift({
+          label: this.$tr('ui.label.download'),
+          icon: 'fas fa-file-download',
+          color: 'info',
+          action: (item) => this.$helper.downloadFromURL(item.path)
+        })
+
+      //Response
+      return response
     },
     //Table columns
     tableColumns() {
@@ -275,7 +305,7 @@ export default {
         {
           name: 'type', label: this.$tr('ui.form.type'), align: 'left', field: 'id',
           format: (val, row) => row ? (row.isFolder ? this.$tr('ui.label.folder') :
-            (row.isImage ? this.$tr('ui.label.image') : this.$tr('ui.label.file'))) : ''
+              (row.isImage ? this.$tr('ui.label.image') : this.$tr('ui.label.file'))) : ''
         },
         {
           name: 'created_at', label: this.$tr('ui.form.createdAt'), field: 'createdAt',
@@ -293,9 +323,22 @@ export default {
       //Get data table
       let items = this.table.data
 
+      //Icons by extensions
+      let iconByExtension = {
+        mp3: 'fas fa-file-audio',
+        mp4: 'fas fa-file-video',
+        pdf: 'fas fa-file-pdf',
+        xlsx: 'fas fa-file-excel',
+        xls: 'fas fa-file-excel',
+        docx: 'fas fa-file-word',
+        doc: 'fas fa-file-word',
+        pptx: 'fas fa-file-powerpoint',
+        ppt: 'fas fa-file-powerpoint',
+      }
+
       //Transform data
       items.forEach(item => {
-        item.icon = item.isFolder ? 'fas fa-folder' : (item.mediaType == 'video' ? 'fas fa-video' : 'fas fa-file')
+        item.icon = item.isFolder ? 'fas fa-folder' : (iconByExtension[item.extension] || 'fas fa-file')
       })
 
       //Response
@@ -367,8 +410,29 @@ export default {
       }
       //Action if is PDF
       if (file.extension == 'pdf') {
-        this.modalPdf.src = file.path
-        this.modalPdf.show = true
+        this.modalPdf = {
+          show: true,
+          src: file.path,
+          fileName: file.filename
+        }
+      }
+      //Action if is mp3
+      if (file.extension == 'mp3') {
+        this.modalAudioVideo = {
+          show: true,
+          src: file.path,
+          type: 'audio',
+          fileName: file.filename
+        }
+      }
+      //Action if is mp4
+      if (file.extension == 'mp4') {
+        this.modalAudioVideo = {
+          show: true,
+          src: file.path,
+          type: 'video',
+          fileName: file.filename
+        }
       }
     },
     //Toggle order
@@ -411,11 +475,11 @@ export default {
 
           .file-image
             margin-right 15px
-            height 25px
-            width 25px
+            height 36px
+            width 36px
             background-repeat no-repeat
             background-position center
-            background-size contain
+            background-size cover
 
       .file-card //Card styles
         color $grey-9

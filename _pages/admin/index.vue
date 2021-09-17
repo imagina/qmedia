@@ -1,14 +1,10 @@
 <template>
-  <div id="indexMedia">
-    <dynamic-field :field="mediaField.newMedia" class="q-mb-xl"/>
-
-    <dynamic-field :field="mediaField.oldMedia" class="q-mb-xl"/>
-
+  <div id="indexMediaPage">
     <!--New Media list-->
-    <media-master/>
+    <media-master v-if="true"/>
 
     <!--Old media list-->
-    <div class="col-12" v-if="true">
+    <div class="col-12" v-else>
       <media-list/>
     </div>
   </div>
@@ -17,8 +13,6 @@
 /*Components*/
 import mediaList from '@imagina/qmedia/_components/list'
 import mediaMaster from '@imagina/qmedia/_components/media'
-
-import mediaForm from '@imagina/qmedia/_components/form'
 
 export default {
   props: {},
@@ -32,41 +26,10 @@ export default {
   data() {
     return {}
   },
-  computed: {
-    mediaField() {
-      return {
-        oldMedia: {
-          name: 'mediasSingle',
-          value: {},
-          type: 'media',
-          props: {
-            label: this.$tr('ui.form.firstImage'),
-            zone: 'mainimage',
-            entity: "Modules\\Iblog\\Entities\\Category",
-            entityId: null,
-            multiple: true
-          }
-        },
-        newMedia: {
-          name: 'mediasSingle',
-          value: {},
-          type: 'selectMedia',
-          props: {
-            label: this.$tr('ui.form.firstImage'),
-            zone: 'mainimage',
-            entity: "Modules\\Iblog\\Entities\\Category",
-            entityId: null,
-            multiple: true
-          }
-        }
-      }
-    }
-  },
+  computed: {},
   methods: {}
 
 }
 </script>
 <style lang="stylus">
-#indexMedia
-  box-shadow $custom-shadow-box
 </style>
