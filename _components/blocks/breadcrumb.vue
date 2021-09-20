@@ -12,7 +12,7 @@
         </template>
         <!---Items on breadcrumb-->
         <q-breadcrumbs-el v-for="(item,index) in breadcrumbs" :key="index"
-                          @click="setFolder(item.id); $emit('selected',item.id)"
+                          @click="setFolder(item.id); $emit('selected',{...item, isFolder : true})"
                           :label="item.name" color="primary" class="cursor-pointer"/>
       </q-breadcrumbs>
     </div>

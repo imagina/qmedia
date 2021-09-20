@@ -2,11 +2,13 @@
   <div id="mediaMasterComponent" class="q-mb-lg">
     <!--Crud folders-->
     <crud :crud-data="import('@imagina/qmedia/_crud/folder')" type="onlyUpdate" ref="crudFolders"
-          @created="refreshData" @updated="refreshData" :custom-data="customCrudData.folder"/>
+          @created="refreshData" @updated="refreshData" @deleted="refreshData"
+          :custom-data="customCrudData.folder"/>
 
     <!--Crud Files-->
     <crud :crud-data="import('@imagina/qmedia/_crud/files')" type="onlyUpdate" ref="crudFiles"
-          @created="refreshData" @updated="refreshData" :custom-data="customCrudData.file"/>
+          @created="refreshData" @updated="refreshData" @deleted="refreshData"
+          :custom-data="customCrudData.file"/>
 
     <!--Page Actions-->
     <div class="box box-auto-height q-mb-md">
@@ -20,36 +22,24 @@
 
     <!---Recent Files-->
     <div class="box box-auto-height q-mb-md">
-      <file-list-component ref="recentFilesComponent" :params="filesParams.recentFiles" key="recentFiles"
-                           grid-card no-pagination :title="$trp('ui.label.recent')" icon="fas fa-hourglass-half"
-                           @selected="setFolder" rows-per-page="6"/>
+      <file-list-component v-bind="fileListParams.recentFiles" @selected="setFolder"/>
     </div>
 
     <!---Folders Files-->
     <div class="box box-auto-height q-mb-md">
-      <file-list-component ref="foldersFilesComponent" :params="filesParams.folderFiles" key="foldersContent"
-                           grid-chip counter order :title="$trp('ui.label.folder')" icon="fas fa-folder-open"
-                           rows-per-page="24" @selected="setFolder"/>
+      <file-list-component v-bind="fileListParams.folderFiles" @selected="setFolder"/>
     </div>
 
     <!---Other Files-->
-    <div class="box box-auto-height q-mb-md relative-position">
-      <!--List-->
-      <file-list-component ref="otherFilesComponent" :params="filesParams.otherFiles" key="otherFiles"
-                           counter :grid-card="!listView" order :title="$trp('ui.label.file')" icon="fas fa-photo-video"
-                           rows-per-page="24"/>
-      <!--toogle view-->
-      <q-btn :icon="listView ? 'fas fa-grip-horizontal' : 'fas fa-list-ul'" class="btn-toggle-view btn-small"
-             @click="listView = !listView" round unelevated outline color="blue-grey">
-        <q-tooltip>{{ this.$tr(`ui.message.${this.listView ? 'gribView' : 'listView'}`) }}</q-tooltip>
-      </q-btn>
+    <div class="box box-auto-height q-mb-md">
+      <file-list-component v-bind="fileListParams.otherFiles"/>
     </div>
   </div>
 </template>
 <script>
 //components
 import breadcrumbComponent from '@imagina/qmedia/_components/blocks/breadcrumb'
-import fileListComponent from '@imagina/qmedia/_components/blocks/fileList'
+import fileListComponent from '@imagina/qsite/_components/master/fileList'
 
 export default {
   beforeDestroy() {
@@ -111,31 +101,113 @@ export default {
         }
       ]
     },
+    //Item actions to file list
+    itemFileListActions() {
+      //Instance main actions
+      let mainActions = [
+        {
+          label: this.$tr('ui.label.edit'),
+          icon: 'fas fa-pen',
+          action: (item) => {
+            if (item.isFolder) this.$refs.crudFolders.update(item)
+            else this.$refs.crudFiles.update(item)
+          }
+        },
+        {
+          label: this.$tr('ui.label.delete'),
+          icon: 'fas fa-trash',
+          action: (item) => {
+            if (item.isFolder) this.$refs.crudFolders.delete(item)
+            else this.$refs.crudFiles.delete(item)
+          }
+        }
+      ]
+
+      //Instance download action
+      let downloadAction = {
+        label: this.$tr('ui.label.download'),
+        vIf: this.$auth.hasAccess('media.medias.download'),
+        icon: 'fas fa-file-download',
+        action: (item) => this.$helper.downloadFromURL(item.path)
+      }
+
+      //Response
+      return {
+        mainActions: mainActions,
+        includeDownload: [downloadAction, ...mainActions]
+      }
+    },
     //Params to component files
-    filesParams() {
+    fileListParams() {
       return this.$clone({
         recentFiles: {
-          ...this.filter,
-          search: null,
-          order: {
-            field: 'created_at',
-            way: 'desc'
+          ref: 'recentFilesComponent',
+          key: 'recentFiles',
+          icon: 'fas fa-hourglass-half',
+          title: this.$trp('ui.label.recent'),
+          itemActions: this.itemFileListActions.includeDownload,
+          loadFiles: {
+            apiRoute: 'apiRoutes.qmedia.files',
+            requestParams: {
+              take: 6,
+              filter: {
+                ...this.filter,
+                search: null,
+                order: {
+                  field: 'created_at',
+                  way: 'desc'
+                }
+              }
+            }
           }
         },
         folderFiles: {
-          ...this.filter,
-          isFolder: true,
-          order: {
-            field: 'filename',
-            way: 'asc'
+          ref: 'foldersFilesComponent',
+          key: 'foldersContent',
+          gridType: 'chip',
+          icon: 'fas fa-folder-open',
+          title: this.$trp('ui.label.folder'),
+          allowCounter: true,
+          allowOrder: true,
+          itemActions: this.itemFileListActions.mainActions,
+          allowPagination: true,
+          loadFiles: {
+            apiRoute: 'apiRoutes.qmedia.files',
+            requestParams: {
+              take: 24,
+              filter: {
+                ...this.filter,
+                isFolder: true,
+                order: {
+                  field: 'filename',
+                  way: 'asc'
+                }
+              }
+            }
           }
         },
         otherFiles: {
-          ...this.filter,
-          isFolder: false,
-          order: {
-            field: 'filename',
-            way: 'asc'
+          ref: 'otherFilesComponent',
+          key: 'otherFiles',
+          icon: 'fas fa-photo-video',
+          title: this.$trp('ui.label.file'),
+          allowCounter: true,
+          allowOrder: true,
+          itemActions: this.itemFileListActions.includeDownload,
+          allowPagination: true,
+          loadFiles: {
+            apiRoute: 'apiRoutes.qmedia.files',
+            requestParams: {
+              take: 24,
+              filter: {
+                ...this.filter,
+                isFolder: false,
+                order: {
+                  field: 'filename',
+                  way: 'asc'
+                }
+              }
+            }
           }
         }
       })
@@ -193,8 +265,8 @@ export default {
       this.$root.$on('page.data.refresh', () => this.refreshData())
     },
     //Set folder
-    setFolder(folderId = false) {
-      this.filter = {folderId: folderId, search: null}
+    setFolder(file) {
+      if (file.isFolder) this.filter = {folderId: file.id, search: null}
     },
     //Refresh Data
     refreshData() {
@@ -209,9 +281,5 @@ export default {
 }
 </script>
 <style lang="stylus">
-#mediaMasterComponent
-  .btn-toggle-view
-    position absolute
-    top 7px
-    right 15px
+//#mediaMasterComponent
 </style>
