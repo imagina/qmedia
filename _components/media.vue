@@ -195,6 +195,7 @@ export default {
           allowOrder: true,
           itemActions: this.itemFileListActions.includeDownload,
           allowPagination: true,
+          allowChangeView: true,
           loadFiles: {
             apiRoute: 'apiRoutes.qmedia.files',
             requestParams: {

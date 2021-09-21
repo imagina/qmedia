@@ -28,7 +28,9 @@ export default {
             value: null,
             type: 'uploader',
             props: {
-              vIf: (this.crudInfo.typeForm == 'create') ? true : false
+              vIf: (this.crudInfo.typeForm == 'create') ? true : false,
+              title: this.$trp('ui.label.file'),
+              gridColClass: 'col-xs-12'
             }
           },
           altAttribute: {
