@@ -20,19 +20,14 @@
       <breadcrumb-component ref="breadcrumbComponent" :params="filter" @selected="setFolder"/>
     </div>
 
-    <!---Recent Files-->
-    <div class="box box-auto-height q-mb-md">
-      <file-list-component v-bind="fileListParams.recentFiles" @selected="setFolder"/>
-    </div>
-
     <!---Folders Files-->
     <div class="box box-auto-height q-mb-md">
-      <file-list-component v-bind="fileListParams.folderFiles" @selected="setFolder"/>
+      <file-list-component v-bind="fileListParams.folderFiles" @clickItem="setFolder"/>
     </div>
 
     <!---Other Files-->
     <div class="box box-auto-height q-mb-md">
-      <file-list-component v-bind="fileListParams.otherFiles"/>
+      <file-list-component v-bind="fileListParams.otherFiles" @selected="files => $emit('selected',files)"/>
     </div>
   </div>
 </template>
@@ -46,7 +41,8 @@ export default {
     this.$root.$off('page.data.refresh')
   },
   props: {
-    disk: {default: 'publicmedia'}
+    disk: {default: 'publicmedia'},
+    allowSelect: {type: Number, default: 0}
   },
   components: {
     breadcrumbComponent,
@@ -140,27 +136,6 @@ export default {
     //Params to component files
     fileListParams() {
       return this.$clone({
-        recentFiles: {
-          ref: 'recentFilesComponent',
-          key: 'recentFiles',
-          icon: 'fas fa-hourglass-half',
-          title: this.$trp('ui.label.recent'),
-          itemActions: this.itemFileListActions.includeDownload,
-          loadFiles: {
-            apiRoute: 'apiRoutes.qmedia.files',
-            requestParams: {
-              take: 6,
-              filter: {
-                ...this.filter,
-                search: null,
-                order: {
-                  field: 'created_at',
-                  way: 'desc'
-                }
-              }
-            }
-          }
-        },
         folderFiles: {
           ref: 'foldersFilesComponent',
           key: 'foldersContent',
@@ -169,7 +144,7 @@ export default {
           title: this.$trp('ui.label.folder'),
           allowCounter: true,
           allowOrder: true,
-          itemActions: this.itemFileListActions.mainActions,
+          itemActions: this.allowSelect ? [] : this.itemFileListActions.mainActions,
           allowPagination: true,
           loadFiles: {
             apiRoute: 'apiRoutes.qmedia.files',
@@ -193,9 +168,10 @@ export default {
           title: this.$trp('ui.label.file'),
           allowCounter: true,
           allowOrder: true,
-          itemActions: this.itemFileListActions.includeDownload,
+          itemActions: this.allowSelect ? [] : this.itemFileListActions.includeDownload,
           allowPagination: true,
           allowChangeView: true,
+          allowSelect: this.allowSelect,
           loadFiles: {
             apiRoute: 'apiRoutes.qmedia.files',
             requestParams: {
@@ -204,8 +180,8 @@ export default {
                 ...this.filter,
                 isFolder: false,
                 order: {
-                  field: 'filename',
-                  way: 'asc'
+                  field: 'created_at',
+                  way: 'desc'
                 }
               }
             }
@@ -273,7 +249,6 @@ export default {
     refreshData() {
       setTimeout(() => {
         this.$refs.breadcrumbComponent.getData(true)
-        this.$refs.recentFilesComponent.getData(true)
         this.$refs.foldersFilesComponent.getData(true)
         this.$refs.otherFilesComponent.getData(true)
       }, 100)
