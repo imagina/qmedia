@@ -4,7 +4,8 @@
     <file-list v-model="filesData" v-bind="fileListParams"/>
     <!--Select media-->
     <master-modal v-model="modalMedia.show" v-bind="modalMediaParams">
-      <media :allow-select="maxFiles - filesData.length" @selected="files => modalMedia.selectedFiles = $clone(files)"/>
+      <media :allow-select="quantityFiles - filesData.length"
+             @selected="files => modalMedia.selectedFiles = $clone(files)"/>
     </master-modal>
   </div>
 </template>
@@ -21,7 +22,8 @@ export default {
     entityId: {default: null},
     multiple: {type: Boolean, default: false},
     gridColClass: {default: false},
-    label: {default: ''}
+    label: {default: ''},
+    maxFiles: {deafult: false}
   },
   components: {fileList, media},
   watch: {
@@ -49,13 +51,13 @@ export default {
   },
   computed: {
     //Validate max Files
-    maxFiles() {
-      return this.multiple ? 12 : 1
+    quantityFiles() {
+      return this.maxFiles ? this.maxFiles : (this.multiple ? 12 : 1)
     },
     //Params to file List
     fileListParams() {
       return {
-        title: `${this.$clone(this.label)} (${this.filesData.length}/${this.maxFiles})`,
+        title: `${this.$clone(this.label)} (${this.filesData.length}/${this.quantityFiles})`,
         gridColClass: this.gridColClass || (this.multiple ? 'col-6 col-md-4' : 'col-12'),
         loadFiles: {
           apiRoute: 'apiRoutes.qmedia.files',
@@ -80,7 +82,7 @@ export default {
               this.modalMedia.selectedFiles = []
               this.modalMedia.show = true
             },
-            disable: this.filesData.length >= this.maxFiles ? true : false
+            disable: this.filesData.length >= this.quantityFiles ? true : false
           }
         ],
         itemActions: [
@@ -97,7 +99,7 @@ export default {
     },
     //modal media params
     modalMediaParams() {
-      let counterSelect = `(${this.modalMedia.selectedFiles.length}/${this.maxFiles - this.filesData.length})`
+      let counterSelect = `(${this.modalMedia.selectedFiles.length}/${this.quantityFiles - this.filesData.length})`
       return {
         title: `${this.$tr('ui.label.select')} ${this.$trp('ui.label.file')} ${counterSelect}`,
         width: '95vw',
