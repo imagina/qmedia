@@ -10,29 +10,39 @@
           @created="refreshData" @updated="refreshData" @deleted="refreshData"
           :custom-data="customCrudData.file"/>
 
-    <!--Page Actions-->
-    <div class="box box-auto-height q-mb-md">
-      <page-actions :extra-actions="pageActions" title="Media" @search="val => {filter.search = val}"/>
-    </div>
+    <!--Uploader-->
+    <uploader v-model="filesToUpload" ref="uploaderComponent" hide-file-list max-files="50" @input="uploadFiles()"/>
 
-    <!--Bread crumb-->
-    <div class="box box-auto-height q-mb-md">
-      <breadcrumb-component ref="breadcrumbComponent" :params="filter" @selected="setFolder"/>
-    </div>
+    <!--Content-->
+    <div class="relative-position">
+      <!--Page Actions-->
+      <div class="box box-auto-height q-mb-md">
+        <page-actions :extra-actions="pageActions" title="Media" @search="val => {filter.search = val}"/>
+      </div>
 
-    <!---Folders Files-->
-    <div class="box box-auto-height q-mb-md">
-      <file-list-component v-bind="fileListParams.folderFiles" @clickItem="setFolder"/>
-    </div>
+      <!--Bread crumb-->
+      <div class="box box-auto-height q-mb-md">
+        <breadcrumb-component ref="breadcrumbComponent" :params="filter" @selected="setFolder"/>
+      </div>
 
-    <!---Other Files-->
-    <div class="box box-auto-height q-mb-md">
-      <file-list-component v-bind="fileListParams.otherFiles" @selected="files => $emit('selected',files)"/>
+      <!---Folders Files-->
+      <div class="box box-auto-height q-mb-md">
+        <file-list-component v-bind="fileListParams.folderFiles" @clickItem="setFolder"/>
+      </div>
+
+      <!---Other Files-->
+      <div class="box box-auto-height q-mb-md">
+        <file-list-component v-bind="fileListParams.otherFiles" @selected="files => $emit('selected',files)"/>
+      </div>
+
+      <!--inner loading-->
+      <inner-loading :visible="loading"/>
     </div>
   </div>
 </template>
 <script>
 //components
+import uploader from '@imagina/qsite/_components/master/uploader'
 import breadcrumbComponent from '@imagina/qmedia/_components/blocks/breadcrumb'
 import fileListComponent from '@imagina/qsite/_components/master/fileList'
 
@@ -46,7 +56,8 @@ export default {
   },
   components: {
     breadcrumbComponent,
-    fileListComponent
+    fileListComponent,
+    uploader
   },
   watch: {},
   mounted() {
@@ -57,7 +68,7 @@ export default {
   data() {
     return {
       loading: false,
-      data: [],
+      filesToUpload: [],
       listView: false,
       filter: {
         search: null,
@@ -93,7 +104,7 @@ export default {
             padding: 'xs md',
             color: 'green'
           },
-          action: () => this.$refs.crudFiles.create()
+          action: () => /*this.$refs.crudFiles.create()*/ this.$refs.uploaderComponent.pickFiles()
         }
       ]
     },
@@ -240,6 +251,27 @@ export default {
   methods: {
     init() {
       this.$root.$on('page.data.refresh', () => this.refreshData())
+    },
+    //upload files
+    async uploadFiles() {
+      //Loading
+      this.loading = true
+
+      //Upload files
+      await Promise.all(this.filesToUpload.map(async file => {
+        //format request
+        let fileData = new FormData()
+        fileData.append('parent_id', this.filter.folderId || 0)
+        fileData.append('file', file.file)
+
+        //Request send file
+        await this.$crud.post('apiRoutes.qmedia.files', fileData)
+      }))
+
+      //Loading
+      this.filesToUpload = []
+      this.refreshData()
+      this.loading = false
     },
     //Set folder
     setFolder(file) {
