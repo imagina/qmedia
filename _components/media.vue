@@ -165,8 +165,8 @@ export default {
                 ...this.filter,
                 isFolder: true,
                 order: {
-                  field: 'filename',
-                  way: 'asc'
+                  field: 'created_at',
+                  way: 'desc'
                 }
               }
             }
@@ -269,8 +269,8 @@ export default {
       }))
 
       //Loading
+      if (this.filesToUpload.length) this.refreshData()
       this.filesToUpload = []
-      this.refreshData()
       this.loading = false
     },
     //Set folder

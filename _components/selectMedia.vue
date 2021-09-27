@@ -4,7 +4,7 @@
     <file-list v-model="filesData" v-bind="fileListParams"/>
     <!--Select media-->
     <master-modal v-model="modalMedia.show" v-bind="modalMediaParams">
-      <media :allow-select="quantityFiles - filesData.length"
+      <media :allow-select="quantityFiles.toSelect"
              @selected="files => modalMedia.selectedFiles = $clone(files)"/>
     </master-modal>
   </div>
@@ -52,12 +52,19 @@ export default {
   computed: {
     //Validate max Files
     quantityFiles() {
-      return this.maxFiles ? this.maxFiles : (this.multiple ? 12 : 1)
+      //Instance max files quantity to select
+      let maxFiles = this.maxFiles ? this.maxFiles : (this.multiple ? 12 : 1)
+      //Return quantites of files
+      return {
+        max: maxFiles,
+        selected: this.filesData.length,
+        toSelect: (maxFiles == 1) ? 1 : (maxFiles - this.filesData.length)
+      }
     },
     //Params to file List
     fileListParams() {
       return {
-        title: `${this.$clone(this.label)} (${this.filesData.length}/${this.quantityFiles})`,
+        title: `${this.$clone(this.label)} (${this.quantityFiles.selected}/${this.quantityFiles.max})`,
         gridColClass: this.gridColClass || (this.multiple ? 'col-6 col-md-4' : 'col-12'),
         loadFiles: {
           apiRoute: 'apiRoutes.qmedia.files',
@@ -72,17 +79,28 @@ export default {
         },
         actions: [
           {
-            label: this.$tr('ui.label.select'),
+            label: ((this.quantityFiles.max == 1) && (this.quantityFiles.selected == 1)) ?
+                this.$tr('ui.label.change') : this.$tr('ui.label.select'),
             icon: 'fas fa-file-upload',
             padding: 'xs sm',
             color: 'green',
             rounded: true,
             outline: true,
             action: () => {
-              this.modalMedia.selectedFiles = []
-              this.modalMedia.show = true
+              //Validate limit files
+              if ((this.quantityFiles.max >= 2) && !this.quantityFiles.toSelect) {
+                this.$alert.warning({
+                  mode: 'modal',
+                  title: this.$tr('qmedia.layout.messages.limitFiles'),
+                  message: this.$tr('qmedia.layout.messages.messageLimitFiles', {quantity: this.quantityFiles.max})
+                })
+              }
+              //Upload files
+              else {
+                this.modalMedia.selectedFiles = []
+                this.modalMedia.show = true
+              }
             },
-            disable: this.filesData.length >= this.quantityFiles ? true : false
           }
         ],
         itemActions: [
@@ -99,7 +117,7 @@ export default {
     },
     //modal media params
     modalMediaParams() {
-      let counterSelect = `(${this.modalMedia.selectedFiles.length}/${this.quantityFiles - this.filesData.length})`
+      let counterSelect = `(${this.modalMedia.selectedFiles.length}/${this.quantityFiles.toSelect})`
       return {
         title: `${this.$tr('ui.label.select')} ${this.$trp('ui.label.file')} ${counterSelect}`,
         width: '95vw',
@@ -110,7 +128,8 @@ export default {
               color: 'green'
             },
             action: () => {
-              this.filesData = this.$clone([...this.modalMedia.selectedFiles, ...this.filesData])
+              let files = this.$clone([...this.modalMedia.selectedFiles, ...this.filesData])
+              this.filesData = this.$clone(files.slice(0, this.quantityFiles.max))
               this.modalMedia.show = false
             }
           }

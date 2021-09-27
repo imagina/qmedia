@@ -17,8 +17,10 @@ export default {
     folderName: 'Nombre de la carpeta',
     moveTo: 'Mover a',
   },
-  messages : {
-    addYourFiles : 'Agrega tus archivos aquí',
-    addYourImages : 'Agrega tus imagenes aquí',
+  messages: {
+    addYourFiles: 'Agrega tus archivos aquí',
+    addYourImages: 'Agrega tus imagenes aquí',
+    limitFiles: 'Limite de Archivos',
+    messageLimitFiles: 'El limite de archivos es de <b>{quantity}</b>. para seleccionar otro archivo primero debes quitar algunos de los seleccionados'
   }
 }
