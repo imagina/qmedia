@@ -40,7 +40,7 @@ export default {
             props: {
               label: `${this.$tr('ui.form.name')}`,
               rules: [
-                val => !val || this.$helper.validateAlphaNumeric(val) || this.$tr('ui.message.mustContainAlphanumeric')
+                val => !val || this.$helper.validateSlugFormat(val) || this.$tr('ui.message.mustContainAlphanumeric')
               ]
             },
           },
