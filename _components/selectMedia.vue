@@ -5,7 +5,7 @@
     <!--direct upload media-->
     <media :allow-select="quantityFiles.toSelect" only-upload ref="mediaComponent" @uploaded="handlerSelectedFiles"/>
     <!--Select media-->
-    <master-modal v-model="modalMedia.show" v-bind="modalMediaParams">
+    <master-modal v-model="modalMedia.show" v-bind="modalMediaParams" @hide="loading = false">
       <media :allow-select="quantityFiles.toSelect" @selected="files => modalMedia.selectedFiles = $clone(files)"/>
     </master-modal>
     <!--inner loading-->
@@ -81,6 +81,7 @@ export default {
             }
           }
         },
+        draggable: true,
         actions: [
           {
             label: ((this.quantityFiles.max == 1) && (this.quantityFiles.selected == 1)) ?
