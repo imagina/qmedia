@@ -73,6 +73,7 @@ export default {
         loadFiles: {
           apiRoute: 'apiRoutes.qmedia.files',
           requestParams: {
+            take: this.quantityFiles.max,
             filter: {
               folderId: null,
               zone: this.zone,
