@@ -1,5 +1,5 @@
 <template>
-  <div id="mediaMasterComponent" class="q-mb-lg">
+  <div id="mediaMasterComponent">
     <!--Crud folders-->
     <crud :crud-data="import('@imagina/qmedia/_crud/folder')" type="onlyUpdate" ref="crudFolders"
           @created="refreshData" @updated="refreshData" @deleted="refreshData"
@@ -11,10 +11,11 @@
           :custom-data="customCrudData.file"/>
 
     <!--Uploader-->
-    <uploader v-model="filesToUpload" ref="uploaderComponent" hide-file-list max-files="50" @input="uploadFiles()"/>
+    <uploader v-model="filesToUpload" ref="uploaderComponent" hide-file-list @input="uploadFiles()"
+              :max-files="allowSelect || 50"/>
 
     <!--Content-->
-    <div class="relative-position">
+    <div class="relative-position" v-if="!onlyUpload">
       <!--Page Actions-->
       <div class="box box-auto-height q-mb-md">
         <page-actions :extra-actions="pageActions" title="Media" @search="val => {filter.search = val}"/>
@@ -52,7 +53,8 @@ export default {
   },
   props: {
     disk: {default: 'publicmedia'},
-    allowSelect: {type: Number, default: 0}
+    allowSelect: {type: Number, default: 0},
+    onlyUpload: {type: Boolean, defualt: false}
   },
   components: {
     breadcrumbComponent,
@@ -104,7 +106,7 @@ export default {
             padding: 'xs md',
             color: 'green'
           },
-          action: () => /*this.$refs.crudFiles.create()*/ this.$refs.uploaderComponent.pickFiles()
+          action: () => this.$refs.uploaderComponent.pickFiles()
         }
       ]
     },
@@ -256,20 +258,31 @@ export default {
     async uploadFiles() {
       //Loading
       this.loading = true
+      //Instance filesUploaded data
+      let filesUploaded = []
+
+      //Get files and check be a array
+      let files = this.$clone(this.filesToUpload || [])
+      if (!Array.isArray(files)) files = [files]
 
       //Upload files
-      await Promise.all(this.filesToUpload.map(async file => {
+      await Promise.all(files.map(async file => {
         //format request
         let fileData = new FormData()
         fileData.append('parent_id', this.filter.folderId || 0)
         fileData.append('file', file.file)
 
         //Request send file
-        await this.$crud.post('apiRoutes.qmedia.files', fileData)
+        await this.$crud.post('apiRoutes.qmedia.files', fileData).then(response => {
+          filesUploaded.push(response.data)
+        })
       }))
 
+      //Emit uploaded files
+      this.$emit('uploaded', this.$clone(filesUploaded))
+
       //Loading
-      if (this.filesToUpload.length) this.refreshData()
+      if (files.length) this.refreshData()
       this.filesToUpload = []
       this.loading = false
     },
@@ -280,10 +293,14 @@ export default {
     //Refresh Data
     refreshData() {
       setTimeout(() => {
-        this.$refs.breadcrumbComponent.getData(true)
-        this.$refs.foldersFilesComponent.getData(true)
-        this.$refs.otherFilesComponent.getData(true)
+        if (this.$refs.breadcrumbComponent) this.$refs.breadcrumbComponent.getData(true)
+        if (this.$refs.foldersFilesComponent) this.$refs.foldersFilesComponent.getData(true)
+        if (this.$refs.otherFilesComponent) this.$refs.otherFilesComponent.getData(true)
       }, 100)
+    },
+    //Pick Files
+    directUpload() {
+      this.$refs.uploaderComponent.pickFiles()
     }
   }
 }
