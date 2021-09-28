@@ -1,12 +1,15 @@
 <template>
-  <div id="selectMediaComponent" class="full-width">
+  <div id="selectMediaComponent" class="full-width relative-position">
     <!--File List-->
     <file-list v-model="filesData" v-bind="fileListParams"/>
+    <!--direct upload media-->
+    <media :allow-select="quantityFiles.toSelect" only-upload ref="mediaComponent" @uploaded="handlerSelectedFiles"/>
     <!--Select media-->
     <master-modal v-model="modalMedia.show" v-bind="modalMediaParams">
-      <media :allow-select="quantityFiles.toSelect"
-             @selected="files => modalMedia.selectedFiles = $clone(files)"/>
+      <media :allow-select="quantityFiles.toSelect" @selected="files => modalMedia.selectedFiles = $clone(files)"/>
     </master-modal>
+    <!--inner loading-->
+    <inner-loading :visible="loading"/>
   </div>
 </template>
 <script>
@@ -23,7 +26,8 @@ export default {
     multiple: {type: Boolean, default: false},
     gridColClass: {default: false},
     label: {default: ''},
-    maxFiles: {deafult: false}
+    maxFiles: {deafult: false},
+    directUpload: {type: Boolean, default: false}
   },
   components: {fileList, media},
   watch: {
@@ -97,8 +101,15 @@ export default {
               }
               //Upload files
               else {
-                this.modalMedia.selectedFiles = []
-                this.modalMedia.show = true
+                //loading
+                this.loading = true
+                //Open direct upload
+                if (this.directUpload) this.$refs.mediaComponent.directUpload()
+                //open modal to select files
+                else {
+                  this.modalMedia.selectedFiles = []
+                  this.modalMedia.show = true
+                }
               }
             },
           }
@@ -128,8 +139,7 @@ export default {
               color: 'green'
             },
             action: () => {
-              let files = this.$clone([...this.modalMedia.selectedFiles, ...this.filesData])
-              this.filesData = this.$clone(files.slice(0, this.quantityFiles.max))
+              this.handlerSelectedFiles(this.modalMedia.selectedFiles)
               this.modalMedia.show = false
             }
           }
@@ -166,6 +176,14 @@ export default {
 
       //Emit response
       this.$emit('input', responseValue)
+    },
+    //Handler selected files
+    handlerSelectedFiles(files) {
+      //Merge selected files
+      let selectedFiles = this.$clone([...files, ...this.filesData])
+      this.filesData = this.$clone(selectedFiles.slice(0, this.quantityFiles.max))
+      //loading
+      this.loading = false
     }
   }
 }
