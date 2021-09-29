@@ -20,6 +20,7 @@ import media from '@imagina/qmedia/_components/media'
 
 export default {
   props: {
+    value: {default: {}},
     disk: {default: 'publicmedia'},
     zone: {type: String, default: 'mainimage'},
     entity: {type: String, required: true},
@@ -70,7 +71,7 @@ export default {
     fileListParams() {
       return {
         title: `${this.$clone(this.label)} (${this.quantityFiles.selected}/${this.quantityFiles.max})`,
-        gridColClass: this.gridColClass || (this.multiple ? 'col-6 col-md-4' : 'col-12'),
+        gridColClass: this.gridColClass || ((this.quantityFiles.max >= 2) ? 'col-6 col-md-4' : 'col-12'),
         loadFiles: {
           apiRoute: 'apiRoutes.qmedia.files',
           requestParams: {
@@ -145,8 +146,6 @@ export default {
       }
       //Upload files
       else {
-        //loading
-        //this.loading = true
         //Open direct upload
         if (this.directUpload) this.$refs.mediaComponent.directUpload()
         //open modal to select files
@@ -159,9 +158,9 @@ export default {
     //Emit response value
     emitResponseValue() {
       let files = this.$clone(this.filesData)
-      let responseValue = {}
+      let responseValue = this.$clone(this.value)
 
-      if (this.multiple) {
+      if (this.quantityFiles.max >= 2) {
         //instance default response
         let responseMultiple = {files: {}, orders: ''}
         //order response
