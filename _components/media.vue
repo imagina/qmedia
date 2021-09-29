@@ -265,6 +265,9 @@ export default {
       let files = this.$clone(this.filesToUpload || [])
       if (!Array.isArray(files)) files = [files]
 
+      //Emit uploaded files
+      this.$emit('uploading', this.$clone(files))
+
       //Upload files
       await Promise.all(files.map(async file => {
         //format request

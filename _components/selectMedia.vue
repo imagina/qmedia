@@ -1,9 +1,10 @@
 <template>
   <div id="selectMediaComponent" class="full-width relative-position">
     <!--File List-->
-    <file-list v-model="filesData" v-bind="fileListParams"/>
+    <file-list v-model="filesData" v-bind="fileListParams" @emptyFileAction="pickSelectFile()"/>
     <!--direct upload media-->
-    <media :allow-select="quantityFiles.toSelect" only-upload ref="mediaComponent" @uploaded="handlerSelectedFiles"/>
+    <media :allow-select="quantityFiles.toSelect" only-upload ref="mediaComponent"
+           @uploading="loading = true" @uploaded="handlerSelectedFiles"/>
     <!--Select media-->
     <master-modal v-model="modalMedia.show" v-bind="modalMediaParams" @hide="loading = false">
       <media :allow-select="quantityFiles.toSelect" @selected="files => modalMedia.selectedFiles = $clone(files)"/>
@@ -92,28 +93,7 @@ export default {
             color: 'green',
             rounded: true,
             outline: true,
-            action: () => {
-              //Validate limit files
-              if ((this.quantityFiles.max >= 2) && !this.quantityFiles.toSelect) {
-                this.$alert.warning({
-                  mode: 'modal',
-                  title: this.$tr('qmedia.layout.messages.limitFiles'),
-                  message: this.$tr('qmedia.layout.messages.messageLimitFiles', {quantity: this.quantityFiles.max})
-                })
-              }
-              //Upload files
-              else {
-                //loading
-                this.loading = true
-                //Open direct upload
-                if (this.directUpload) this.$refs.mediaComponent.directUpload()
-                //open modal to select files
-                else {
-                  this.modalMedia.selectedFiles = []
-                  this.modalMedia.show = true
-                }
-              }
-            },
+            action: () => this.pickSelectFile(),
           }
         ],
         itemActions: [
@@ -125,7 +105,8 @@ export default {
               if (fileIndex >= 0) this.filesData.splice(fileIndex, 1)
             }
           }
-        ]
+        ],
+        quantity: this.quantityFiles.max
       }
     },
     //modal media params
@@ -151,6 +132,29 @@ export default {
   },
   methods: {
     init() {
+    },
+    //pick select File
+    pickSelectFile() {
+      //Validate limit files
+      if ((this.quantityFiles.max >= 2) && !this.quantityFiles.toSelect) {
+        this.$alert.warning({
+          mode: 'modal',
+          title: this.$tr('qmedia.layout.messages.limitFiles'),
+          message: this.$tr('qmedia.layout.messages.messageLimitFiles', {quantity: this.quantityFiles.max})
+        })
+      }
+      //Upload files
+      else {
+        //loading
+        //this.loading = true
+        //Open direct upload
+        if (this.directUpload) this.$refs.mediaComponent.directUpload()
+        //open modal to select files
+        else {
+          this.modalMedia.selectedFiles = []
+          this.modalMedia.show = true
+        }
+      }
     },
     //Emit response value
     emitResponseValue() {
