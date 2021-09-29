@@ -3,11 +3,12 @@
     <!--File List-->
     <file-list v-model="filesData" v-bind="fileListParams" @emptyFileAction="pickSelectFile()"/>
     <!--direct upload media-->
-    <media :allow-select="quantityFiles.toSelect" only-upload ref="mediaComponent"
+    <media :allow-select="quantityFiles.toSelect" only-upload ref="mediaComponent" :accept="accept"
            @uploading="loading = true" @uploaded="handlerSelectedFiles"/>
     <!--Select media-->
     <master-modal v-model="modalMedia.show" v-bind="modalMediaParams" @hide="loading = false">
-      <media :allow-select="quantityFiles.toSelect" @selected="files => modalMedia.selectedFiles = $clone(files)"/>
+      <media :allow-select="quantityFiles.toSelect" :accept="accept"
+             @selected="files => modalMedia.selectedFiles = $clone(files)"/>
     </master-modal>
     <!--inner loading-->
     <inner-loading :visible="loading"/>
@@ -29,7 +30,8 @@ export default {
     gridColClass: {default: false},
     label: {default: ''},
     maxFiles: {deafult: false},
-    directUpload: {type: Boolean, default: false}
+    directUpload: {type: Boolean, default: false},
+    accept: {default: false}
   },
   components: {fileList, media},
   watch: {

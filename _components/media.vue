@@ -12,7 +12,7 @@
 
     <!--Uploader-->
     <uploader v-model="filesToUpload" ref="uploaderComponent" hide-file-list @input="uploadFiles()"
-              :max-files="allowSelect || 50"/>
+              :max-files="allowSelect || 50" :accept="accept"/>
 
     <!--Content-->
     <div class="relative-position" v-if="!onlyUpload">
@@ -54,7 +54,8 @@ export default {
   props: {
     disk: {default: 'publicmedia'},
     allowSelect: {type: Number, default: 0},
-    onlyUpload: {type: Boolean, defualt: false}
+    onlyUpload: {type: Boolean, defualt: false},
+    accept: {default: false}
   },
   components: {
     breadcrumbComponent,
@@ -195,7 +196,8 @@ export default {
                 order: {
                   field: 'created_at',
                   way: 'desc'
-                }
+                },
+                ...(this.accept ? {extension: this.acceptExtensions} : {})
               }
             }
           }
@@ -248,6 +250,28 @@ export default {
           }
         }
       }
+    },
+    //Accept extensions
+    acceptExtensions() {
+      let accept = this.$clone(this.accept ? this.accept.split(',') : [])
+      let response = []
+
+      //Get extensions settings
+      let extensions = {
+        images: this.$store.getters['qsiteApp/getSettingValueByName']('media::allowedImageTypes'),
+        videos: this.$store.getters['qsiteApp/getSettingValueByName']('media::allowedVideoTypes'),
+        audio: this.$store.getters['qsiteApp/getSettingValueByName']('media::allowedAudioTypes'),
+        files: this.$store.getters['qsiteApp/getSettingValueByName']('media::allowedFileTypes')
+      }
+
+      //Parse extensions
+      accept.forEach(extensionName => {
+        if (extensions[extensionName]) response = [...response, ...extensions[extensionName]]
+        else response = [...response, extensionName]
+      })
+
+      //Response
+      return response
     }
   },
   methods: {
