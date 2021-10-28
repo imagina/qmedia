@@ -61,7 +61,7 @@ export default {
     //Validate max Files
     quantityFiles() {
       //Instance max files quantity to select
-      let maxFiles = this.maxFiles ? this.maxFiles : (this.multiple ? 12 : 1)
+      let maxFiles = this.maxFiles ? this.maxFiles : (this.multiple ? 50 : 1)
       //Return quantites of files
       return {
         max: maxFiles,
