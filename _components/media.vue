@@ -170,7 +170,8 @@ export default {
                 order: {
                   field: 'created_at',
                   way: 'desc'
-                }
+                },
+                disk: this.disk
               }
             }
           }
@@ -197,6 +198,7 @@ export default {
                   field: 'created_at',
                   way: 'desc'
                 },
+                disk: this.disk,
                 ...(this.accept ? {extension: this.acceptExtensions} : {})
               }
             }
@@ -297,6 +299,7 @@ export default {
         //format request
         let fileData = new FormData()
         fileData.append('parent_id', this.filter.folderId || 0)
+        fileData.append('disk', this.disk)
         fileData.append('file', file.file)
 
         //Request send file

@@ -4,10 +4,10 @@
     <file-list v-model="filesData" v-bind="fileListParams" @emptyFileAction="pickSelectFile()"/>
     <!--direct upload media-->
     <media :allow-select="quantityFiles.toSelect" only-upload ref="mediaComponent" :accept="accept"
-           @uploading="loading = true" @uploaded="handlerSelectedFiles"/>
+           @uploading="loading = true" @uploaded="handlerSelectedFiles" :disk="disk"/>
     <!--Select media-->
     <master-modal v-model="modalMedia.show" v-bind="modalMediaParams" @hide="loading = false">
-      <media :allow-select="quantityFiles.toSelect" :accept="accept"
+      <media :allow-select="quantityFiles.toSelect" :accept="accept" :disk="disk"
              @selected="files => modalMedia.selectedFiles = $clone(files)"/>
     </master-modal>
     <!--inner loading-->
@@ -82,7 +82,8 @@ export default {
               folderId: null,
               zone: this.zone,
               entity: this.entity,
-              entityId: this.entityId
+              entityId: this.entityId,
+              disk : this.disk
             }
           }
         },
