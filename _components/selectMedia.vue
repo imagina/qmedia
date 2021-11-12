@@ -163,6 +163,10 @@ export default {
       let files = this.$clone(this.filesData)
       let responseValue = this.$clone(this.value)
 
+      //Validate response value
+      if ((typeof responseValue != 'object') || Array.isArray(responseValue) || (responseValue == null))
+        responseValue = {}
+
       if (this.quantityFiles.max >= 2) {
         //instance default response
         let responseMultiple = {files: {}, orders: ''}
