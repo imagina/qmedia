@@ -31,7 +31,8 @@ export default {
     label: {default: ''},
     maxFiles: {deafult: false},
     directUpload: {type: Boolean, default: false},
-    accept: {default: false}
+    accept: {default: false},
+    readonly: {type: Boolean, default: false}
   },
   components: {fileList, media},
   watch: {
@@ -83,7 +84,7 @@ export default {
               zone: this.zone,
               entity: this.entity,
               entityId: this.entityId,
-              disk : this.disk
+              disk: this.disk
             }
           }
         },
@@ -110,7 +111,8 @@ export default {
             }
           }
         ],
-        quantity: this.quantityFiles.max
+        quantity: this.quantityFiles.max,
+        readonly: this.readonly
       }
     },
     //modal media params
