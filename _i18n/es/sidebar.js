@@ -1,3 +1,4 @@
 export default {
-  adminIndex : 'Media',
+  adminGroup: 'Media',
+  adminIndex: 'Lista de Archivos',
 }
