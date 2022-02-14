@@ -92,7 +92,7 @@ export default {
         actions: [
           {
             label: ((this.quantityFiles.max == 1) && (this.quantityFiles.selected == 1)) ?
-                this.$tr('ui.label.change') : this.$tr('ui.label.select'),
+                this.$tr('isite.cms.label.change') : this.$tr('isite.cms.label.select'),
             icon: 'fas fa-file-upload',
             padding: 'xs sm',
             color: 'green',
@@ -103,7 +103,7 @@ export default {
         ],
         itemActions: [
           {
-            label: this.$tr('ui.label.delete'),
+            label: this.$tr('isite.cms.label.delete'),
             icon: 'fas fa-trash',
             action: (item) => {
               let fileIndex = this.filesData.findIndex(file => item.id == file.id)
@@ -119,12 +119,12 @@ export default {
     modalMediaParams() {
       let counterSelect = `(${this.modalMedia.selectedFiles.length}/${this.quantityFiles.toSelect})`
       return {
-        title: `${this.$tr('ui.label.select')} ${this.$trp('ui.label.file')} ${counterSelect}`,
+        title: `${this.$tr('isite.cms.label.select')} ${this.$trp('isite.cms.label.file')} ${counterSelect}`,
         width: '95vw',
         actions: [
           {
             props: {
-              label: this.$tr('ui.label.save'),
+              label: this.$tr('isite.cms.label.save'),
               color: 'green'
             },
             action: () => {
@@ -145,8 +145,8 @@ export default {
       if ((this.quantityFiles.max >= 2) && !this.quantityFiles.toSelect) {
         this.$alert.warning({
           mode: 'modal',
-          title: this.$tr('qmedia.layout.messages.limitFiles'),
-          message: this.$tr('qmedia.layout.messages.messageLimitFiles', {quantity: this.quantityFiles.max})
+          title: this.$tr('media.cms.messages.limitFiles'),
+          message: this.$tr('media.cms.messages.messageLimitFiles', {quantity: this.quantityFiles.max})
         })
       }
       //Upload files

@@ -6,10 +6,10 @@
         <!--Title-->
         <div class="text-blue-grey">
           <q-icon name="fas fa-photo-video" class="q-mr-sm"/>
-          <label>{{ label || $tr('ui.label.file') }}</label>
+          <label>{{ label || $tr('isite.cms.label.file') }}</label>
         </div>
         <!--= Add File Button =-->
-        <q-btn :label="buttonLabel ? buttonLabel : $tr('ui.label.select')" no-caps @click="modalMedia = true" unelevated
+        <q-btn :label="buttonLabel ? buttonLabel : $tr('isite.cms.label.select')" no-caps @click="modalMedia = true" unelevated
                :icon="buttonIcon ? buttonIcon : 'fas fa-plus'" color="green" rounded class="btn-extra-small"/>
       </div>
     </div>
@@ -48,7 +48,7 @@
     <q-dialog id="modalMedia" v-model="modalMedia" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
       <q-card>
         <q-toolbar class="bg-primary text-white">
-          <q-toolbar-title>{{ $tr('qmedia.layout.selectMedia') }}</q-toolbar-title>
+          <q-toolbar-title>{{ $tr('media.cms.selectMedia') }}</q-toolbar-title>
           <q-btn flat v-close-popup icon="fas fa-times"/>
         </q-toolbar>
         <q-card-section class="q-pa-md">

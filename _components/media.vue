@@ -86,10 +86,10 @@ export default {
       return [
         'search',
         {
-          label: this.$tr('qmedia.layout.newFolder'),
+          label: this.$tr('media.cms.newFolder'),
           props: {
             icon: 'fas fa-folder-plus',
-            label: this.$tr('qmedia.layout.newFolder'),
+            label: this.$tr('media.cms.newFolder'),
             round: false,
             rounded: true,
             padding: 'xs md',
@@ -98,10 +98,10 @@ export default {
           action: () => this.$refs.crudFolders.create()
         },
         {
-          label: this.$tr('qmedia.layout.newFile'),
+          label: this.$tr('media.cms.newFile'),
           props: {
             icon: 'fas fa-file-upload',
-            label: this.$tr('qmedia.layout.newFile'),
+            label: this.$tr('media.cms.newFile'),
             round: false,
             rounded: true,
             padding: 'xs md',
@@ -116,7 +116,7 @@ export default {
       //Instance main actions
       let mainActions = [
         {
-          label: this.$tr('ui.label.edit'),
+          label: this.$tr('isite.cms.label.edit'),
           icon: 'fas fa-pen',
           action: (item) => {
             if (item.isFolder) this.$refs.crudFolders.update(item)
@@ -124,7 +124,7 @@ export default {
           }
         },
         {
-          label: this.$tr('ui.label.delete'),
+          label: this.$tr('isite.cms.label.delete'),
           icon: 'fas fa-trash',
           action: (item) => {
             if (item.isFolder) this.$refs.crudFolders.delete(item)
@@ -135,7 +135,7 @@ export default {
 
       //Instance download action
       let downloadAction = {
-        label: this.$tr('ui.label.download'),
+        label: this.$tr('isite.cms.label.download'),
         vIf: this.$auth.hasAccess('media.medias.download'),
         icon: 'fas fa-file-download',
         action: (item) => this.$helper.downloadFromURL(item.path)
@@ -155,7 +155,7 @@ export default {
           key: 'foldersContent',
           gridType: 'chip',
           icon: 'fas fa-folder-open',
-          title: this.$trp('ui.label.folder'),
+          title: this.$trp('isite.cms.label.folder'),
           allowCounter: true,
           allowOrder: true,
           itemActions: this.allowSelect ? [] : this.itemFileListActions.mainActions,
@@ -180,7 +180,7 @@ export default {
           ref: 'otherFilesComponent',
           key: 'otherFiles',
           icon: 'fas fa-photo-video',
-          title: this.$trp('ui.label.file'),
+          title: this.$trp('isite.cms.label.file'),
           allowCounter: true,
           allowOrder: true,
           itemActions: this.allowSelect ? [] : this.itemFileListActions.includeDownload,
@@ -216,10 +216,10 @@ export default {
               value: this.filter.folderId ? this.filter.folderId : '0',
               type: 'treeSelect',
               props: {
-                label: this.$tr('ui.form.parent'),
+                label: this.$tr('isite.cms.form.parent'),
                 clearable: false,
                 options: [
-                  {label: this.$tr('ui.message.noValue'), value: '0', id: '0'}
+                  {label: this.$tr('isite.cms.message.noValue'), value: '0', id: '0'}
                 ]
               },
               loadOptions: {
@@ -237,10 +237,10 @@ export default {
               value: this.filter.folderId ? this.filter.folderId : '0',
               type: 'treeSelect',
               props: {
-                label: this.$tr('ui.label.folder'),
+                label: this.$tr('isite.cms.label.folder'),
                 clearable: false,
                 options: [
-                  {label: this.$tr('ui.message.noValue'), value: '0', id: '0'}
+                  {label: this.$tr('isite.cms.message.noValue'), value: '0', id: '0'}
                 ]
               },
               loadOptions: {

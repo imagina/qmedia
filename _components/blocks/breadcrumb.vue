@@ -78,13 +78,13 @@ export default {
         if (this.filter.folderId) {
           this.$crud.show('apiRoutes.qmedia.breadcrumb', this.filter.folderId, requestParams).then(response => {
             this.breadcrumbs = response.data
-            this.breadcrumbs[0] = {id: 0, name: this.$tr('ui.label.home')}
+            this.breadcrumbs[0] = {id: 0, name: this.$tr('isite.cms.label.home')}
             this.loading = false
           }).catch(error => {
             this.loading = false
           })
         } else {
-          this.breadcrumbs = [{id: 0, name: this.$tr('ui.label.home')}]
+          this.breadcrumbs = [{id: 0, name: this.$tr('isite.cms.label.home')}]
         }
       })
     }

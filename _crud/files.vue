@@ -13,12 +13,12 @@ export default {
         apiRoute: 'apiRoutes.qmedia.files',
         permission: 'media.medias',
         create: {
-          title: this.$tr('qmedia.layout.newFile'),
+          title: this.$tr('media.cms.newFile'),
           method: this.create
         },
         read: {},
         update: {
-          title: this.$tr('qmedia.layout.updateFile')
+          title: this.$tr('media.cms.updateFile')
         },
         delete: true,
         formLeft: {
@@ -29,7 +29,7 @@ export default {
             type: 'uploader',
             props: {
               vIf: (this.crudInfo.typeForm == 'create') ? true : false,
-              title: this.$trp('ui.label.file'),
+              title: this.$trp('isite.cms.label.file'),
               gridColClass: 'col-xs-12'
             }
           },
@@ -38,9 +38,9 @@ export default {
             type: 'input',
             isTranslatable: true,
             props: {
-              label: `${this.$tr('ui.form.name')}`,
+              label: `${this.$tr('isite.cms.form.name')}`,
               rules: [
-                val => !val || this.$helper.validateSlugFormat(val) || this.$tr('ui.message.mustContainAlphanumeric')
+                val => !val || this.$helper.validateSlugFormat(val) || this.$tr('isite.cms.message.mustContainAlphanumeric')
               ]
             },
           },
@@ -48,10 +48,10 @@ export default {
             value: '0',
             type: 'treeSelect',
             props: {
-              label: this.$tr('ui.label.folder'),
+              label: this.$tr('isite.cms.label.folder'),
               clearable: false,
               options: [
-                {label: this.$tr('ui.message.noValue'), value: '0', id: '0'}
+                {label: this.$tr('isite.cms.message.noValue'), value: '0', id: '0'}
               ]
             },
             loadOptions: {
@@ -65,7 +65,7 @@ export default {
             type: 'input',
             isTranslatable: true,
             props: {
-              label: `${this.$tr('ui.form.description')}`,
+              label: `${this.$tr('isite.cms.form.description')}`,
               type: 'textarea',
               rows: "3",
             },

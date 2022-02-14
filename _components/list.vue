@@ -21,7 +21,7 @@
               <div class="table-top-left col-12 col-md-5 col-lg-4 col-xl-3">
                 <!---Search-->
                 <q-input clearable v-model="filter.search" dense outlined debounce="800" style="max-width: 250px"
-                         :placeholder="`${$tr('ui.label.search',{capitalize : true})}...`"
+                         :placeholder="`${$tr('isite.cms.label.search',{capitalize : true})}...`"
                          @input="getData({pagination:pagination,search:filter.search})">
                   <template v-slot:append>
                     <q-icon name="search"/>
@@ -34,27 +34,27 @@
                   <!--Button Move file -->
                   <q-btn color="teal" icon="fas fa-arrows-alt" rounded unelevated
                          @click="getFolders(); dialogMove=true"
-                         :label="$tr('ui.label.move')"
+                         :label="$tr('isite.cms.label.move')"
                          v-if="rowsSelected.length"/>
                   <!--Button delete file -->
                   <q-btn color="red-14" icon="fas fa-trash" class="q-ml-xs"
                          @click="dialogDeleteGlobal.handler()"
-                         :label="$tr('ui.label.delete')" rounded unelevated
+                         :label="$tr('isite.cms.label.delete')" rounded unelevated
                          v-if="rowsSelected.length"/>
                   <!--Button add folder -->
                   <q-btn color="green" icon="fas fa-folder-plus" class="q-ml-xs"
                          @click="dialogCreateFolder=true" rounded unelevated
-                         :label="$tr('qmedia.layout.newFolder')"
+                         :label="$tr('media.cms.newFolder')"
                          v-if="$auth.hasAccess('media.folders.create')"
                   />
                   <!--Button add file -->
                   <q-btn color="blue" icon="add_photo_alternate" class="q-ml-xs"
                          @click="uploadFile = !uploadFile" :loading="loadingUploadFile"
-                         :label="$tr('qmedia.layout.uploadFile')" rounded unelevated
+                         :label="$tr('media.cms.uploadFile')" rounded unelevated
                          v-if="$auth.hasAccess('media.medias.create')">
                     <div slot="loading">
                       <q-spinner class="on-left"/>
-                      <span class="q-hide q-md-show">{{ $tr('ui.label.loading') }}...</span>
+                      <span class="q-hide q-md-show">{{ $tr('isite.cms.label.loading') }}...</span>
                     </div>
                   </q-btn>
                   <!---Uploader Files-->
@@ -64,7 +64,7 @@
                       auto-expand
                       field-name="file"
                       :factory="files => factoryUploader(files)"
-                      @fail="$alert.error({message: `${this.$tr('ui.message.recordNoCreated')}`})"
+                      @fail="$alert.error({message: `${this.$tr('isite.cms.message.recordNoCreated')}`})"
                       @finish="finishUploadFiles(); loadingUploadFile = false"
                       hide-upload-button
                       ref="uploadComponent"
@@ -72,7 +72,7 @@
                   <!--Button refresh -->
                   <q-btn color="info" icon="fas fa-sync" class="q-ml-xs" rounded unelevated
                          @click="getData({pagination:pagination,search:filter.search},true)">
-                    <q-tooltip>{{ $tr('ui.label.refresh') }}</q-tooltip>
+                    <q-tooltip>{{ $tr('isite.cms.label.refresh') }}</q-tooltip>
                   </q-btn>
                 </div>
               </div>
@@ -111,17 +111,17 @@
         <!--= Actions =-->
         <q-td slot="body-cell-actions" slot-scope="props" :props="props">
           <div v-if="embebed && !props.row.isFolder">
-            <q-btn color="blue" :label="$tr('ui.label.select')" size="sm"
+            <q-btn color="blue" :label="$tr('isite.cms.label.select')" size="sm"
                    @click="$emit('data', props.row)" rounded unelevated/>
           </div>
           <div v-else-if="!embebed">
             <q-btn icon="fas fa-pen" color="green" size="sm" class="q-mx-xs" round unelevated
                    @click="props.row.isFolder ? editFolder(props.row.filename,true,props.row.id) : editFile(true,props.row)">
-              <q-tooltip>{{ $tr('ui.label.edit') }}</q-tooltip>
+              <q-tooltip>{{ $tr('isite.cms.label.edit') }}</q-tooltip>
             </q-btn>
             <q-btn icon="far fa-trash-alt" color="red" size="sm" class="q-mx-xs" round unelevated
                    @click="dialogDeleteItem.handler(props.row.id,props.row.isFolder)">
-              <q-tooltip>{{ $tr('ui.label.delete') }}</q-tooltip>
+              <q-tooltip>{{ $tr('isite.cms.label.delete') }}</q-tooltip>
             </q-btn>
           </div>
         </q-td>
@@ -137,7 +137,7 @@
         <q-toolbar class="bg-primary text-white">
           <q-toolbar-title>
             <q-icon name="fa fa-folder" class="q-mr-sm"/>
-            <label>{{ $tr('qmedia.layout.newFolder') }}</label>
+            <label>{{ $tr('media.cms.newFolder') }}</label>
           </q-toolbar-title>
           <q-btn flat v-close-popup icon="fas fa-times"/>
         </q-toolbar>
@@ -145,13 +145,13 @@
         <!--Content-->
         <div class="relative-position q-pa-md">
           <q-form @submit="newFolder()"
-                  @validation-error="$alert.error($tr('ui.message.formInvalid'))">
-            <q-input :label="$tr('qmedia.layout.form.folderName')"
-                     :rules="[val => !!val || $tr('ui.message.fieldRequired')]"
+                  @validation-error="$alert.error($tr('isite.cms.message.formInvalid'))">
+            <q-input :label="$tr('media.cms.form.folderName')"
+                     :rules="[val => !!val || $tr('isite.cms.message.fieldRequired')]"
                      v-model="folderName" outlined dense/>
 
             <div class="text-right">
-              <q-btn color="green" :label="$tr('ui.label.save')" type="submit"
+              <q-btn color="green" :label="$tr('isite.cms.label.save')" type="submit"
                      icon="fas fa-save" v-close-popup rounded unelevated/>
             </div>
 
@@ -168,7 +168,7 @@
         <q-toolbar class="bg-primary text-white">
           <q-toolbar-title>
             <q-icon name="fa fa-folder" class="q-mr-sm"/>
-            <label>{{ $tr('qmedia.layout.renameFolder') }}</label>
+            <label>{{ $tr('media.cms.renameFolder') }}</label>
           </q-toolbar-title>
           <q-btn flat v-close-popup icon="fas fa-times"/>
         </q-toolbar>
@@ -176,13 +176,13 @@
         <!--Content-->
         <div class="relative-position q-pa-md">
           <q-form @submit="editFolder('',false,false)"
-                  @validation-error="$alert.error($tr('ui.message.formInvalid'))">
-            <q-input :label="$tr('qmedia.layout.form.folderName')"
-                     :rules="[val => !!val || $tr('ui.message.fieldRequired')]"
+                  @validation-error="$alert.error($tr('isite.cms.message.formInvalid'))">
+            <q-input :label="$tr('media.cms.form.folderName')"
+                     :rules="[val => !!val || $tr('isite.cms.message.fieldRequired')]"
                      v-model="folderName" outlined dense/>
 
             <div class="text-right">
-              <q-btn color="green" :label="$tr('ui.label.save')" type="submit"
+              <q-btn color="green" :label="$tr('isite.cms.label.save')" type="submit"
                      icon="fas fa-save" v-close-popup rounded unelevated/>
             </div>
 
@@ -199,7 +199,7 @@
         <q-toolbar class="bg-primary text-white">
           <q-toolbar-title>
             <q-icon name="fa fa-folder" class="q-mr-sm"/>
-            <label>{{ $tr('qmedia.layout.editFile') }}</label>
+            <label>{{ $tr('media.cms.editFile') }}</label>
           </q-toolbar-title>
           <q-btn flat v-close-popup icon="fas fa-times"/>
         </q-toolbar>
@@ -207,7 +207,7 @@
         <!--Content-->
         <div class="relative-position q-pa-md">
           <q-form @submit="editFile()" ref="formEditFile"
-                  @validation-error="$alert.error($tr('ui.message.formInvalid'))">
+                  @validation-error="$alert.error($tr('isite.cms.message.formInvalid'))">
 
             <locales v-model="locale" class="q-mb-md"/>
 
@@ -217,20 +217,20 @@
                 <img class="img-fluid" style="max-width: 200px"
                      :src="fileForm.path ? fileForm.path : ''" alt="">
               </div>
-              <q-input :label="$tr('qmedia.layout.form.altAttribute')"
+              <q-input :label="$tr('media.cms.form.altAttribute')"
                        v-model="locale.formTemplate.alt_attribute" outlined dense/>
-              <q-input :label="$tr('ui.label.description')"
+              <q-input :label="$tr('isite.cms.label.description')"
                        v-model="locale.formTemplate.description" outlined dense/>
-              <q-input :label="$tr('qmedia.layout.form.keyWords')"
+              <q-input :label="$tr('media.cms.form.keyWords')"
                        v-model="locale.formTemplate.keywords" outlined dense/>
-              <q-select :label="$trp('ui.label.tag',{capitalize:true})" bg-color="white"
+              <q-select :label="$trp('isite.cms.label.tag',{capitalize:true})" bg-color="white"
                         v-model="locale.formTemplate.tags" use-input use-chips multiple
                         hide-dropdown-icon input-debounce="0" new-value-mode="add-unique"
                         style="width: 100%" outlined dense/>
             </div>
 
             <div class="text-right">
-              <q-btn color="green" :label="$tr('ui.label.save')" type="submit"
+              <q-btn color="green" :label="$tr('isite.cms.label.save')" type="submit"
                      icon="fas fa-save" v-close-popup rounded unelevated/>
             </div>
 
@@ -247,7 +247,7 @@
         <q-toolbar class="bg-primary text-white">
           <q-toolbar-title>
             <q-icon name="fa fa-folder" class="q-mr-sm"/>
-            <label>{{ $tr('qmedia.layout.moveMedia') }}</label>
+            <label>{{ $tr('media.cms.moveMedia') }}</label>
           </q-toolbar-title>
           <q-btn flat v-close-popup icon="fas fa-times"/>
         </q-toolbar>
@@ -255,13 +255,13 @@
         <!--Content-->
         <div class="relative-position q-pa-md">
           <q-form @submit="moveElements()"
-                  @validation-error="$alert.error($tr('ui.message.formInvalid'))">
+                  @validation-error="$alert.error($tr('isite.cms.message.formInvalid'))">
 
-            <q-select :label="$tr('qmedia.layout.form.moveTo')" v-model="folderSelected"
+            <q-select :label="$tr('media.cms.form.moveTo')" v-model="folderSelected"
                       :options="selectFolders" outlined dense emit-value map-options/>
 
             <div class="text-right">
-              <q-btn color="green" :label="$tr('ui.label.confirm')" type="submit"
+              <q-btn color="green" :label="$tr('isite.cms.label.confirm')" type="submit"
                      icon="fas fa-save" v-close-popup rounded unelevated/>
             </div>
 
@@ -380,17 +380,17 @@ export default {
           }
         },
         {
-          name: 'filename', label: this.$tr('ui.form.name'),
+          name: 'filename', label: this.$tr('isite.cms.form.name'),
           field: 'filename', align: 'left'
         },
         {
-          name: 'createdAt', label: this.$tr('ui.form.createdAt'),
+          name: 'createdAt', label: this.$tr('isite.cms.form.createdAt'),
           field: 'createdAt',
           format: val => val ? this.$trd(val) : '-',
           align: 'right', sortable: true
         },
         {
-          name: 'actions', label: this.$tr('ui.form.actions'), align: 'center'
+          name: 'actions', label: this.$tr('isite.cms.form.actions'), align: 'center'
         },
 
       ]
@@ -399,10 +399,10 @@ export default {
       return {
         handler: () => {
           this.$q.dialog({
-            title: this.$tr('ui.label.confirm'),
-            ok: this.$tr('ui.label.delete'),
-            message: this.$tr('ui.message.deleteRecord'),
-            cancel: this.$tr('ui.label.cancel'),
+            title: this.$tr('isite.cms.label.confirm'),
+            ok: this.$tr('isite.cms.label.delete'),
+            message: this.$tr('isite.cms.message.deleteRecord'),
+            cancel: this.$tr('isite.cms.label.cancel'),
             color: 'red'
           }).onOk(() => {
             this.deleteElements()
@@ -415,10 +415,10 @@ export default {
       return {
         handler: (id, isFolder) => {
           this.$q.dialog({
-            title: this.$tr('ui.label.confirm'),
-            ok: this.$tr('ui.label.delete'),
-            message: this.$tr('ui.message.deleteRecord'),
-            cancel: this.$tr('ui.label.cancel'),
+            title: this.$tr('isite.cms.label.confirm'),
+            ok: this.$tr('isite.cms.label.delete'),
+            message: this.$tr('isite.cms.message.deleteRecord'),
+            cancel: this.$tr('isite.cms.label.cancel'),
           }).onOk(() => {
             this.deleteElement(id, isFolder)
           }).onCancel(() => {
@@ -427,7 +427,7 @@ export default {
       }
     },
     defaultBreadCrum() {
-      return [{id: 0, name: this.$tr('ui.label.home')}]
+      return [{id: 0, name: this.$tr('isite.cms.label.home')}]
     }
   },
   methods: {
@@ -468,7 +468,7 @@ export default {
         this.pagination.rowsNumber = response.meta.page.total
         this.loading = false
       }).catch(error => {
-        this.$alert.error({message: this.$tr('ui.message.errorRequest'), pos: 'bottom'})
+        this.$alert.error({message: this.$tr('isite.cms.message.errorRequest'), pos: 'bottom'})
         this.loading = false
       })
     },
@@ -497,11 +497,11 @@ export default {
 
       mediaService.crud.create('apiRoutes.qmedia.folders', data).then(reponse => {
         this.loadingFolder = false
-        this.$alert.success({message: `${this.$tr('ui.message.recordCreated')}`})
+        this.$alert.success({message: `${this.$tr('isite.cms.message.recordCreated')}`})
         this.getData({pagination: this.pagination, search: this.filter.search}, true)
       }).catch(error => {
         this.loadingFolder = false
-        this.$alert.error({message: `${this.$tr('ui.message.recordNoCreated')}`})
+        this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoCreated')}`})
       })
     },
     /**
@@ -520,11 +520,11 @@ export default {
       mediaService.crud.create('apiRoutes.qmedia.batchMove', data).then(reponse => {
         this.loadingMove = false
         this.rowsSelected = []
-        this.$alert.success({message: this.$tr('ui.message.recordUpdated')})
+        this.$alert.success({message: this.$tr('isite.cms.message.recordUpdated')})
         this.getData({pagination: this.pagination, search: this.filter.search}, true)
       }).catch(error => {
         this.loadingMove = false
-        this.$alert.error({message: this.$tr('ui.message.recordNoUpdated')})
+        this.$alert.error({message: this.$tr('isite.cms.message.recordNoUpdated')})
       })
     },
 
@@ -534,7 +534,7 @@ export default {
     finishUploadFiles() {
       this.uploadFile = false
       this.uploaderID = uid()
-      this.$alert.success({message: `${this.$tr('ui.message.recordCreated')}`})
+      this.$alert.success({message: `${this.$tr('isite.cms.message.recordCreated')}`})
       this.getDataByFolder({id: this.filter.folderId, name: this.filter.folderName}, true)
     },
     getFolders() {
@@ -558,7 +558,7 @@ export default {
           })
         })
       }).catch(error => {
-        this.$alert.error({message: this.$tr('ui.message.errorRequest'), pos: 'bottom'})
+        this.$alert.error({message: this.$tr('isite.cms.message.errorRequest'), pos: 'bottom'})
       })
     },
 
@@ -576,10 +576,10 @@ export default {
       }
 
       mediaService.crud.delete(configRoute, id).then(response => {
-        this.$alert.success({message: `${this.$tr('ui.message.recordDeleted')}`})
+        this.$alert.success({message: `${this.$tr('isite.cms.message.recordDeleted')}`})
         this.getData({pagination: this.pagination, search: this.filter.search}, true)
       }).catch(error => {
-        this.$alert.error({message: `${this.$tr('ui.message.recordNoDeleted')}`})
+        this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoDeleted')}`})
       })
     },
 
@@ -593,12 +593,12 @@ export default {
       }
 
       mediaService.crud.create('apiRoutes.qmedia.batchDestroy', data).then(response => {
-        this.$alert.success({message: `${this.$tr('ui.message.recordDeleted')}`})
+        this.$alert.success({message: `${this.$tr('isite.cms.message.recordDeleted')}`})
         this.loading = false
         this.rowsSelected = []
         this.getData({pagination: this.pagination, search: this.filter.search}, true)
       }).catch(error => {
-        this.$alert.error({message: `${this.$tr('ui.message.recordNoDeleted')}`})
+        this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoDeleted')}`})
       })
     },
     /**
@@ -625,11 +625,11 @@ export default {
         mediaService.crud.update('apiRoutes.qmedia.folders', this.idFolderToEdit, data).then(response => {
           this.loadingRenameFolder = false
           this.rowsSelected = []
-          this.$alert.success({message: this.$tr('ui.message.recordUpdated')})
+          this.$alert.success({message: this.$tr('isite.cms.message.recordUpdated')})
           this.getData({pagination: this.pagination, search: this.filter.search}, true)
         }).catch(error => {
           this.loadingRenameFolder = false
-          this.$alert.error({message: this.$tr('ui.message.recordNoUpdated')})
+          this.$alert.error({message: this.$tr('isite.cms.message.recordNoUpdated')})
         })
       }
     },
@@ -654,11 +654,11 @@ export default {
           this.rowsSelected = []
           this.fileForm = {}
           this.dialogEditFile = false
-          this.$alert.success({message: this.$tr('ui.message.recordUpdated')})
+          this.$alert.success({message: this.$tr('isite.cms.message.recordUpdated')})
           this.getData({pagination: this.pagination, search: this.filter.search}, true)
         }).catch(error => {
           this.loadingEditFile = false
-          this.$alert.error({message: this.$tr('ui.message.recordNoUpdated')})
+          this.$alert.error({message: this.$tr('isite.cms.message.recordNoUpdated')})
         })
       }
     },
