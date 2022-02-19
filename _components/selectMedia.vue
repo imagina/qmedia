@@ -103,6 +103,16 @@ export default {
         ],
         itemActions: [
           {
+            label: this.$tr('isite.cms.label.download'),
+            format: (item) => {
+              if ((item.disk == 'publicmedia') && this.$auth.hasAccess('media.medias.download'))
+                return {vIf: true}
+              else return {vIf: false}
+            },
+            icon: 'fas fa-file-download',
+            action: (item) => this.$helper.downloadFromURL(item.path)
+          },
+          {
             label: this.$tr('isite.cms.label.delete'),
             icon: 'fas fa-trash',
             action: (item) => {
