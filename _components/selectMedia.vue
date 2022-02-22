@@ -1,7 +1,8 @@
 <template>
   <div id="selectMediaComponent" class="full-width relative-position">
     <!--File List-->
-    <file-list v-model="filesData" v-bind="fileListParams" @emptyFileAction="pickSelectFile()"/>
+    <file-list v-model="filesData" v-bind="fileListParams" @emptyFileAction="pickSelectFile()"
+               @loaded="loadedFiles = true"/>
     <!--direct upload media-->
     <media :allow-select="quantityFiles.toSelect" only-upload ref="mediaComponent" :accept="accept"
            @uploading="loading = true" @uploaded="handlerSelectedFiles" :disk="disk"/>
@@ -51,6 +52,7 @@ export default {
   data() {
     return {
       loading: false,
+      loadedFiles: false,
       filesData: [],
       modalMedia: {
         show: false,
@@ -199,7 +201,7 @@ export default {
       }
 
       //Emit response
-      this.$emit('input', responseValue)
+      if (this.loadedFiles) this.$emit('input', responseValue)
     },
     //Handler selected files
     handlerSelectedFiles(files) {
