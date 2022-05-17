@@ -1,3 +1,6 @@
 export default {
-  moduleName: 'media'
+  moduleName: 'media',
+  entityNames: {
+    zone: "zone"
+  }
 }

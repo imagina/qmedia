@@ -6,7 +6,8 @@ export default [
     title: 'media.cms.sidebar.adminGroup',
     icon: 'fas fa-photo-video',
     children: [
-      pages.qmedia.index
+      pages.qmedia.index,
+      pages.qmedia.zones
     ]
   }
 ]

@@ -10,8 +10,24 @@ export default {
     title: 'media.cms.sidebar.adminIndex',
     icon: 'fas fa-photo-video',
     authenticated: true,
-    subHeader : {
-      refresh : true
+    subHeader: {
+      refresh: true
+    }
+  },
+  //Zones Page
+  zones: {
+    permission: 'media.zones.manage',
+    activated: true,
+    path: '/media/zones',
+    name: 'app.media.zones',
+    crud: import('@imagina/qmedia/_crud/zones'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'media.cms.sidebar.adminZones',
+    icon: 'fas fa-file-invoice',
+    authenticated: true,
+    subHeader: {
+      refresh: true
     }
   },
 }
