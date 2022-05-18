@@ -66,7 +66,9 @@ export default {
               requestParams: {filter: {asSelect: true}},
               select: {label: "name", id: "path"}
             }
-          },
+          }
+        },
+        formRight: {
           mediasSingle: {
             value: {},
             type: 'media',
@@ -75,6 +77,43 @@ export default {
               zone: 'watermark',
               entity: "Modules\\Media\\Entities\\Zone",
               entityId: null
+            }
+          },
+          waterMarkPosition: {
+            value: "center",
+            type: "select",
+            fakeFieldName: "options",
+            props: {
+              label: `${this.$tr('isite.cms.label.waterMark')} | ${this.$tr("isite.cms.label.position")}`,
+              options: [
+                {label: this.$tr('isite.cms.topLeft'), value: "top-left"},
+                {label: this.$tr('isite.cms.top'), value: "top"},
+                {label: this.$tr('isite.cms.topRight'), value: "top-right"},
+                {label: this.$tr('isite.cms.left'), value: "left"},
+                {label: this.$tr('isite.cms.center'), value: "center"},
+                {label: this.$tr('isite.cms.right'), value: "right"},
+                {label: this.$tr('isite.cms.bottomLeft'), value: "bottom-left"},
+                {label: this.$tr('isite.cms.bottom'), value: "bottom"},
+                {label: this.$tr('isite.cms.bottomRight'), value: "bottom-right"},
+              ]
+            }
+          },
+          waterMarkYAxis: {
+            value: 0,
+            type: "input",
+            fakeFieldName: "options",
+            props: {
+              label: `${this.$tr('isite.cms.label.waterMark')} | ${this.$tr("isite.cms.label.axis")} Y`,
+              type: "number"
+            }
+          },
+          waterMarkXAxis: {
+            value: 0,
+            type: "input",
+            fakeFieldName: "options",
+            props: {
+              label: `${this.$tr('isite.cms.label.waterMark')} | ${this.$tr("isite.cms.label.axis")} X`,
+              type: "number"
             }
           }
         }
