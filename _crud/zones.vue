@@ -55,13 +55,16 @@ export default {
             },
           },
           entityType: {
-            type: "select",
+            type: "treeSelect",
             require: true,
             props: {
               label: `${this.$tr('isite.cms.label.entity')}*`,
-              options: [
-                {label: "Iad - Ad", value: 'Modules\\Iad\\Entities\\Ad'}
-              ]
+              disableBranchNodes: true
+            },
+            loadOptions: {
+              apiRoute: "apiRoutes.qsite.modulesInfo",
+              requestParams: {filter: {asSelect: true}},
+              select: {label: "name", id: "path"}
             }
           },
           mediasSingle: {
