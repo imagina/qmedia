@@ -13,6 +13,7 @@
         @uploaded="handlerSelectedFiles"
         :disk="disk"
         :max-file-size="config.maxFileSize"
+        :ratio="config.ratio"
     />
     <!--Select media-->
     <master-modal v-model="modalMedia.show" v-bind="modalMediaParams" @hide="loading = false">
@@ -22,6 +23,7 @@
           :disk="disk"
           @selected="files => modalMedia.selectedFiles = $clone(files)"
           :max-file-size="config.maxFileSize"
+          :ratio="config.ratio"
       />
     </master-modal>
     <!--inner loading-->
@@ -79,14 +81,15 @@ export default {
     //Select media config
     config() {
       //Instance max files quantity to select
-      let maxFiles = this.zoneConfig.maxFiles || (this.maxFiles ? this.maxFiles : (this.multiple ? 50 : 1))
+      let maxFiles = this.zoneConfig.maxFiles || (this.maxFiles ? this.maxFiles : (this.multiple ? 12 : 1))
       //Return quantites of files
       return {
         maxFiles: maxFiles,
         selected: this.filesData.length,
         toSelect: (maxFiles == 1) ? 1 : (maxFiles - this.filesData.length),
         accept: this.zoneConfig.accept || this.accept,
-        maxFileSize: parseInt(this.zoneConfig.maxFileSize || 0)
+        maxFileSize: parseInt(this.zoneConfig.maxFileSize || 0),
+        ratio: this.zoneConfig.ratio || "free"
       }
     },
     //Params to file List

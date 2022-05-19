@@ -51,8 +51,16 @@ export default {
     //Zone config
     zoneConfig() {
       return {
-        maxFileSizeMB: parseInt(this.maxFileSize || this.mediaSettings.maxFileSize || 10)
+        maxFileSizeMB: parseInt(this.maxFileSize || this.mediaSettings.maxFileSize || 10),
+        ratio: this.parseRatio(this.ratio)
       }
+    },
+  },
+  methods: {
+    //parse ratio
+    parseRatio(value) {
+      if (!value || value == "free") return NaN
+      return value.split(":")[0] / value.split(":")[1]
     }
   }
 }

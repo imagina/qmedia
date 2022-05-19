@@ -12,7 +12,7 @@
 
     <!--Uploader-->
     <uploader v-model="filesToUpload" ref="uploaderComponent" hide-file-list @input="uploadFiles()"
-              :max-files="allowSelect || 50" :accept="accept" :max-file-size="maxFileSize"/>
+              :max-files="allowSelect || 50" :accept="accept" :max-file-size="maxFileSize" :ratio="ratio"/>
 
     <!--Content-->
     <div class="relative-position" v-if="!onlyUpload">
@@ -59,6 +59,7 @@ export default {
     allowSelect: {type: Number, default: 0},
     maxFileSize: {type: Number, default: 0},
     onlyUpload: {type: Boolean, defualt: false},
+    ratio: {type: String, default: "free"},
     accept: {default: false}
   },
   components: {
