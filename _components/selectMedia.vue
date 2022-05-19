@@ -4,15 +4,28 @@
     <file-list v-model="filesData" v-bind="fileListParams" @emptyFileAction="pickSelectFile()"
                @loaded="loadedFiles = true"/>
     <!--direct upload media-->
-    <media :allow-select="quantityFiles.toSelect" only-upload ref="mediaComponent" :accept="accept"
-           @uploading="loading = true" @uploaded="handlerSelectedFiles" :disk="disk"/>
+    <media
+        :allow-select="config.toSelect"
+        only-upload
+        ref="mediaComponent"
+        :accept="config.accept"
+        @uploading="loading = true"
+        @uploaded="handlerSelectedFiles"
+        :disk="disk"
+        :max-file-size="config.maxFileSize"
+    />
     <!--Select media-->
     <master-modal v-model="modalMedia.show" v-bind="modalMediaParams" @hide="loading = false">
-      <media :allow-select="quantityFiles.toSelect" :accept="accept" :disk="disk"
-             @selected="files => modalMedia.selectedFiles = $clone(files)"/>
+      <media
+          :allow-select="config.toSelect"
+          :accept="config.accept"
+          :disk="disk"
+          @selected="files => modalMedia.selectedFiles = $clone(files)"
+          :max-file-size="config.maxFileSize"
+      />
     </master-modal>
     <!--inner loading-->
-    <inner-loading :visible="loading"/>
+    <inner-loading :visible="loadingData || loading"/>
   </div>
 </template>
 <script>
@@ -52,8 +65,10 @@ export default {
   data() {
     return {
       loading: false,
+      loadingData: false,
       loadedFiles: false,
       filesData: [],
+      zoneConfig: {},
       modalMedia: {
         show: false,
         selectedFiles: []
@@ -61,26 +76,28 @@ export default {
     }
   },
   computed: {
-    //Validate max Files
-    quantityFiles() {
+    //Select media config
+    config() {
       //Instance max files quantity to select
-      let maxFiles = this.maxFiles ? this.maxFiles : (this.multiple ? 50 : 1)
+      let maxFiles = this.zoneConfig.maxFiles || (this.maxFiles ? this.maxFiles : (this.multiple ? 50 : 1))
       //Return quantites of files
       return {
-        max: maxFiles,
+        maxFiles: maxFiles,
         selected: this.filesData.length,
-        toSelect: (maxFiles == 1) ? 1 : (maxFiles - this.filesData.length)
+        toSelect: (maxFiles == 1) ? 1 : (maxFiles - this.filesData.length),
+        accept: this.zoneConfig.accept || this.accept,
+        maxFileSize: parseInt(this.zoneConfig.maxFileSize || 0)
       }
     },
     //Params to file List
     fileListParams() {
       return {
-        title: `${this.$clone(this.label)} (${this.quantityFiles.selected}/${this.quantityFiles.max})`,
-        gridColClass: this.gridColClass || ((this.quantityFiles.max >= 2) ? 'col-6 col-md-4' : 'col-12'),
+        title: `${this.$clone(this.label)} (${this.config.selected}/${this.config.maxFiles})`,
+        gridColClass: this.gridColClass || ((this.config.maxFiles >= 2) ? 'col-6 col-md-4' : 'col-12'),
         loadFiles: {
           apiRoute: 'apiRoutes.qmedia.files',
           requestParams: {
-            take: this.quantityFiles.max,
+            take: this.config.maxFiles,
             filter: {
               folderId: null,
               zone: this.zone,
@@ -93,7 +110,7 @@ export default {
         draggable: true,
         actions: [
           {
-            label: ((this.quantityFiles.max == 1) && (this.quantityFiles.selected == 1)) ?
+            label: ((this.config.maxFiles == 1) && (this.config.selected == 1)) ?
                 this.$tr('isite.cms.label.change') : this.$tr('isite.cms.label.select'),
             icon: 'fas fa-file-upload',
             padding: 'xs sm',
@@ -123,13 +140,13 @@ export default {
             }
           }
         ],
-        quantity: this.quantityFiles.max,
+        quantity: this.config.maxFiles,
         readonly: this.readonly
       }
     },
     //modal media params
     modalMediaParams() {
-      let counterSelect = `(${this.modalMedia.selectedFiles.length}/${this.quantityFiles.toSelect})`
+      let counterSelect = `(${this.modalMedia.selectedFiles.length}/${this.config.toSelect})`
       return {
         title: `${this.$tr('isite.cms.label.select')} ${this.$trp('isite.cms.label.file')} ${counterSelect}`,
         width: '95vw',
@@ -150,15 +167,37 @@ export default {
   },
   methods: {
     init() {
+      this.getZone()
+    },
+    //Get zone from DB
+    getZone() {
+      return new Promise(resolve => {
+        this.loadingData = true
+        //Request params
+        let requestParams = {
+          refresh: true,
+          params: {
+            filter: {field: "name", entityType: this.entity}
+          }
+        }
+        //Request
+        this.$crud.show('apiRoutes.qmedia.zones', this.zone, requestParams).then(response => {
+          this.zoneConfig = response.data?.options || {}
+          this.loadingData = false
+        }).catch(error => {
+          resolve(false)
+          this.loadingData = false
+        })
+      })
     },
     //pick select File
     pickSelectFile() {
       //Validate limit files
-      if ((this.quantityFiles.max >= 2) && !this.quantityFiles.toSelect) {
+      if ((this.config.maxFiles >= 2) && !this.config.toSelect) {
         this.$alert.warning({
           mode: 'modal',
           title: this.$tr('media.cms.messages.limitFiles'),
-          message: this.$tr('media.cms.messages.messageLimitFiles', {quantity: this.quantityFiles.max})
+          message: this.$tr('media.cms.messages.messageLimitFiles', {quantity: this.config.maxFiles})
         })
       }
       //Upload files
@@ -181,7 +220,7 @@ export default {
       if ((typeof responseValue != 'object') || Array.isArray(responseValue) || (responseValue == null))
         responseValue = {}
 
-      if (this.quantityFiles.max >= 2) {
+      if (this.config.maxFiles >= 2) {
         //instance default response
         let responseMultiple = {files: {}, orders: ''}
         //order response
@@ -207,7 +246,7 @@ export default {
     handlerSelectedFiles(files) {
       //Merge selected files
       let selectedFiles = this.$clone([...files, ...this.filesData])
-      this.filesData = this.$clone(selectedFiles.slice(0, this.quantityFiles.max))
+      this.filesData = this.$clone(selectedFiles.slice(0, this.config.maxFiles))
       //loading
       this.loading = false
     }
