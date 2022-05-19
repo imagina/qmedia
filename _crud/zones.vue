@@ -161,6 +161,18 @@ export default {
               type: "number"
             }
           },
+          directUpload: {
+            value: '0',
+            type: 'select',
+            fakeFieldName: "options",
+            props: {
+              label: this.$tr('media.cms.directUpload'),
+              options: [
+                {label: this.$tr('isite.cms.label.yes'), value: '1'},
+                {label: this.$tr('isite.cms.label.no'), value: '0'}
+              ]
+            }
+          },
         },
         formRight: {
           mediasSingle: {

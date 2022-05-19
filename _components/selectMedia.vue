@@ -89,7 +89,9 @@ export default {
         toSelect: (maxFiles == 1) ? 1 : (maxFiles - this.filesData.length),
         accept: this.zoneConfig.accept || this.accept,
         maxFileSize: parseInt(this.zoneConfig.maxFileSize || 0),
-        ratio: this.zoneConfig.ratio || "free"
+        ratio: this.zoneConfig.ratio || "free",
+        directUpload: (this.zoneConfig.directUpload == undefined) ? this.directUpload :
+            (parseInt(this.zoneConfig.directUpload) ? true : false)
       }
     },
     //Params to file List
@@ -206,7 +208,7 @@ export default {
       //Upload files
       else {
         //Open direct upload
-        if (this.directUpload) this.$refs.mediaComponent.directUpload()
+        if (this.config.directUpload) this.$refs.mediaComponent.directUpload()
         //open modal to select files
         else {
           this.modalMedia.selectedFiles = []
