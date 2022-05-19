@@ -12,7 +12,7 @@
 
     <!--Uploader-->
     <uploader v-model="filesToUpload" ref="uploaderComponent" hide-file-list @input="uploadFiles()"
-              :max-files="allowSelect || 50" :accept="accept"/>
+              :max-files="allowSelect || 50" :accept="accept" :max-file-size="maxFileSize"/>
 
     <!--Content-->
     <div class="relative-position" v-if="!onlyUpload">
@@ -42,6 +42,8 @@
   </div>
 </template>
 <script>
+//Mixins
+import zoneConfigMixing from "@imagina/qmedia/_mixins/zoneConfigMixins"
 //components
 import uploader from '@imagina/qsite/_components/master/uploader'
 import breadcrumbComponent from '@imagina/qmedia/_components/blocks/breadcrumb'
@@ -51,9 +53,11 @@ export default {
   beforeDestroy() {
     this.$root.$off('page.data.refresh')
   },
+  mixins: [zoneConfigMixing],
   props: {
     disk: {default: 'publicmedia'},
     allowSelect: {type: Number, default: 0},
+    maxFileSize: {type: Number, default: 0},
     onlyUpload: {type: Boolean, defualt: false},
     accept: {default: false}
   },
@@ -199,7 +203,7 @@ export default {
                   way: 'desc'
                 },
                 disk: this.disk,
-                ...(this.accept ? {extension: this.acceptExtensions} : {})
+                ...(this.accept ? {extension: this.acceptExtensions.withoutDot} : {})
               }
             }
           }
@@ -252,28 +256,6 @@ export default {
           }
         }
       }
-    },
-    //Accept extensions
-    acceptExtensions() {
-      let accept = this.$clone(this.accept ? this.accept.split(',') : [])
-      let response = []
-
-      //Get extensions settings
-      let extensions = {
-        images: this.$store.getters['qsiteApp/getSettingValueByName']('media::allowedImageTypes'),
-        videos: this.$store.getters['qsiteApp/getSettingValueByName']('media::allowedVideoTypes'),
-        audio: this.$store.getters['qsiteApp/getSettingValueByName']('media::allowedAudioTypes'),
-        files: this.$store.getters['qsiteApp/getSettingValueByName']('media::allowedFileTypes')
-      }
-
-      //Parse extensions
-      accept.forEach(extensionName => {
-        if (extensions[extensionName]) response = [...response, ...extensions[extensionName]]
-        else response = [...response, extensionName]
-      })
-
-      //Response
-      return response
     }
   },
   methods: {
