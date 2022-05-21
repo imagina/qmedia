@@ -179,18 +179,18 @@ export default {
             value: {},
             type: 'media',
             props: {
-              label: this.$tr('isite.cms.label.waterMark'),
+              label: this.$tr('isite.cms.label.watermark'),
               zone: 'watermark',
               entity: "Modules\\Media\\Entities\\Zone",
               entityId: null
             }
           },
-          waterMarkPosition: {
+          watermarkPosition: {
             value: "center",
             type: "select",
             fakeFieldName: "options",
             props: {
-              label: `${this.$tr('isite.cms.label.waterMark')} | ${this.$tr("isite.cms.label.position")}`,
+              label: `${this.$tr('isite.cms.label.watermark')} | ${this.$tr("isite.cms.label.position")}`,
               options: [
                 {label: this.$tr('isite.cms.topLeft'), value: "top-left"},
                 {label: this.$tr('isite.cms.top'), value: "top"},
@@ -204,21 +204,21 @@ export default {
               ]
             }
           },
-          waterMarkYAxis: {
+          watermarkXAxis: {
             value: 0,
             type: "input",
             fakeFieldName: "options",
             props: {
-              label: `${this.$tr('isite.cms.label.waterMark')} | ${this.$tr("isite.cms.label.axis")} Y`,
+              label: `${this.$tr('isite.cms.label.watermark')} | ${this.$tr("isite.cms.label.axis")} X`,
               type: "number"
             }
           },
-          waterMarkXAxis: {
+          watermarkYAxis: {
             value: 0,
             type: "input",
             fakeFieldName: "options",
             props: {
-              label: `${this.$tr('isite.cms.label.waterMark')} | ${this.$tr("isite.cms.label.axis")} X`,
+              label: `${this.$tr('isite.cms.label.watermark')} | ${this.$tr("isite.cms.label.axis")} Y`,
               type: "number"
             }
           }
