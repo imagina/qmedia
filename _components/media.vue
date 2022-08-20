@@ -12,7 +12,7 @@
 
     <!--Uploader-->
     <uploader v-model="filesToUpload" ref="uploaderComponent" hide-file-list @input="uploadFiles()"
-              :max-files="allowSelect || 50" :accept="accept" :max-file-size="maxFileSize" :ratio="ratio"/>
+              :max-files="50" :accept="accept" :max-file-size="maxFileSize" :ratio="ratio"/>
 
     <!--Content-->
     <div class="relative-position" v-if="!onlyUpload">
@@ -132,9 +132,9 @@ export default {
           label: this.$tr('isite.cms.label.copyDisclosureLink'),
           icon: "fas fa-copy",
           format: (item) => {
-            return { vIf: !item.isFolder && item.path ? true : false }
+            return {vIf: !item.isFolder && item.path ? true : false}
           },
-          action: (item) => this.$helper.copyToClipboard(item.path,'isite.cms.messages.copyDisclosureLink'),
+          action: (item) => this.$helper.copyToClipboard(item.path, 'isite.cms.messages.copyDisclosureLink'),
         },
         {
           label: this.$tr('isite.cms.label.delete'),
@@ -196,7 +196,7 @@ export default {
           title: this.$trp('isite.cms.label.file'),
           allowCounter: true,
           allowOrder: true,
-          itemActions: this.allowSelect ? [] : this.itemFileListActions.includeDownload,
+          itemActions: this.itemFileListActions.includeDownload,
           allowPagination: true,
           allowChangeView: true,
           allowSelect: this.allowSelect,
