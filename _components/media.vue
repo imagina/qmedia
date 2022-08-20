@@ -11,7 +11,7 @@
           :custom-data="customCrudData.file"/>
 
     <!--Uploader-->
-    <uploader v-model="filesToUpload" ref="uploaderComponent" hide-file-list @input="uploadFiles()"
+    <uploader ref="uploaderComponent" hide-file-list @added="uploadFiles"
               :max-files="50" :accept="accept" :max-file-size="maxFileSize" :ratio="ratio"/>
 
     <!--Content-->
@@ -76,7 +76,6 @@ export default {
   data() {
     return {
       loading: false,
-      filesToUpload: [],
       listView: false,
       filter: {
         search: null,
@@ -272,15 +271,10 @@ export default {
       this.$root.$on('page.data.refresh', () => this.refreshData())
     },
     //upload files
-    async uploadFiles() {
-      //Loading
-      this.loading = true
-      //Instance filesUploaded data
-      let filesUploaded = []
-
-      //Get files and check be a array
-      let files = this.$clone(this.filesToUpload || [])
-      if (!Array.isArray(files)) files = [files]
+    async uploadFiles(data) {
+      this.loading = true //Loading
+      let filesUploaded = []//Instance filesUploaded data
+      var files = [data.file]//Get files and check be a array
 
       //Emit uploaded files
       this.$emit('uploading', this.$clone(files))
@@ -302,10 +296,11 @@ export default {
       //Emit uploaded files
       this.$emit('uploaded', this.$clone(filesUploaded))
 
-      //Loading
-      if (files.length) this.refreshData()
-      this.filesToUpload = []
-      this.loading = false
+      //Last file uploaded
+      if (data.final) {
+        this.loading = false
+        this.refreshData()
+      }
     },
     //Set folder
     setFolder(file) {
