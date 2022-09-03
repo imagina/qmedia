@@ -1,7 +1,7 @@
 <template>
   <div id="selectMediaComponent" class="full-width relative-position">
     <!--File List-->
-    <file-list v-model="filesData" v-bind="fileListParams" @emptyFileAction="pickSelectFile()"
+    <file-list v-if="initiated" v-model="filesData" v-bind="fileListParams" @emptyFileAction="pickSelectFile()"
                @loaded="loadedFiles = true"/>
     <!--direct upload media-->
     <media
@@ -66,6 +66,7 @@ export default {
   },
   data() {
     return {
+      initiated: false,
       loading: false,
       loadingData: false,
       loadedFiles: false,
@@ -171,8 +172,10 @@ export default {
     }
   },
   methods: {
-    init() {
-      this.getZone()
+    async init() {
+      this.initiated = false
+      await this.getZone()
+      this.initiated = true
     },
     //Get zone from DB
     getZone() {
@@ -189,6 +192,7 @@ export default {
         this.$crud.show('apiRoutes.qmedia.zones', this.zone, requestParams).then(response => {
           this.zoneConfig = response.data?.options || {}
           this.loadingData = false
+          resolve(response.data)
         }).catch(error => {
           resolve(false)
           this.loadingData = false
