@@ -131,7 +131,7 @@ export default {
           label: this.$tr('isite.cms.label.copyDisclosureLink'),
           icon: "fas fa-copy",
           format: (item) => {
-            return {vIf: !item.isFolder && item.path ? true : false}
+            return {vIf: !item.isFolder && item.url ? true : false}
           },
           action: (item) => this.$helper.copyToClipboard(item.path, 'isite.cms.messages.copyDisclosureLink'),
         },
