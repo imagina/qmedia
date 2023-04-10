@@ -143,6 +143,7 @@ export default {
           if (response.data) this.files = [response.data];
           this.pushData()
         }).catch(error => {
+          this.$apiResponse.handleError(error, () => {})
         })
       }
 

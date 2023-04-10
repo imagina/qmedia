@@ -194,8 +194,10 @@ export default {
           this.loadingData = false
           resolve(response.data)
         }).catch(error => {
-          resolve(false)
-          this.loadingData = false
+          this.$apiResponse.handleError(error, () => {
+            resolve(false)
+            this.loadingData = false
+          })
         })
       })
     },

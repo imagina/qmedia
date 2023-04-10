@@ -81,7 +81,9 @@ export default {
             this.breadcrumbs[0] = {id: 0, name: this.$tr('isite.cms.label.home')}
             this.loading = false
           }).catch(error => {
-            this.loading = false
+            this.$apiResponse.handleError(error, () => {
+              this.loading = false
+            })
           })
         } else {
           this.breadcrumbs = [{id: 0, name: this.$tr('isite.cms.label.home')}]

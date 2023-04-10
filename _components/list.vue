@@ -468,8 +468,10 @@ export default {
         this.pagination.rowsNumber = response.meta.page.total
         this.loading = false
       }).catch(error => {
-        this.$alert.error({message: this.$tr('isite.cms.message.errorRequest'), pos: 'bottom'})
-        this.loading = false
+          this.$apiResponse.handleError(error, () => {
+            this.$alert.error({message: this.$tr('isite.cms.message.errorRequest'), pos: 'bottom'})
+            this.loading = false
+          })
       })
     },
     /**
@@ -558,7 +560,9 @@ export default {
           })
         })
       }).catch(error => {
-        this.$alert.error({message: this.$tr('isite.cms.message.errorRequest'), pos: 'bottom'})
+          this.$apiResponse.handleError(error, () => {
+            this.$alert.error({message: this.$tr('isite.cms.message.errorRequest'), pos: 'bottom'})
+          })
       })
     },
 
