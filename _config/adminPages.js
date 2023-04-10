@@ -8,7 +8,7 @@ export default {
     page: () => import('@imagina/qmedia/_pages/admin/index'),
     layout: () => import('@imagina/qsite/_layouts/master.vue'),
     title: 'media.cms.sidebar.adminIndex',
-    icon: 'fas fa-photo-video',
+    icon: 'fa-light fa-photo-film',
     authenticated: true,
     subHeader: {
       refresh: true
@@ -24,7 +24,7 @@ export default {
     page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
     layout: () => import('@imagina/qsite/_layouts/master.vue'),
     title: 'media.cms.sidebar.adminZones',
-    icon: 'fas fa-file-invoice',
+    icon: 'fa-light fa-sliders-up',
     authenticated: true,
     subHeader: {
       refresh: true

@@ -4,7 +4,7 @@ const pages = config('pages') // Get Pages from config
 export default [
   {
     title: 'media.cms.sidebar.adminGroup',
-    icon: 'fas fa-photo-video',
+    icon: 'fa-light fa-photo-film',
     children: [
       pages.qmedia.index,
       pages.qmedia.zones
