@@ -686,7 +686,7 @@ export default {
   }
 }
 </script>
-<style lang="stylus">
+<style lang="sass">
 #mediaList
   .table-top
     .table-top-right

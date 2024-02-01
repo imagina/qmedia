@@ -264,7 +264,7 @@ export default {
   }
 }
 </script>
-<style lang="stylus">
+<style lang="sass">
 #selectMediaComponent
   border 1px solid $grey-4
   border-radius $custom-radius-items

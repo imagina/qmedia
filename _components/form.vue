@@ -208,7 +208,7 @@ export default {
   }
 }
 </script>
-<style lang="stylus">
+<style lang="sass">
 #mediaForm
   border dashed 1px $blue-grey
   border-radius 5px
