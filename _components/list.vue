@@ -687,39 +687,48 @@ export default {
 }
 </script>
 <style lang="scss">
-#mediaList
-  .table-top
-    .table-top-right
-      .q-btn
-        @media screen and (max-width: $breakpoint-sm)
-          margin-top 10px
-        @media screen and (max-width: $breakpoint-md)
-          .q-btn-inner
-            i
-              margin 0px
-
-            div
-              display none
-
-          .absolute-full
-            svg
-              margin 0px
-
-  .image
-    background-repeat no-repeat
-    background-size contain
-    background-position center center
-    height 70px
-    width auto
-    overflow hidden
-
-  table td
-    word-wrap break-word !important
-    overflow-wrap break-word !important
-    white-space inherit !important
-
-#mediaEditFileModal
-  .img-fluid
-    width 50%
-
+#mediaList {
+  .table-top {
+    .table-top-right {
+      .q-btn {
+        @media screen and (max-width: $breakpoint-sm) {
+          margin-top: 10px;
+        }
+        @media screen and (max-width: $breakpoint-md) {
+          .q-btn-inner {
+            i {
+              margin: 0px;
+            }
+            div {
+              display: none;
+            }
+          }
+          .absolute-full {
+            svg {
+              margin: 0px;
+            }
+          }
+        }
+      }
+    }
+  }
+  .image {
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center center;
+    height: 70px;
+    width: auto;
+    overflow: hidden;
+  }
+  table td {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: inherit !important;
+  }
+}
+#mediaEditFileModal {
+  .img-fluid {
+    width: 50%;
+  }
+}
 </style>

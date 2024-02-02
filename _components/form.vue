@@ -209,37 +209,45 @@ export default {
 }
 </script>
 <style lang="scss">
-#mediaForm
-  border dashed 1px $blue-grey
-  border-radius 5px
-  padding 8px 10px
+#mediaForm {
+  border: dashed 1px $blue-grey;
+  border-radius: 5px;
+  padding: 8px 10px;
 
-  .file-block
-    padding 3px
+  .file-block {
+    padding: 3px;
 
-    .file-block-content
-      cursor pointer
-      background-repeat no-repeat
-      background-size 100% auto
-      background-position center center
-      height 150px
-      overflow hidden
-      border 1px solid $grey-4
-      border-radius 5px
+    .file-block-content {
+      cursor: pointer;
+      background-repeat: no-repeat;
+      background-size: 100% auto;
+      background-position: center center;
+      height: 150px;
+      overflow: hidden;
+      border: 1px solid $grey-4;
+      border-radius: 5px;
+    }
+  }
 
-  .label
-    text-transform capitalize
+  .label {
+    text-transform: capitalize;
+  }
 
-  .btn-remove-file
-    position absolute
-    right 0
-    top 0
+  .btn-remove-file {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
 
-#modalMedia
-  .q-card
-    min-width 80vw
+#modalMedia {
+  .q-card {
+    min-width: 80vw;
 
-    .q-card__section
-      max-height calc(100vh - 148px) !important
-      overflow-y scroll
+    .q-card__section {
+      max-height: calc(100vh - 148px) !important;
+      overflow-y: scroll;
+    }
+  }
+}
 </style>
