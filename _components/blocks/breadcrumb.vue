@@ -93,7 +93,7 @@ export default {
   }
 }
 </script>
-<style lang="stylus">
+<style lang="scss">
 #mediaBreadcrumbComponent
   #breadcrumbContent
     padding 10px 15px
