@@ -133,7 +133,7 @@ export default {
           format: (item) => {
             return {vIf: !item.isFolder && item.url ? true : false}
           },
-          action: (item) => this.$helper.copyToClipboard(item.path, 'isite.cms.messages.copyDisclosureLink'),
+          action: (item) => this.$helper.copyToClipboard(item.url, 'isite.cms.messages.copyDisclosureLink'),
         },
         {
           label: this.$tr('isite.cms.label.delete'),
@@ -150,7 +150,7 @@ export default {
         label: this.$tr('isite.cms.label.download'),
         vIf: this.$auth.hasAccess('media.medias.download'),
         icon: 'fas fa-file-download',
-        action: (item) => this.$helper.downloadFromURL(item.path)
+        action: (item) => this.$helper.downloadFromURL(item.url)
       }
 
       //Response

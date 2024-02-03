@@ -265,7 +265,8 @@ export default {
 }
 </script>
 <style lang="scss">
-#selectMediaComponent
-  border 1px solid $grey-4
-  border-radius $custom-radius-items
+#selectMediaComponent {
+  border: 1px solid $grey-4;
+  border-radius: $custom-radius-items;
+}
 </style>
