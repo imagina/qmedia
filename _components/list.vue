@@ -4,7 +4,7 @@
     <div class="col-12 backend-page relative-position">
       <!--== Table ==-->
       <q-table
-          :data="dataTable"
+          :rows="dataTable"
           :columns="columnsTable"
           :pagination.sync="pagination"
           selection="multiple"
