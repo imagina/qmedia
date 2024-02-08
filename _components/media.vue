@@ -48,10 +48,11 @@ import zoneConfigMixing from "@imagina/qmedia/_mixins/zoneConfigMixins"
 import uploader from '@imagina/qsite/_components/master/uploader'
 import breadcrumbComponent from '@imagina/qmedia/_components/blocks/breadcrumb'
 import fileListComponent from '@imagina/qsite/_components/master/fileList'
+import eventBus from '@imagina/qsite/_plugins/eventBus'
 
 export default {
   beforeDestroy() {
-    this.$root.$off('page.data.refresh')
+    eventBus.off('page.data.refresh')
   },
   mixins: [zoneConfigMixing],
   props: {
@@ -268,7 +269,7 @@ export default {
   },
   methods: {
     init() {
-      this.$root.$on('page.data.refresh', () => this.refreshData())
+      eventBus.on('page.data.refresh', () => this.refreshData())
     },
     //upload files
     async uploadFiles(data) {
