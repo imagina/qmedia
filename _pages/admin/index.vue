@@ -11,8 +11,8 @@
 </template>
 <script>
 /*Components*/
-import mediaList from '@imagina/qmedia/_components/list'
-import mediaMaster from '@imagina/qmedia/_components/media'
+import mediaList from 'modules/qmedia/_components/list'
+import mediaMaster from 'modules/qmedia/_components/media'
 
 export default {
   props: {},

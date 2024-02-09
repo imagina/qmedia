@@ -5,7 +5,7 @@
 </template>
 <script>
   //Components
-  import mediaList from '@imagina/qmedia/_components/list'
+  import mediaList from 'modules/qmedia/_components/list'
 
   export default {
     props: {},

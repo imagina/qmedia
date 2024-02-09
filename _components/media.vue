@@ -1,12 +1,12 @@
 <template>
   <div id="mediaMasterComponent">
     <!--Crud folders-->
-    <crud :crud-data="import('@imagina/qmedia/_crud/folder')" type="onlyUpdate" ref="crudFolders"
+    <crud :crud-data="import('modules/qmedia/_crud/folder')" type="onlyUpdate" ref="crudFolders"
           @created="refreshData" @updated="refreshData" @deleted="refreshData"
           :custom-data="customCrudData.folder"/>
 
     <!--Crud Files-->
-    <crud :crud-data="import('@imagina/qmedia/_crud/files')" type="onlyUpdate" ref="crudFiles"
+    <crud :crud-data="import('modules/qmedia/_crud/files')" type="onlyUpdate" ref="crudFiles"
           @created="refreshData" @updated="refreshData" @deleted="refreshData"
           :custom-data="customCrudData.file"/>
 
@@ -43,12 +43,12 @@
 </template>
 <script>
 //Mixins
-import zoneConfigMixing from "@imagina/qmedia/_mixins/zoneConfigMixins"
+import zoneConfigMixing from "modules/qmedia/_mixins/zoneConfigMixins"
 //components
-import uploader from '@imagina/qsite/_components/master/uploader'
-import breadcrumbComponent from '@imagina/qmedia/_components/blocks/breadcrumb'
-import fileListComponent from '@imagina/qsite/_components/master/fileList'
-import eventBus from '@imagina/qsite/_plugins/eventBus'
+import uploader from 'modules/qsite/_components/master/uploader'
+import breadcrumbComponent from 'modules/qmedia/_components/blocks/breadcrumb'
+import fileListComponent from 'modules/qsite/_components/master/fileList'
+import eventBus from 'modules/qsite/_plugins/eventBus'
 
 export default {
   beforeDestroy() {

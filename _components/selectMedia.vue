@@ -32,8 +32,8 @@
 </template>
 <script>
 //components
-import fileList from '@imagina/qsite/_components/master/fileList'
-import media from '@imagina/qmedia/_components/media'
+import fileList from 'modules/qsite/_components/master/fileList'
+import media from 'modules/qmedia/_components/media'
 
 export default {
   props: {
