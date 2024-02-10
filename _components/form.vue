@@ -60,10 +60,10 @@
 </template>
 <script>
 /*Components*/
-import mediaList from '@imagina/qmedia/_components/list'
+import mediaList from 'modules/qmedia/_components/list'
 import draggable from 'vuedraggable'
 /*Services*/
-import mediaService from '@imagina/qmedia/_services/index'
+import mediaService from 'modules/qmedia/_services/index'
 
 export default {
   props: {

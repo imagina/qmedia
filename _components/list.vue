@@ -279,7 +279,7 @@ import {uid} from 'quasar'
 import _cloneDeep from 'lodash.clonedeep'
 
 /*Services*/
-import mediaService from '@imagina/qmedia/_services/index'
+import mediaService from 'modules/qmedia/_services/index'
 
 export default {
   props: {
