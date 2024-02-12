@@ -1,7 +1,7 @@
 import crud from 'modules/qcrud/_services/baseService'
 import http from "axios";
 import { remember } from "modules/qsite/_plugins/remember"
-import config from 'modules/qsite/_config/master/index'
+import config from 'src/config/plugin'
 
 export default {
   crud,
