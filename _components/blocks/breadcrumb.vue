@@ -8,7 +8,7 @@
       <q-breadcrumbs gutter="none">
         <!---Slot separator-->
         <template v-slot:separator>
-          <q-icon size="1.5em" name="chevron_right" color="primary"/>
+          <q-icon size="1.5em" name="fa-light fa-chevron-right" color="primary"/>
         </template>
         <!---Items on breadcrumb-->
         <q-breadcrumbs-el v-for="(item,index) in breadcrumbs" :key="index"
