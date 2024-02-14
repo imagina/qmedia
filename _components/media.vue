@@ -48,7 +48,7 @@ import zoneConfigMixing from "modules/qmedia/_mixins/zoneConfigMixins"
 import uploader from 'modules/qsite/_components/master/uploader'
 import breadcrumbComponent from 'modules/qmedia/_components/blocks/breadcrumb'
 import fileListComponent from 'modules/qsite/_components/master/fileList'
-import eventBus from 'modules/qsite/_plugins/eventBus'
+import { eventBus } from 'src/plugins/utils'
 
 export default {
   beforeDestroy() {
