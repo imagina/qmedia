@@ -27,6 +27,7 @@ export default {
       }
     }
   },
+  emits: ['selected'],
   components: {},
   watch: {
     params: {

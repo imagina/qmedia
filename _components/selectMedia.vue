@@ -37,7 +37,7 @@ import media from 'modules/qmedia/_components/media'
 
 export default {
   props: {
-    value: {default: {}},
+    modelValue: {default: {}},
     disk: {default: 'publicmedia'},
     zone: {type: String, default: 'mainimage'},
     entity: {type: String, required: true},
@@ -50,6 +50,7 @@ export default {
     accept: {default: false},
     readonly: {type: Boolean, default: false}
   },
+  emits: ['update:modelValue'],
   components: {fileList, media},
   watch: {
     filesData: {
@@ -225,7 +226,7 @@ export default {
     //Emit response value
     emitResponseValue() {
       let files = this.$clone(this.filesData)
-      let responseValue = this.$clone(this.value)
+      let responseValue = this.$clone(this.modelValue)
 
       //Validate response value
       if ((typeof responseValue != 'object') || Array.isArray(responseValue) || (responseValue == null))
@@ -251,7 +252,7 @@ export default {
       }
 
       //Emit response
-      if (this.loadedFiles) this.$emit('input', responseValue)
+      if (this.loadedFiles) this.$emit('update:modelValue', responseValue)
     },
     //Handler selected files
     handlerSelectedFiles(files) {

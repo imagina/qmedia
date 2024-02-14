@@ -63,6 +63,7 @@ export default {
     ratio: {type: String, default: "free"},
     accept: {default: false}
   },
+  emits: ['selected','uploading','uploaded'],
   components: {
     breadcrumbComponent,
     fileListComponent,

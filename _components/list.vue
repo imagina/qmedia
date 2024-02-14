@@ -289,6 +289,7 @@ export default {
       default: false
     }
   },
+  emits: ['data'],
   components: {},
   watch: {
     uploadFile(newValue) {

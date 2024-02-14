@@ -76,7 +76,7 @@ export default {
       type: Boolean,
       default: false
     },
-    value: {
+    modelValue: {
       //type: Object,
       default: () => {
         return {}
@@ -88,6 +88,7 @@ export default {
     buttonLabel: {type: String, default: ''},
     buttonIcon: {type: String, default: ''}
   },
+  emits: ['update:modelValue'],
   components: {
     mediaList,
     draggable
@@ -165,8 +166,8 @@ export default {
           }
 
           //Default value to filesData
-          if (Array.isArray(this.value) && !this.value.lenght) filesData = {}
-          else filesData = JSON.parse(JSON.stringify(this.value))
+          if (Array.isArray(this.modelValue) && !this.modelValue.lenght) filesData = {}
+          else filesData = JSON.parse(JSON.stringify(this.modelValue))
 
           //Validate if exist zone
           if (!filesData[zone] || Array.isArray(filesData[zone])) filesData[zone] = {}
@@ -179,15 +180,15 @@ export default {
         } else {
           if (file) this.files = [file]
 
-          if (Array.isArray(this.value) && !this.value.lenght) filesData = {}
-          else filesData = JSON.parse(JSON.stringify(this.value))
+          if (Array.isArray(this.modelValue) && !this.modelValue.lenght) filesData = {}
+          else filesData = JSON.parse(JSON.stringify(this.modelValue))
 
           if (!filesData[zone]) filesData[zone] = {}
           filesData[zone] = file ? file.id : (this.files[0] ? this.files[0].id : '')
           this.modalMedia = false
         }
         //Emit data
-        this.$emit('input', this.$clone(filesData))
+        this.$emit('update:modelValue', this.$clone(filesData))
       }, 300)
     },
     /**
