@@ -22,7 +22,7 @@
                 <!---Search-->
                 <q-input clearable v-model="filter.search" dense outlined debounce="800" style="max-width: 250px"
                          :placeholder="`${$tr('isite.cms.label.search',{capitalize : true})}...`"
-                         @input="getData({pagination:pagination,search:filter.search})">
+                         @update:modelValue="getData({pagination:pagination,search:filter.search})">
                   <template v-slot:append>
                     <q-icon name="search"/>
                   </template>
