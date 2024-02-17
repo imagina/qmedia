@@ -131,7 +131,7 @@ export default {
           {
             label: this.$tr('isite.cms.label.download'),
             format: (item) => {
-              if ((item.disk == 'publicmedia') && this.$auth.hasAccess('media.medias.download'))
+              if ((item.disk == 'publicmedia') && this.$hasAccess('media.medias.download'))
                 return {vIf: true}
               else return {vIf: false}
             },

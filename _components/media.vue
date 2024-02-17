@@ -150,7 +150,7 @@ export default {
       //Instance download action
       let downloadAction = {
         label: this.$tr('isite.cms.label.download'),
-        vIf: this.$auth.hasAccess('media.medias.download'),
+        vIf: this.$hasAccess('media.medias.download'),
         icon: 'fas fa-file-download',
         action: (item) => this.$helper.downloadFromURL(item.url)
       }

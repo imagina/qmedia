@@ -45,13 +45,13 @@
                   <q-btn color="green" icon="fas fa-folder-plus" class="q-ml-xs"
                          @click="dialogCreateFolder=true" rounded unelevated
                          :label="$tr('media.cms.newFolder')"
-                         v-if="$auth.hasAccess('media.folders.create')"
+                         v-if="$hasAccess('media.folders.create')"
                   />
                   <!--Button add file -->
                   <q-btn color="blue" icon="add_photo_alternate" class="q-ml-xs"
                          @click="uploadFile = !uploadFile" :loading="loadingUploadFile"
                          :label="$tr('media.cms.uploadFile')" rounded unelevated
-                         v-if="$auth.hasAccess('media.medias.create')">
+                         v-if="$hasAccess('media.medias.create')">
                     <div slot="loading">
                       <q-spinner class="on-left"/>
                       <span class="q-hide q-md-show">{{ $tr('isite.cms.label.loading') }}...</span>
