@@ -3,16 +3,16 @@ export default {
     //Settings
     mediaSettings() {
       const types = {
-        imagesType: this.$store.getters['qsiteApp/getSettingValueByName']('media::allowedImageTypes'),
-        filesType: this.$store.getters['qsiteApp/getSettingValueByName']('media::allowedFileTypes'),
-        videosType: this.$store.getters['qsiteApp/getSettingValueByName']('media::allowedVideoTypes'),
-        audiosType: this.$store.getters['qsiteApp/getSettingValueByName']('media::allowedAudioTypes'),
+        imagesType: this.$getSetting('media::allowedImageTypes'),
+        filesType: this.$getSetting('media::allowedFileTypes'),
+        videosType: this.$getSetting('media::allowedVideoTypes'),
+        audiosType: this.$getSetting('media::allowedAudioTypes'),
       }
       //Response
       return {
         ...types,
-        ratios: this.$store.getters['qsiteApp/getSettingValueByName']('media::allowedRatios'),
-        maxFileSize: this.$store.getters['qsiteApp/getSettingValueByName']('media::maxFileSize'),
+        ratios: this.$getSetting('media::allowedRatios'),
+        maxFileSize: this.$getSetting('media::maxFileSize'),
       }
     },
     //Return accept extensions
