@@ -20,23 +20,47 @@
     <!--= Files viewer =-->
     <div class="col-12">
       <div style="min-height: 160px">
-        <draggable @change="pushData(false)" class="row" v-model="files" group="filesDrag">
-          <div v-for="(file,index) in files" :key="index"
-               class="file-block col-6 col-md-3 relative-position">
-            <!--Image-->
-            <div class="file-block-content" v-if="file.is_image || file.isImage"
-                 @click="$refs.avatarImage.open(file.path)"
-                 :style="'background-image:url(' + getThumbnails(file,'smallThumb') + ')'">
+        <draggable
+          @change="pushData(false)"
+          class="row"
+          v-model="files"
+          group="filesDrag"
+          item-key="id"
+        >
+          <template #item="{ element, index }">
+            <div
+              :key="index"
+              class="file-block col-6 col-md-3 relative-position"
+            >
+              <!--Image-->
+              <div
+                class="file-block-content"
+                v-if="element.is_image || element.isImage"
+                @click="$refs.avatarImage.open(element.path)"
+                :style="'background-image:url(' + getThumbnails(element,'smallThumb') + ')'"
+              />
+              <!--Icon-->
+              <div
+                class="file-block-content row items-center justify-center"
+                v-else
+              >
+                <q-icon
+                  color="grey-8"
+                  size="40px"
+                  :name="((element.media_type || element.mediaType) == 'video') ? 'fas fa-video' : 'far fa-file-alt'"
+                />
+              </div>
+              <!--Action remove file-->
+              <q-btn
+                round
+                color="red"
+                @click="deleteFile(index)"
+                icon="fas fa-trash-alt"
+                size="sm" unelevated
+                class="btn-remove-file"
+              />
             </div>
-            <!--Icon-->
-            <div class="file-block-content row items-center justify-center" v-else>
-              <q-icon color="grey-8" size="40px"
-                      :name="((file.media_type || file.mediaType) == 'video') ? 'fas fa-video' : 'far fa-file-alt'"/>
-            </div>
-            <!--Action remove file-->
-            <q-btn round color="red" @click="deleteFile(index)" icon="fas fa-trash-alt" size="sm" unelevated
-                   class="btn-remove-file"/>
-          </div>
+          </template>
         </draggable>
       </div>
     </div>
