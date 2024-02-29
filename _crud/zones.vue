@@ -172,15 +172,6 @@ export default {
                 { label: this.$tr('isite.cms.label.no'), value: '0' }
               ]
             }
-          },
-          thumbnails: {
-            value: '',
-            type: 'json',
-            fakeFieldName: 'options',
-            props: {
-              label: this.$tr('media.cms.thumbnailsConfig'),
-              type: 'textarea'
-            }
           }
         },
         formRight: {
