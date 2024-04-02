@@ -24,7 +24,7 @@
                          :placeholder="`${$tr('isite.cms.label.search',{capitalize : true})}...`"
                          @update:modelValue="getData({pagination:pagination,search:filter.search})">
                   <template v-slot:append>
-                    <q-icon name="search"/>
+                    <q-icon name="fas fa-search"/>
                   </template>
                 </q-input>
               </div>
