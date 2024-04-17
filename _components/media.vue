@@ -51,7 +51,7 @@ import fileListComponent from 'modules/qsite/_components/master/fileList'
 import { eventBus } from 'src/plugins/utils'
 
 export default {
-  beforeDestroy() {
+  beforeUnmount() {
     eventBus.off('page.data.refresh')
   },
   mixins: [zoneConfigMixing],
