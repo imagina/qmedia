@@ -32,6 +32,7 @@ export default {
         read: {
           columns: [
             { name: 'id', label: this.$tr('isite.cms.form.id'), field: 'id', style: 'width: 50px' },
+            { name: 'zone', label: this.$tr('isite.cms.label.zone'), field: 'name', align: 'rigth', action: 'edit' },
             {
               name: 'module', label: this.$tr('isite.cms.label.module'), field: 'entityType', align: 'left',
               format: val => val ? val.split('\\')[1] : ''
@@ -40,7 +41,6 @@ export default {
               name: 'entity', label: this.$tr('isite.cms.label.entity'), field: 'entityType', align: 'left',
               format: val => val ? val.split('\\')[3] : ''
             },
-            { name: 'zone', label: this.$tr('isite.cms.label.zone'), field: 'name', align: 'rigth' },
             {
               name: 'accept', label: this.$tr('isite.cms.label.accept'), field: 'options', align: 'rigth',
               format: val => val.accept || '-'
