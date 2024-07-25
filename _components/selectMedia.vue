@@ -50,7 +50,7 @@ export default {
     accept: {default: false},
     readonly: {type: Boolean, default: false}
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'files'],
   components: {fileList, media},
   watch: {
     filesData: {
@@ -252,7 +252,10 @@ export default {
       }
 
       //Emit response
-      if (this.loadedFiles) this.$emit('update:modelValue', responseValue)
+      if (this.loadedFiles) {
+        this.$emit('update:modelValue', responseValue)
+        this.$emit('files', files)
+      }
     },
     //Handler selected files
     handlerSelectedFiles(files) {
