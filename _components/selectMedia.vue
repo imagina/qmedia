@@ -11,7 +11,7 @@
         :accept="config.accept"
         @uploading="loading = true"
         @uploaded="handlerSelectedFiles"
-        :disk="disk"
+        :disk="mediaDisk"
         :max-file-size="config.maxFileSize"
         :ratio="config.ratio"
     />
@@ -20,7 +20,7 @@
       <media
           :allow-select="config.toSelect"
           :accept="config.accept"
-          :disk="disk"
+          :disk="mediaDisk"
           @selected="files => modalMedia.selectedFiles = $clone(files)"
           :max-file-size="config.maxFileSize"
           :ratio="config.ratio"
@@ -38,7 +38,7 @@ import media from '@imagina/qmedia/_components/media'
 export default {
   props: {
     value: {default: {}},
-    disk: {default: 'publicmedia'},
+    disk: {default: null},
     zone: {type: String, default: 'mainimage'},
     entity: {type: String, required: true},
     entityId: {default: null},
@@ -109,7 +109,7 @@ export default {
               zone: this.zone,
               entity: this.entity,
               entityId: this.entityId,
-              disk: this.disk
+              disk: this.mediaDisk
             }
           }
         },
@@ -130,7 +130,7 @@ export default {
           {
             label: this.$tr('isite.cms.label.download'),
             format: (item) => {
-              if ((item.disk == 'publicmedia') && this.$auth.hasAccess('media.medias.download'))
+              if (['s3','publicmedia'].includes(item.disk) && this.$auth.hasAccess('media.medias.download'))
                 return {vIf: true}
               else return {vIf: false}
             },
@@ -169,6 +169,10 @@ export default {
           }
         ]
       }
+    },
+    //default disk
+    mediaDisk() {
+      return this.disk || this.$store.getters['qsiteApp/getSettingValueByName']('media::filesystem');
     }
   },
   methods: {

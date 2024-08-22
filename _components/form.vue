@@ -52,7 +52,7 @@
           <q-btn flat v-close-popup icon="fas fa-times"/>
         </q-toolbar>
         <q-card-section class="q-pa-md">
-          <media-list embebed @data="pushData" :disk="disk"/>
+          <media-list embebed @data="pushData" :disk="mediaDisk"/>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -67,7 +67,7 @@ import mediaService from '@imagina/qmedia/_services/index'
 
 export default {
   props: {
-    disk: {default: 'publicmedia'},
+    disk: {default: null},
     zone: {
       type: String,
       default: 'image'
@@ -204,6 +204,10 @@ export default {
         return itemFile ? itemFile.path : ''
       }
       return ''
+    },
+    //default disk
+    mediaDisk() {
+      return this.disk || this.$store.getters['qsiteApp/getSettingValueByName']('media::filesystem');
     }
   }
 }

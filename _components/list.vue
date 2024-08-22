@@ -283,7 +283,7 @@ import mediaService from '@imagina/qmedia/_services/index'
 
 export default {
   props: {
-    disk: {default: 'publicmedia'},
+    disk: {default: null},
     embebed: {
       type: Boolean,
       default: false
@@ -428,6 +428,10 @@ export default {
     },
     defaultBreadCrum() {
       return [{id: 0, name: this.$tr('isite.cms.label.home')}]
+    },
+    //default disk
+    mediaDisk() {
+      return this.disk || this.$store.getters['qsiteApp/getSettingValueByName']('media::filesystem');
     }
   },
   methods: {
@@ -444,7 +448,7 @@ export default {
           take: pagination.rowsPerPage,
           filter: {
             ...this.filter,
-            disk: this.disk
+            disk: this.mediaDisk
           },
         },
         refresh: refresh
@@ -676,7 +680,7 @@ export default {
         formFields: [
           {name: 'parent_id', value: this.filter.folderId},
           {name: 'Content-Type', value: files[0].type},
-          {name: 'disk', value: this.disk},
+          {name: 'disk', value: this.mediaDisk},
         ],
         headers: [
           {name: 'Authorization', value: this.$store.state.quserAuth.userToken}

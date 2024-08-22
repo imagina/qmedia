@@ -55,7 +55,7 @@ export default {
   },
   mixins: [zoneConfigMixing],
   props: {
-    disk: {default: 'publicmedia'},
+    disk: {default: null},
     allowSelect: {type: Number, default: 0},
     maxFileSize: {type: Number, default: 0},
     onlyUpload: {type: Boolean, defualt: false},
@@ -183,7 +183,7 @@ export default {
                   field: 'created_at',
                   way: 'desc'
                 },
-                disk: this.disk
+                disk: this.mediaDisk
               }
             }
           }
@@ -210,7 +210,7 @@ export default {
                   field: 'created_at',
                   way: 'desc'
                 },
-                disk: this.disk,
+                disk: this.mediaDisk,
                 ...(this.accept ? {extension: this.acceptExtensions.withoutDot} : {})
               }
             }
@@ -223,7 +223,7 @@ export default {
       return {
         folder: {
           formLeft: {
-            disk: {value: this.disk},
+            disk: {value: this.mediaDisk},
             parentId: {
               value: this.filter.folderId ? this.filter.folderId : '0',
               type: 'treeSelect',
@@ -244,7 +244,7 @@ export default {
         },
         file: {
           formLeft: {
-            disk: {value: this.disk},
+            disk: {value: this.mediaDisk},
             folderId: {
               value: this.filter.folderId ? this.filter.folderId : '0',
               type: 'treeSelect',
@@ -264,6 +264,10 @@ export default {
           }
         }
       }
+    },
+    //default disk
+    mediaDisk() {
+      return this.disk || this.$store.getters['qsiteApp/getSettingValueByName']('media::filesystem');
     }
   },
   methods: {
@@ -284,7 +288,7 @@ export default {
         //format request
         let fileData = new FormData()
         fileData.append('parent_id', this.filter.folderId || 0)
-        fileData.append('disk', this.disk)
+        fileData.append('disk', this.mediaDisk)
         fileData.append('file', file.file)
 
         //Request send file
