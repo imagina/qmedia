@@ -5,17 +5,18 @@
       <div class="row justify-between items-center">
         <!--Title-->
         <div class="text-blue-grey">
-          <q-icon name="fas fa-photo-video" class="q-mr-sm"/>
+          <q-icon name="fas fa-photo-video" class="q-mr-sm" />
           <label>{{ label || $tr('isite.cms.label.file') }}</label>
         </div>
         <!--= Add File Button =-->
-        <q-btn :label="buttonLabel ? buttonLabel : $tr('isite.cms.label.select')" no-caps @click="modalMedia = true" unelevated
-               :icon="buttonIcon ? buttonIcon : 'fas fa-plus'" color="green" rounded class="btn-extra-small"/>
+        <q-btn :label="buttonLabel ? buttonLabel : $tr('isite.cms.label.select')" no-caps @click="modalMedia = true"
+               unelevated
+               :icon="buttonIcon ? buttonIcon : 'fas fa-plus'" color="green" rounded class="btn-extra-small" />
       </div>
     </div>
     <!--Separator-->
     <div class="col-12 q-mt-sm q-mb-md">
-      <q-separator/>
+      <q-separator />
     </div>
     <!--= Files viewer =-->
     <div class="col-12">
@@ -66,17 +67,17 @@
     </div>
 
     <!--Image preview-->
-    <avatar-image ref="avatarImage" no-preview/>
+    <avatar-image ref="avatarImage" no-preview />
 
     <!--= Media List Modal =-->
     <q-dialog id="modalMedia" v-model="modalMedia" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
       <q-card>
         <q-toolbar class="bg-primary text-white">
           <q-toolbar-title>{{ $tr('media.cms.selectMedia') }}</q-toolbar-title>
-          <q-btn flat v-close-popup icon="fas fa-times"/>
+          <q-btn flat v-close-popup icon="fas fa-times" />
         </q-toolbar>
         <q-card-section class="q-pa-md">
-          <media-list embebed @data="pushData" :disk="disk"/>
+          <media-list embebed @data="pushData" :disk="mediaDisk" />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -84,14 +85,14 @@
 </template>
 <script>
 /*Components*/
-import mediaList from 'modules/qmedia/_components/list'
-import draggable from 'vuedraggable'
+import mediaList from 'modules/qmedia/_components/list';
+import draggable from 'vuedraggable';
 /*Services*/
-import mediaService from 'modules/qmedia/_services/index'
+import mediaService from 'modules/qmedia/_services/index';
 
 export default {
   props: {
-    disk: {default: 'publicmedia'},
+    disk: { default: null },
     zone: {
       type: String,
       default: 'image'
@@ -103,14 +104,14 @@ export default {
     modelValue: {
       //type: Object,
       default: () => {
-        return {}
+        return {};
       }
     },
-    entity: {type: String, required: true},
-    entityId: {default: null},
-    label: {type: String, default: ''},
-    buttonLabel: {type: String, default: ''},
-    buttonIcon: {type: String, default: ''}
+    entity: { type: String, required: true },
+    entityId: { default: null },
+    label: { type: String, default: '' },
+    buttonLabel: { type: String, default: '' },
+    buttonIcon: { type: String, default: '' }
   },
   emits: ['update:modelValue'],
   components: {
@@ -120,29 +121,35 @@ export default {
   watch: {
     entityId() {
       if (this.entityId) {
-        this.getData()
+        this.getData();
       }
     },
     zone() {
       if (this.entityId) {
-        this.getData()
+        this.getData();
       }
     }
   },
   mounted() {
-    this.$nextTick(function () {
+    this.$nextTick(function() {
       // if has entity id, get the files associated
       if (this.entityId) {
 
-        this.getData()
+        this.getData();
       }
-    })
+    });
   },
   data() {
     return {
       modalMedia: false,
       ids: [],
       files: []
+    };
+  },
+  computed: {
+    //default disk
+    mediaDisk() {
+      return this.disk || this.$getSetting('media::filesystem');
     }
   },
   methods: {
@@ -153,23 +160,24 @@ export default {
           zone: this.zone,
           entity: this.entity,
           entity_id: this.entityId
-        },
-      }
+        }
+      };
 
       // if is multiple media, call diff routes and transform diff the response.data
       if (this.multiple) {
         this.$crud.index('apiRoutes.qmedia.find', params).then(response => {
           if (response.data && Array.isArray(response.data)) this.files = response.data;
-          this.pushData()
+          this.pushData();
         }).catch(error => {
-        })
+        });
       } else {
         this.$crud.index('apiRoutes.qmedia.findFirst', params).then(response => {
           if (response.data) this.files = [response.data];
-          this.pushData()
+          this.pushData();
         }).catch(error => {
-          this.$apiResponse.handleError(error, () => {})
-        })
+          this.$apiResponse.handleError(error, () => {
+          });
+        });
       }
 
     },
@@ -179,59 +187,59 @@ export default {
      */
     pushData(file = false) {
       setTimeout(() => {
-        let zone = this.$clone(this.zone)
-        let filesData = {}
+        let zone = this.$clone(this.zone);
+        let filesData = {};
 
         if (this.multiple) {
           // if file is not false, its pusher on files list
           if (file) {
-            this.files.push(file)
-            this.$alert.success("image " + file.filename + " added")
+            this.files.push(file);
+            this.$alert.success('image ' + file.filename + ' added');
           }
 
           //Default value to filesData
-          if (Array.isArray(this.modelValue) && !this.modelValue.lenght) filesData = {}
-          else filesData = JSON.parse(JSON.stringify(this.modelValue))
+          if (Array.isArray(this.modelValue) && !this.modelValue.lenght) filesData = {};
+          else filesData = JSON.parse(JSON.stringify(this.modelValue));
 
           //Validate if exist zone
-          if (!filesData[zone] || Array.isArray(filesData[zone])) filesData[zone] = {}
+          if (!filesData[zone] || Array.isArray(filesData[zone])) filesData[zone] = {};
 
           //Get files ID
-          let ids = this.files.map(file => file.id)
+          let ids = this.files.map(file => file.id);
           //Set files data
-          filesData[zone].files = ids
-          filesData[zone].orders = ids.join()
+          filesData[zone].files = ids;
+          filesData[zone].orders = ids.join();
         } else {
-          if (file) this.files = [file]
+          if (file) this.files = [file];
 
-          if (Array.isArray(this.modelValue) && !this.modelValue.lenght) filesData = {}
-          else filesData = JSON.parse(JSON.stringify(this.modelValue))
+          if (Array.isArray(this.modelValue) && !this.modelValue.lenght) filesData = {};
+          else filesData = JSON.parse(JSON.stringify(this.modelValue));
 
-          if (!filesData[zone]) filesData[zone] = {}
-          filesData[zone] = file ? file.id : (this.files[0] ? this.files[0].id : '')
-          this.modalMedia = false
+          if (!filesData[zone]) filesData[zone] = {};
+          filesData[zone] = file ? file.id : (this.files[0] ? this.files[0].id : '');
+          this.modalMedia = false;
         }
         //Emit data
-        this.$emit('update:modelValue', this.$clone(filesData))
-      }, 300)
+        this.$emit('update:modelValue', this.$clone(filesData));
+      }, 300);
     },
     /**
      * delete files and push data to the v-model
      * @param index
      */
     deleteFile(index) {
-      this.files.splice(index, 1)
-      this.pushData()
+      this.files.splice(index, 1);
+      this.pushData();
     },
     getThumbnails(file, name) {
       if (file && file.thumbnails) {
-        let itemFile = file.thumbnails.find(item => item.name == name)
-        return itemFile ? itemFile.path : ''
+        let itemFile = file.thumbnails.find(item => item.name == name);
+        return itemFile ? itemFile.path : '';
       }
-      return ''
+      return '';
     }
   }
-}
+};
 </script>
 <style lang="scss">
 #mediaForm {
