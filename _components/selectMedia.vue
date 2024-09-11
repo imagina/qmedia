@@ -173,7 +173,6 @@ export default {
     },
     //default disk
     mediaDisk() {
-      console.warn(this.disk, this.$getSetting('media::filesystem'));
       return this.disk || this.$getSetting('media::filesystem');
     }
   },
