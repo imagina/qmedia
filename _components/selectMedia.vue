@@ -190,7 +190,7 @@ export default {
         let requestParams = {
           refresh: true,
           params: {
-            filter: { field: 'name', entityType: this.entity }
+            filter: { field: 'systemName', entityType: this.entity }
           }
         };
         //Request
