@@ -181,7 +181,7 @@ export default {
             props: {
               label: this.$tr('isite.cms.label.watermark'),
               zone: 'watermark',
-              entity: 'Modules\\Media\\Entities\\Zone',
+              entity: 'Modules\\Media\\Models\\Zone',
               entityId: null
             }
           },
