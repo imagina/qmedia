@@ -10,12 +10,12 @@ export default {
     //Get settings
     settings() {
       return {
-        imagesType: this.$getSetting('media::allowedImageTypes'),
-        filesType: this.$getSetting('media::allowedFileTypes'),
-        videosType: this.$getSetting('media::allowedVideoTypes'),
-        audiosType: this.$getSetting('media::allowedAudioTypes'),
-        ratios: this.$getSetting('media::allowedRatios'),
-        maxFileSize: this.$getSetting('media::maxFileSize')
+        imagesType: this.$getSetting('imedia::allowedImageTypes'),
+        filesType: this.$getSetting('imedia::allowedFileTypes'),
+        videosType: this.$getSetting('imedia::allowedVideoTypes'),
+        audiosType: this.$getSetting('imedia::allowedAudioTypes'),
+        ratios: this.$getSetting('imedia::allowedRatios'),
+        maxFileSize: this.$getSetting('imedia::maxFileSize')
       };
     },
     //Crud Data

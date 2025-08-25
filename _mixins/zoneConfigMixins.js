@@ -3,16 +3,16 @@ export default {
     //Settings
     mediaSettings() {
       const types = {
-        imagesType: this.$getSetting('media::allowedImageTypes'),
-        filesType: this.$getSetting('media::allowedFileTypes'),
-        videosType: this.$getSetting('media::allowedVideoTypes'),
-        audiosType: this.$getSetting('media::allowedAudioTypes'),
+        imagesType: this.$getSetting('imedia::allowedImageTypes'),
+        filesType: this.$getSetting('imedia::allowedFileTypes'),
+        videosType: this.$getSetting('imedia::allowedVideoTypes'),
+        audiosType: this.$getSetting('imedia::allowedAudioTypes'),
       }
       //Response
       return {
         ...types,
-        ratios: this.$getSetting('media::allowedRatios'),
-        maxFileSize: this.$getSetting('media::maxFileSize'),
+        ratios: this.$getSetting('imedia::allowedRatios'),
+        maxFileSize: this.$getSetting('imedia::maxFileSize'),
       }
     },
     //Return accept extensions

@@ -1,7 +1,7 @@
 export default {
   //Home Page
   index: {
-    permission: 'media.medias.manage',
+    permission: 'imedia.files.manage',
     activated: true,
     path: '/media/index',
     name: 'app.media.index',
@@ -16,7 +16,7 @@ export default {
   },
   //Zones Page
   zones: {
-    permission: 'media.zones.manage',
+    permission: 'imedia.zones.manage',
     activated: true,
     path: '/media/zones',
     name: 'app.media.zones',

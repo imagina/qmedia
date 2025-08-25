@@ -226,7 +226,7 @@ export default {
         folder: {
           formLeft: {
             disk: { value: this.mediaDisk },
-            parentId: {
+            folderId: {
               value: this.filter.folderId ? this.filter.folderId : '0',
               type: 'treeSelect',
               props: {
@@ -269,7 +269,7 @@ export default {
     },
     //default disk
     mediaDisk() {
-      return this.disk || this.$getSetting('media::filesystem');
+      return this.disk || this.$getSetting('imedia::filesystem');
     }
   },
   methods: {
@@ -289,8 +289,10 @@ export default {
       await Promise.all(files.map(async file => {
         //format request
         let fileData = new FormData();
-        fileData.append('parent_id', this.filter.folderId || 0);
-        fileData.append('disk', this.mediaDisk);
+        if (this.filter.folderId) {
+          fileData.append('attributes[folder_id]', this.filter.folderId);
+        }
+        fileData.append('attributes[disk]', this.mediaDisk);
         fileData.append('file', file.file);
 
         //Request send file

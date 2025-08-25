@@ -44,7 +44,7 @@
                 <q-btn color="green" icon="fas fa-folder-plus" class="q-ml-xs"
                        @click="dialogCreateFolder=true" rounded unelevated
                        :label="$tr('media.cms.newFolder')"
-                       v-if="$hasAccess('media.folders.create')"
+                       v-if="$hasAccess('imedia.files.create')"
                 />
                 <!--Button add file -->
                 <q-btn color="blue" icon="fas fa-file-upload" class="q-ml-xs"
@@ -436,7 +436,7 @@ export default {
     },
     //default disk
     mediaDisk() {
-      return this.disk || this.$getSetting('media::filesystem');
+      return this.disk || this.$getSetting('imedia::filesystem');
     }
   },
   methods: {

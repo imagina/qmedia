@@ -10,8 +10,8 @@ export default {
     crudData() {
       return {
         crudId: this.crudId,
-        apiRoute: 'apiRoutes.qmedia.folders',
-        permission: 'media.folders',
+        apiRoute: 'apiRoutes.qmedia.files',
+        permission: 'imedia.files',
         create: {
           title: this.$tr('media.cms.newFolder'),
         },
@@ -24,7 +24,7 @@ export default {
           id: {value: ''},
           userId: {value: this.$store.state.quserAuth.userId},
           isFolder: {value: 1},
-          filename: {
+          name: {
             value: null,
             type: 'input',
             props: {
@@ -35,7 +35,7 @@ export default {
               ]
             }
           },
-          parentId: {
+          folderId: {
             value: '0',
             type: 'treeSelect',
             props: {
@@ -54,8 +54,6 @@ export default {
         },
         getDataForm(data, type) {
           return new Promise(resolve => {
-            //replace name value
-            data.name = data.filename
             //Response
             resolve(data)
           })
