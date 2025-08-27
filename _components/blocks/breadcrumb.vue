@@ -12,8 +12,8 @@
         </template>
         <!---Items on breadcrumb-->
         <q-breadcrumbs-el v-for="(item,index) in breadcrumbs" :key="index"
-                          @click="setFolder(item.id); $emit('selected',{...item, isFolder : true})"
-                          :label="item.name" color="primary" class="cursor-pointer"/>
+                          @click="$emit('selected',item)"
+                          :label="item.filename" color="primary" class="cursor-pointer"/>
       </q-breadcrumbs>
     </div>
   </div>
@@ -21,22 +21,10 @@
 <script>
 export default {
   props: {
-    params: {
-      default: () => {
-        return {folderId: 0}
-      }
-    }
+    breadcrumbs: {default: []}
   },
   emits: ['selected'],
   components: {},
-  watch: {
-    params: {
-      deep: true,
-      handler: function (newValue, oldValue) {
-        if (this.filter.folderId != newValue.folderId) this.setFolder()
-      }
-    }
-  },
   mounted() {
     this.$nextTick(function () {
       this.init()
@@ -44,23 +32,19 @@ export default {
   },
   data() {
     return {
-      loading: false,
-      breadcrumbs: [],
-      filter: {
-        folderId: 0
-      }
+      loading: false
     }
   },
   computed: {},
   methods: {
     init() {
-      this.setFolder()//Set folder
+      //this.setFolder()//Set folder
     },
     //Set folder
     setFolder(folderId = false) {
       //Set filters
       this.filter.folderId = this.$clone((folderId !== false) ? folderId : this.params.folderId)
-      this.getData()//Get data
+      //this.getData()//Get data
     },
     //Get data
     getData(refresh = false) {

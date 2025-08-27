@@ -23,7 +23,7 @@
 
       <!--Bread crumb-->
       <div class="box box-auto-height q-mb-md">
-        <breadcrumb-component ref="breadcrumbComponent" :params="filter" @selected="setFolder" />
+        <breadcrumb-component ref="breadcrumbComponent" :breadcrumbs="breadCrumb" @selected="setFolder" />
       </div>
 
       <!---Folders Files-->
@@ -83,7 +83,8 @@ export default {
         search: null,
         folderId: 0
       },
-      filesComponent: null
+      filesComponent: null,
+      breadCrumb : [{id: 0, isFolder:true, filename: this.$tr('isite.cms.label.home')}]
     };
   },
   computed: {
@@ -313,11 +314,15 @@ export default {
     //Set folder
     setFolder(file) {
       if (file.isFolder) this.filter = { folderId: file.id, search: null };
+      //Set breadcrumb
+      const index = this.breadCrumb.findIndex(b => b.id === file.id);
+      if (index === -1) this.breadCrumb.push(file);
+      else this.breadCrumb = this.breadCrumb.slice(0, index + 1);
     },
     //Refresh Data
     refreshData() {
       setTimeout(() => {
-        if (this.$refs.breadcrumbComponent) this.$refs.breadcrumbComponent.getData(true);
+        //if (this.$refs.breadcrumbComponent) this.$refs.breadcrumbComponent.getData(true);
         if (this.$refs.foldersFilesComponent) this.$refs.foldersFilesComponent.getData(true);
         if (this.$refs.otherFilesComponent) this.$refs.otherFilesComponent.getData(true);
       }, 100);
