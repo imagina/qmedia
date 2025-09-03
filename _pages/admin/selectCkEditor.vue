@@ -22,7 +22,7 @@
     methods: {
       selectImage(file = false) {
         let CKEditorFuncNum = this.$route.query.CKEditorFuncNum
-        window.opener.CKEDITOR.tools.callFunction(CKEditorFuncNum, file.path);
+        window.opener.CKEDITOR.tools.callFunction(CKEditorFuncNum, file.url);
         window.close()
       }
     }

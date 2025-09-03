@@ -380,8 +380,7 @@ export default {
           field: 'thumbnails', align: 'center',
           format: val => {
             if (!val) return '';
-            let itemFile = val.find(item => item.name == 'smallThumb');
-            return itemFile ? itemFile.path : '';
+            return val.smallThumb
           }
         },
         {
