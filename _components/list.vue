@@ -78,8 +78,8 @@
             <!--Breadcrumb-->
             <div class="table-top-filters col-12 q-pt-md">
               <q-breadcrumbs>
-                <q-breadcrumbs-el v-for="(breadcrumb,index) in breadcrumbs" :key="index" :label="breadcrumb.name"
-                                  color="primary" @click.native="getDataByFolder(breadcrumb)"
+                <q-breadcrumbs-el v-for="(breadcrumb,index) in breadcrumbs" :key="index" :label="breadcrumb.filename"
+                                  color="primary" @click.native="setFolder(breadcrumb)"
                                   style="cursor: pointer" />
               </q-breadcrumbs>
             </div>
@@ -89,7 +89,7 @@
         <!--= Small Thumb or Icon =-->
         <template v-slot:body-cell-small_thumb="props">
           <q-td style="width: 30%" :props="props">
-            <q-btn v-if="props.row.isFolder" icon="far fa-folder" flat @click="getDataByFolder(props.row)" rounded
+            <q-btn v-if="props.row.isFolder" icon="far fa-folder" flat @click="setFolder(props.row)" rounded
                    unelevated />
             <div v-else-if="props.row.isImage">
               <div class="image" :style="'background-image: url('+props.value+')'" alt="" style="min-width: 60px">
@@ -302,7 +302,6 @@ export default {
   },
   mounted() {
     this.$nextTick(function() {
-      this.breadcrumbs = this.defaultBreadCrum;
       this.getData({ pagination: this.pagination, search: this.filter.search }, this.embebed);
     });
   },
@@ -335,7 +334,7 @@ export default {
       fileForm: {},
       rowsSelected: [],
       uploadFile: false,
-      breadcrumbs: [],
+      breadcrumbs: [{ id: 0, filename: this.$tr('isite.cms.label.home') }],
       headers: [{
         name: 'Authorization',
         value: this.$store.state.quserAuth.userToken
@@ -430,9 +429,6 @@ export default {
         }
       };
     },
-    defaultBreadCrum() {
-      return [{ id: 0, name: this.$tr('isite.cms.label.home') }];
-    },
     //default disk
     mediaDisk() {
       return this.disk || this.$getSetting('imedia::filesystem');
@@ -457,16 +453,6 @@ export default {
         },
         refresh: refresh
       };
-
-      // if folderId is not root path
-      if (this.filter.folderId != 0) {
-        let breacrumb = await this.$crud.show('apiRoutes.qmedia.breadcrumb', this.filter.folderName, params);
-        this.breadcrumbs = breacrumb.data;
-      } else
-        // reseting breadcrumb
-      {
-        this.breadcrumbs = this.defaultBreadCrum;
-      }
 
       // index all media by params
       this.$crud.index('apiRoutes.qmedia.files', params).then(response => {
@@ -690,7 +676,17 @@ export default {
           { name: 'Authorization', value: this.$store.state.quserAuth.userToken }
         ]
       };
-    }
+    },
+
+    //Set folder
+    setFolder(file) {
+      //made the request
+      if (file.isFolder || file.id === 0) this.getDataByFolder(file);
+      //Set breadcrumb
+      const index = this.breadcrumbs.findIndex(b => b.id === file.id);
+      if (index === -1) this.breadcrumbs.push(file);
+      else this.breadcrumbs = this.breadcrumbs.slice(0, index + 1);
+    },
   }
 };
 </script>
